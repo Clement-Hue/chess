@@ -1,0 +1,4 @@
+﻿  Vcpkg is unable to link because we cannot decide between Release and Debug libraries. Please define the property VcpkgConfiguration to be 'Release' or 'Debug' (currently 'Déboguer UnitTests').
+  Test.cpp
+Test.obj : error LNK2019: symbole externe non résolu "class boost::unit_test::test_suite * __cdecl init_unit_test_suite(int,char * * const)" (?init_unit_test_suite@@YAPEAVtest_suite@unit_test@boost@@HQEAPEAD@Z) référencé dans la fonction main
+D:\chess\x64\Déboguer UnitTests\chess.exe : fatal error LNK1120: 1 externes non résolus
