@@ -7,7 +7,7 @@
 int main(int argc, char** argv)
 {
 	Application board;
-	board.create_window();
+	board.init();
 	return 0;
 }
 

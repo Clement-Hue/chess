@@ -181,6 +181,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game\EventHandler.cpp" />
     <ClCompile Include="src\game\BoardGame.cpp" />
     <ClCompile Include="src\game\Piece.cpp" />
     <ClCompile Include="src\game\Square.cpp" />
@@ -191,6 +192,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\EventHandler.h" />
     <ClInclude Include="src\game\BoardGame.h" />
     <ClInclude Include="src\game\Constants.h" />
     <ClInclude Include="src\game\Piece.h" />

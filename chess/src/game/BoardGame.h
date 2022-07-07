@@ -1,12 +1,13 @@
 #pragma once
-#include <vector>
 #include "Square.h"
+#include <vector>
+
 class BoardGame
 {
 public:
 	BoardGame();
-	const std::vector<Square>& get_squares() const noexcept { return this->squares_; }
+	Square& get_squares(const uint8_t i) noexcept { return this->squares_[i]; }
 private:
-	std::vector<Square> squares_{};
+	std::vector<Square> squares_;
 };
 

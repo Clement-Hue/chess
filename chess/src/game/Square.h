@@ -5,7 +5,7 @@ class Piece;
 
 struct Square
 {
-	uint8_t value;
+	const uint8_t value;
 	Piece* piece{ nullptr };
 };
 
