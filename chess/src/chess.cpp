@@ -2,11 +2,11 @@
 //
 
 #define SDL_MAIN_HANDLED
-#include "loader/BoardGame.h"
+#include "game/Application.h"
 
 int main(int argc, char** argv)
 {
-	loader::BoardGame board;
+	Application board;
 	board.create_window();
 	return 0;
 }

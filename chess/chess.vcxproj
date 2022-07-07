@@ -181,14 +181,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\loader\BoardGame.cpp" />
+    <ClCompile Include="src\game\BoardGame.cpp" />
+    <ClCompile Include="src\game\Piece.cpp" />
+    <ClCompile Include="src\game\Square.cpp" />
+    <ClCompile Include="src\game\Application.cpp" />
     <ClCompile Include="src\chess.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Déboguer UnitTests|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Déboguer UnitTests|x64'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\loader\BoardGame.h" />
+    <ClInclude Include="src\game\BoardGame.h" />
+    <ClInclude Include="src\game\Constants.h" />
+    <ClInclude Include="src\game\Piece.h" />
+    <ClInclude Include="src\game\Square.h" />
+    <ClInclude Include="src\game\Application.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
