@@ -1,1 +1,0 @@
-D:\chess\application\x64\Release\application.vcxproj.CopyComplete
