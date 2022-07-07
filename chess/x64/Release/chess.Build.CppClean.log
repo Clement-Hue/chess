@@ -1,8 +1,13 @@
+d:\chess\x64\release\chess.lib
+d:\chess\x64\release\chess.exp
 d:\chess\x64\release\sdl2.dll
 d:\chess\chess\x64\release\vc143.pdb
+d:\chess\chess\x64\release\application.obj
+d:\chess\chess\x64\release\square.obj
+d:\chess\chess\x64\release\piece.obj
 d:\chess\chess\x64\release\boardgame.obj
-d:\chess\chess\x64\release\chess.obj
-d:\chess\x64\release\chess.exe
+d:\chess\chess\x64\release\eventhandler.obj
+d:\chess\x64\release\chess.dll
 d:\chess\chess\x64\release\chess.ipdb
 d:\chess\x64\release\chess.pdb
 d:\chess\chess\x64\release\chess.iobj

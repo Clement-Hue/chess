@@ -1,0 +1,4 @@
+﻿  application.cpp
+D:\chess\chess\src\game\BoardGame.h(18,22): warning C4251: 'BoardGame::square_' : class 'std::vector<Square,std::allocator<Square>>' nécessite une interface DLL pour être utilisé(e) par les clients de class 'BoardGame'
+D:\chess\chess\src\game\BoardGame.h(18): message : voir la déclaration de 'std::vector<Square,std::allocator<Square>>'
+  application.vcxproj -> D:\chess\x64\Debug\application.exe

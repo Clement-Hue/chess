@@ -1,13 +1,20 @@
 #pragma once
 #include "Square.h"
 #include <vector>
+#include "Common.h"
+#include "iostream"
 
-class BoardGame
+class CHESS_API  BoardGame
 {
 public:
 	BoardGame();
-	Square& get_squares(const uint8_t i) noexcept { return this->squares_[i]; }
+	BoardGame(const BoardGame&) = delete;
+	BoardGame(BoardGame&&) = delete;
+	BoardGame& operator=(const BoardGame&) = delete;
+	BoardGame& operator=(BoardGame&&) = delete;
+	Square& operator[](const uint8_t i) noexcept { return this->square_[i]; }
+	~BoardGame() = default;
 private:
-	std::vector<Square> squares_;
+	std::vector<Square> square_;
 };
 

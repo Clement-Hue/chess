@@ -3,6 +3,7 @@
 #include "BoardGame.h"
 #include "EventHandler.h"
 #include <memory>
+#include "Common.h"
 
 struct WindowSize
 {
@@ -13,7 +14,7 @@ struct CaseColor
 {
 	uint8_t r, g, b, a;
 };
-class Application
+class CHESS_API Application
 {
 public:
 	explicit Application(const WindowSize window_size = {800,800},

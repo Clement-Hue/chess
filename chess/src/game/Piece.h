@@ -2,11 +2,12 @@
 #include "Square.h"
 #include <vector>
 #include "BoardGame.h"
+#include "Common.h"
 
-class Piece
+class CHESS_API  Piece
 {
 public:
-	explicit Piece(BoardGame& board,Square& square): board_(board),square_(&square) {}
+	explicit Piece(BoardGame& board, Square& square);
 	virtual std::vector<Square*> available_square() const noexcept = 0;
 	void move(Square& square) noexcept;
 	Piece(const Piece&) = delete;
@@ -19,7 +20,7 @@ protected:
 	Square* square_;
 };
 
-class Rock final: public Piece
+class CHESS_API Rock final: public Piece
 {
 public:
 	explicit Rock(BoardGame& board,Square& square): Piece(board, square) {}

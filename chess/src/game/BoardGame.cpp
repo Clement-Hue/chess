@@ -1,18 +1,17 @@
 #include "BoardGame.h"
 #include "Constants.h"
 
-
 static std::vector<Square> create_squares()
 {
 	std::vector<Square> squares;
 	squares.reserve(NB_SQUARES);
-	for (uint8_t i = 0; i<NB_SQUARES; ++i)
+	for (uint8_t i = 0; i<NB_SQUARES; i++)
 	{
-		squares.emplace_back(Square{i});
+		squares.emplace_back(Square{ i });
 	}
 	return squares;
 }
 
-BoardGame::BoardGame(): squares_{create_squares()}
+BoardGame::BoardGame(): square_(create_squares())
 {
 }

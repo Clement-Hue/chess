@@ -1,7 +1,8 @@
 #pragma once
 #include "BoardGame.h"
+#include "Common.h"
 
-class EventHandler
+class CHESS_API EventHandler
 {
 public:
 	explicit EventHandler(BoardGame& board) : board_(board){}
@@ -15,7 +16,7 @@ protected:
 	BoardGame& board_;
 };
 
-class QuitHandler final: public EventHandler
+class CHESS_API QuitHandler final: public EventHandler
 {
 public:
 	explicit QuitHandler(BoardGame& board,bool& quit): EventHandler(board), quit_(quit){}
@@ -24,7 +25,7 @@ private:
 	bool& quit_;
 };
 
-class MouseButtonHandler final: public EventHandler
+class CHESS_API MouseButtonHandler final: public EventHandler
 {
 public:
 	explicit MouseButtonHandler(BoardGame& board): EventHandler(board) {}
