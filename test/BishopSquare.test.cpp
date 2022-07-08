@@ -1,19 +1,17 @@
 #include "pch.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 
-TEST(RockSquareAvailable, all_square_free)
+TEST(BishopSquareAvailable, all_square_free)
 {
 	BoardGame board;
-	const Rock rock{ board, board[11], PieceColor::white };
-	const auto rock_available_square = rock.eligible_squares();
+	const Bishop bishop{ board, board[11], PieceColor::white };
+	const auto rock_available_square = bishop.eligible_squares();
 	EXPECT_THAT(rock_available_square, WhenSorted(ElementsAre(
-		&board[3], &board[8], &board[9], &board[10], &board[12], &board[13],
-		&board[14], &board[15], &board[19], &board[27], &board[35], &board[43],
-		&board[51], &board[59]
-	)));
+		&board[2], &board[4], &board[18], &board[20], &board[25], &board[29],
+		&board[32], &board[38], &board[47])));
 }
+/*
 
 TEST(RockSquareAvailable, rock_on_first_line)
 {
@@ -85,3 +83,4 @@ TEST(RockSquareAvailable, enemy_square_are_available_square)
 		p1.get_square(), p2.get_square(), p3.get_square(), p4.get_square()
 	}));
 }
+*/

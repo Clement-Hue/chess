@@ -2,7 +2,7 @@
 #include "Constants.h"
 
 
-Piece::Piece(BoardGame& board, Square& square, const Color color): board_(board), square_(&square),
+Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
 	color_(color)	
 {
 	this->square_->set_piece(*this);
@@ -15,14 +15,6 @@ void Piece::move(Square& square) noexcept
 	this->square_->set_piece(*this);
 }
 
-
-std::vector<Square*> Rock::eligible_squares() const noexcept
-{
-	std::vector<Square*> squares;
-	this->add_eligible_file_squares(squares);
-	this->add_eligible_row_squares(squares);
-	return squares;
-}
 
 void Piece::add_eligible_file_squares(std::vector<Square*>& squares) const noexcept
 {
@@ -61,4 +53,22 @@ bool Piece::is_eligible_square(std::vector<Square*>& squares, const int8_t squar
 	}
 	squares.emplace_back(&this->board_[square_value]);
 	return true;
+}
+
+
+std::vector<Square*> Rock::eligible_squares() const noexcept
+{
+	std::vector<Square*> squares;
+	this->add_eligible_file_squares(squares);
+	this->add_eligible_row_squares(squares);
+	return squares;
+}
+
+std::vector<Square*> Bishop::eligible_squares() const noexcept
+{
+	std::vector<Square*> squares;
+	for (int8_t i = this->square_->get_value() + NB_SQUARES_BY_ROW + 1;
+		this->is_eligible_square(squares, i)
+		; i += NB_SQUARES_BY_ROW + 1);
+	return squares;
 }
