@@ -25,6 +25,7 @@ protected:
 	PieceColor color_;
 	void add_eligible_file_squares(std::vector<Square*>&) const noexcept;
 	void add_eligible_row_squares(std::vector<Square*>&) const noexcept;
+	void add_eligible_diagonals(std::vector<Square*>&) const noexcept;
 	bool is_eligible_square(std::vector<Square*>&, int8_t) const noexcept;
 };
 

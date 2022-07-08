@@ -18,10 +18,10 @@ void Piece::move(Square& square) noexcept
 
 void Piece::add_eligible_file_squares(std::vector<Square*>& squares) const noexcept
 {
-	for (int8_t i = this->square_->get_value() + NB_SQUARES_BY_ROW;
+	for (int8_t i = this->square_->get_value(); 
 		this->is_eligible_square(squares, i)
 		; i += NB_SQUARES_BY_ROW);
-	for (int8_t i = this->square_->get_value() - NB_SQUARES_BY_ROW;
+	for (int8_t i = this->square_->get_value();
 		this->is_eligible_square(squares, i)
 		; i -= NB_SQUARES_BY_ROW);
 }
@@ -36,12 +36,29 @@ void Piece::add_eligible_row_squares(std::vector<Square*>& squares) const noexce
 		; ++i);
 }
 
+void Piece::add_eligible_diagonals(std::vector<Square*>& squares) const noexcept
+{
+	for (int8_t i = this->square_->get_value(); 
+		this->board_[i].get_file() >= this->square_->get_file() && this->is_eligible_square(squares, i)
+		; i += NB_SQUARES_BY_ROW + 1);
+	for (int8_t i = this->square_->get_value(); 
+		this->board_[i].get_file() <= this->square_->get_file() && this->is_eligible_square(squares, i)
+		; i += NB_SQUARES_BY_ROW - 1);
+	for (int8_t i = this->square_->get_value(); 
+		this->board_[i].get_file() <= this->square_->get_file() && this->is_eligible_square(squares, i)
+		; i -= NB_SQUARES_BY_ROW + 1);
+	for (int8_t i = this->square_->get_value(); 
+		this->board_[i].get_file() >= this->square_->get_file() && this->is_eligible_square(squares, i)
+		; i -= NB_SQUARES_BY_ROW - 1);
+}
+
 /**
  * Predicate with side effect.
  * Add the square to the vector if the square is eligible
  */
 bool Piece::is_eligible_square(std::vector<Square*>& squares, const int8_t square_value) const noexcept
 {
+	if (this->square_->get_value() == square_value) return true;
 	if (square_value > NB_SQUARES || square_value < 0) return false;
 	if (!this->board_[square_value].is_free())
 	{
@@ -67,8 +84,8 @@ std::vector<Square*> Rock::eligible_squares() const noexcept
 std::vector<Square*> Bishop::eligible_squares() const noexcept
 {
 	std::vector<Square*> squares;
-	for (int8_t i = this->square_->get_value() + NB_SQUARES_BY_ROW + 1;
-		this->is_eligible_square(squares, i)
-		; i += NB_SQUARES_BY_ROW + 1);
+	this->add_eligible_diagonals(squares);
 	return squares;
 }
+
+
