@@ -2,27 +2,71 @@
 #include "Constants.h"
 
 
-Piece::Piece(BoardGame& board, Square& square): board_(board), square_(&square)
+Piece::Piece(BoardGame& board, Square& square, const Color color): board_(board), square_(&square),
+	color_(color)	
 {
-	this->square_->piece = this;
+	this->square_->set_piece(*this);
 }
 
 void Piece::move(Square& square) noexcept
 {
-	this->square_->piece = nullptr;
+	this->square_->remove_piece();
 	this->square_ = &square;
-	this->square_->piece = this;
+	this->square_->set_piece(*this);
 }
 
 std::vector<Square*> Rock::available_square() const noexcept
 {
 	std::vector<Square*> squares;
-	const uint8_t column = this->square_->value % NB_SQUARES_BY_ROW;
-	const uint8_t row = this->square_->value / 8;
-	for (uint8_t i = 0; i<NB_SQUARES; ++i)
+	const uint8_t column = this->square_->get_value() % NB_SQUARES_BY_ROW;
+	const uint8_t row = this->square_->get_value() / NB_SQUARES_BY_ROW;
+	for (int8_t i = this->square_->get_value() + NB_SQUARES_BY_ROW; i<NB_SQUARES; i+=NB_SQUARES_BY_ROW )
 	{
-		if (i == this->square_->value) continue;
-		if (i % 8 == column || i / 8 == row) squares.emplace_back(&this->board_[i]);
+		if (!this->board_[i].is_free())
+		{
+			if (this->board_[i].has_enemy_piece_of(*this))
+			{
+				squares.emplace_back(&this->board_[i]);
+			}
+			break;
+		}
+		squares.emplace_back(&this->board_[i]);
+	}
+	for (int8_t i = this->square_->get_value() - NB_SQUARES_BY_ROW; i>= 0; i-=NB_SQUARES_BY_ROW )
+	{
+		if (!this->board_[i].is_free())
+		{
+			if (this->board_[i].has_enemy_piece_of(*this))
+			{
+				squares.emplace_back(&this->board_[i]);
+			}
+			break;
+		}
+		squares.emplace_back(&this->board_[i]);
+	}
+	for (int8_t i = this->square_->get_value() - 1;  this->square_->is_same_row(i) ; --i)
+	{
+		if (!this->board_[i].is_free())
+		{
+			if (this->board_[i].has_enemy_piece_of(*this))
+			{
+				squares.emplace_back(&this->board_[i]);
+			}
+			break;
+		}
+		squares.emplace_back(&this->board_[i]);
+	}
+	for (int8_t i = this->square_->get_value() + 1;  this->square_->is_same_row(i) ; ++i)
+	{
+		if (!this->board_[i].is_free())
+		{
+			if (this->board_[i].has_enemy_piece_of(*this))
+			{
+				squares.emplace_back(&this->board_[i]);
+			}
+			break;
+		}
+		squares.emplace_back(&this->board_[i]);
 	}
 	return squares;
 }

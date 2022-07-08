@@ -2,7 +2,6 @@
 #include "Square.h"
 #include <vector>
 #include "Common.h"
-#include "iostream"
 
 class CHESS_API  BoardGame
 {
