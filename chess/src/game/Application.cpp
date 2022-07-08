@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <array>
 #include "EventHandler.h"
+#include "SDL2/SDL_image.h"
 #include <memory>
 
 std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event& e, bool& quit)
@@ -32,10 +33,12 @@ void Application::app_loop()
 	}
 }
 
+
 void Application::init()
 {
 	this->init_window_and_renderer();
 	this->draw_board();
+	this->load_assets();
 	this->app_loop();
 }
 
@@ -98,4 +101,14 @@ void Application::draw_board() const noexcept
 	const auto white_squares = create_white_squares<nb_rect>(this->window_size_);
 	SDL_RenderFillRects(this->renderer_, white_squares.data(), nb_rect);
 	SDL_RenderPresent(this->renderer_);
+}
+
+void Application::load_assets() const
+{
+	SDL_Surface* image = IMG_Load("./chess_piece_2_black_bishop");
+	if (!image)
+	{
+		printf("unable to load image");
+	}
+	SDL_Texture* render_image = SDL_CreateTextureFromSurface(this->renderer_, image);
 }

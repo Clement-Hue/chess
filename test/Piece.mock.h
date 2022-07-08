@@ -6,5 +6,5 @@ class MockPiece final: public Piece
 {
 public:
 	MockPiece(BoardGame& board, Square& square, const PieceColor color = PieceColor::white): Piece(board, square, color) {}
-	std::vector<Square*> eligible_squares() const noexcept override { return {}; }
+	std::vector<Square*> get_eligible_squares() const noexcept override { return {}; }
 };

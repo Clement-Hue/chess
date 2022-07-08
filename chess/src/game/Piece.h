@@ -10,7 +10,7 @@ class CHESS_API Piece
 {
 public:
 	explicit Piece(BoardGame& board, Square& square, PieceColor color);
-	virtual std::vector<Square*> eligible_squares() const noexcept = 0;
+	virtual std::vector<Square*> get_eligible_squares() const noexcept = 0;
 	void move(Square& square) noexcept;
 	Piece(const Piece&) = delete;
 	Piece(Piece&&) = delete;
@@ -33,7 +33,7 @@ class CHESS_API Rock final: public Piece
 {
 public:
 	explicit Rock(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::vector<Square*> eligible_squares() const noexcept override;	
+	std::vector<Square*> get_eligible_squares() const noexcept override;	
 };
 
 
@@ -41,5 +41,5 @@ class CHESS_API Bishop final: public Piece
 {
 public:
 	explicit Bishop(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::vector<Square*> eligible_squares() const noexcept override;	
+	std::vector<Square*> get_eligible_squares() const noexcept override;	
 };

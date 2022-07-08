@@ -37,6 +37,7 @@ private:
 
 	void init_window_and_renderer();
 	void draw_board() const noexcept;
+	void load_assets() const;
 	void app_loop();
 	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
 };

@@ -73,7 +73,7 @@ bool Piece::is_eligible_square(std::vector<Square*>& squares, const int8_t squar
 }
 
 
-std::vector<Square*> Rock::eligible_squares() const noexcept
+std::vector<Square*> Rock::get_eligible_squares() const noexcept
 {
 	std::vector<Square*> squares;
 	this->add_eligible_file_squares(squares);
@@ -81,7 +81,7 @@ std::vector<Square*> Rock::eligible_squares() const noexcept
 	return squares;
 }
 
-std::vector<Square*> Bishop::eligible_squares() const noexcept
+std::vector<Square*> Bishop::get_eligible_squares() const noexcept
 {
 	std::vector<Square*> squares;
 	this->add_eligible_diagonals(squares);
