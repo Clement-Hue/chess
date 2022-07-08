@@ -6,3 +6,9 @@ bool Square::has_enemy_piece_of(const Piece& piece) const noexcept
 	if (this->piece_ == nullptr) return false;
 	return this->piece_->get_color() != piece.get_color();
 }
+
+bool Square::has_friend_piece_of(const Piece& piece) const noexcept
+{
+	if (this->piece_ == nullptr) return false;
+	return this->piece_->get_color() == piece.get_color();
+}

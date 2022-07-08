@@ -13,12 +13,13 @@ public:
 	uint8_t get_value() const noexcept { return this->value_; }
 	void set_piece(Piece& piece) noexcept { this->piece_ = &piece; }
 	void remove_piece() noexcept { this->piece_ = nullptr; }
-	bool is_same_row(const Square& other) const noexcept { return this->get_row() == other.get_row(); }
-	bool is_same_column(const Square& other) const noexcept { return this->get_column() == other.get_column(); }
-	bool is_same_row(const uint8_t row) const noexcept { return this->get_row() == row / NB_SQUARES_BY_ROW; }
-	bool is_same_column(const uint8_t column) const noexcept { return this->get_column() == column % NB_SQUARES_BY_ROW; }
+	bool is_same_rank(const Square& other) const noexcept { return this->get_row() == other.get_row(); }
+	bool is_same_file(const Square& other) const noexcept { return this->get_column() == other.get_column(); }
+	bool is_same_rank(const uint8_t row) const noexcept { return this->get_row() == row / NB_SQUARES_BY_ROW; }
+	bool is_same_file(const uint8_t column) const noexcept { return this->get_column() == column % NB_SQUARES_BY_ROW; }
 	bool is_free() const noexcept { return this->piece_ == nullptr; }
 	bool has_enemy_piece_of(const Piece& piece) const noexcept;
+	bool has_friend_piece_of(const Piece& piece) const noexcept;
 	uint8_t get_row() const noexcept { return this->value_ / NB_SQUARES_BY_ROW; }
 	uint8_t get_column() const noexcept { return this->value_ % NB_SQUARES_BY_ROW; }
 	bool operator==(const Square& other) const noexcept { return other.value_ == this->value_; }
