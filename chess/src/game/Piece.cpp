@@ -10,6 +10,12 @@ Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(b
 
 void Piece::move(Square& square) noexcept
 {
+	const auto piece_on_square = square.get_piece();
+	if (piece_on_square && piece_on_square->is_friend_of(*this)) return;
+	if (piece_on_square && piece_on_square->is_enemy_of(*this))
+	{
+		piece_on_square->remove_square();
+	}
 	this->square_->remove_piece();
 	this->square_ = &square;
 	this->square_->set_piece(*this);

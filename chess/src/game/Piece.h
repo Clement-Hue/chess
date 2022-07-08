@@ -17,8 +17,11 @@ public:
 	Piece& operator=(const Piece&) = delete;
 	Piece& operator=(Piece&&) = delete;
 	virtual ~Piece() = default;
+	void remove_square() noexcept { this->square_ = nullptr; }
 	const Square* get_square() const noexcept { return this->square_; }
 	PieceColor get_color() const noexcept { return this->color_; }
+	bool is_enemy_of(const Piece& piece) const noexcept { return this->get_color() != piece.get_color(); }
+	bool is_friend_of(const Piece& piece) const noexcept { return !this->is_enemy_of(piece); }
 protected:
 	BoardGame& board_;
 	Square* square_{nullptr};

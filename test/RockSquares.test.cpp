@@ -3,7 +3,7 @@
 #include "game/Piece.h"
 #include "Piece.mock.h"
 
-TEST(RockSquareAvailable, all_square_free)
+TEST(RockSquareAvailable, all_squares_free)
 {
 	BoardGame board;
 	const Rock rock{ board, board[11], PieceColor::white };
@@ -72,7 +72,7 @@ TEST(RockSquareAvailable, lower_square_taken)
 	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[3])));
 }
 
-TEST(RockSquareAvailable, enemy_square_are_available_square)
+TEST(RockSquareAvailable, enemy_squares_are_available_squares)
 {
 	BoardGame board;
 	const MockPiece p1 = { board, board[3], PieceColor::black };

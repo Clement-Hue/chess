@@ -9,7 +9,7 @@ class CHESS_API Square
 {
 public:
 	explicit Square(const uint8_t value, Piece* piece = nullptr): value_{value}, piece_{piece} {}
-	const Piece* get_piece() const noexcept { return this->piece_; }
+	Piece* get_piece() const noexcept { return this->piece_; }
 	uint8_t get_value() const noexcept { return this->value_; }
 	void set_piece(Piece& piece) noexcept { this->piece_ = &piece; }
 	void remove_piece() noexcept { this->piece_ = nullptr; }
