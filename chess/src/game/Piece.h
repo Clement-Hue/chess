@@ -10,7 +10,7 @@ class CHESS_API Piece
 {
 public:
 	explicit Piece(BoardGame& board, Square& square, Color color);
-	virtual std::vector<Square*> available_square() const noexcept = 0;
+	virtual std::vector<Square*> eligible_squares() const noexcept = 0;
 	void move(Square& square) noexcept;
 	Piece(const Piece&) = delete;
 	Piece(Piece&&) = delete;
@@ -23,11 +23,14 @@ protected:
 	BoardGame& board_;
 	Square* square_{nullptr};
 	Color color_;
+	void add_eligible_file_square(std::vector<Square*>&) const noexcept;
+	void add_eligible_row_squares(std::vector<Square*>&) const noexcept;
+	bool is_eligible_square(std::vector<Square*>&, int8_t) const noexcept;
 };
 
 class CHESS_API Rock final: public Piece
 {
 public:
 	explicit Rock(BoardGame& board,Square& square, const Color color): Piece(board, square, color) {}
-	std::vector<Square*> available_square() const noexcept override;	
+	std::vector<Square*> eligible_squares() const noexcept override;	
 };
