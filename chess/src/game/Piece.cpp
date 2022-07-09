@@ -94,4 +94,11 @@ std::vector<Square*> Bishop::get_eligible_squares() const noexcept
 	return squares;
 }
 
-
+std::vector<Square*> Queen::get_eligible_squares() const noexcept
+{
+	std::vector<Square*> squares;
+	this->add_eligible_file_squares(squares);
+	this->add_eligible_row_squares(squares);
+	this->add_eligible_diagonals(squares);
+	return squares;
+}

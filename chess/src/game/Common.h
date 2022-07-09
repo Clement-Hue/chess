@@ -5,3 +5,4 @@
 #else
 #define CHESS_API __declspec(dllimport)
 #endif
+

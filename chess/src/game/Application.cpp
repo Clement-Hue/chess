@@ -1,10 +1,10 @@
-#include "Application.h"
 #include <SDL2/SDL.h>
+#include "SDL2/SDL_image.h"
+#include "Application.h"
 #include <stdexcept>
 #include <array>
-#include "EventHandler.h"
-#include "SDL2/SDL_image.h"
 #include <memory>
+#include "EventHandler.h"
 
 std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event& e, bool& quit)
 {
@@ -67,20 +67,18 @@ void Application::init_window_and_renderer()
 	}
 }
 
-template <uint8_t NbCases>
-static std::array<SDL_Rect, NbCases> create_white_squares(const WindowSize& window_size) noexcept
+template <uint8_t NbRect>
+static std::array<SDL_Rect, NbRect> create_white_squares(const int case_width, const int case_height) noexcept
 {
-	const int case_width = window_size.width / 8;
-	const int case_height = window_size.height / 8;
-	std::array<SDL_Rect, NbCases> white_squares{ { {0 ,0,case_width, case_height} } };
-	for (uint8_t i = 1; i < 32; ++i)
+	std::array<SDL_Rect, NbRect> white_squares{ { {0 ,0,case_width, case_height} } };
+	for (uint8_t i = 1; i < NbRect; ++i)
 	{
 		white_squares[i].x = white_squares[i - 1].x + 2 * case_width;
 		white_squares[i].y = white_squares[i - 1].y;
 
 		if (i % 4 == 0) // line break
 		{
-			white_squares[i].x = (i % 8 == 0) ? 0 : case_width;
+			white_squares[i].x = (i % NB_SQUARES_BY_ROW == 0) ? 0 : case_width;
 			white_squares[i].y = white_squares[i - 1].y + case_height;
 		}
 		white_squares[i].w = case_width;
@@ -92,23 +90,25 @@ static std::array<SDL_Rect, NbCases> create_white_squares(const WindowSize& wind
 
 void Application::draw_board() const noexcept
 {
-	constexpr uint8_t nb_rect = 32;
+	constexpr uint8_t nb_rect = NB_SQUARES / 2;
 	SDL_SetRenderDrawColor(this->renderer_, this->primary_color_.r, this->primary_color_.g,
 		this->primary_color_.b, this->primary_color_.a);
 	SDL_RenderClear(this->renderer_);
 	SDL_SetRenderDrawColor(this->renderer_, this->secondary_color_.r, this->secondary_color_.g, 
 		this->secondary_color_.b, this->secondary_color_.a);
-	const auto white_squares = create_white_squares<nb_rect>(this->window_size_);
+	const auto& [case_width, case_height] = this->get_case_dimensions();
+	const auto white_squares = create_white_squares<nb_rect>(case_width, case_height);
 	SDL_RenderFillRects(this->renderer_, white_squares.data(), nb_rect);
 	SDL_RenderPresent(this->renderer_);
 }
 
 void Application::load_assets() const
 {
-	SDL_Surface* image = IMG_Load("./chess_piece_2_black_bishop");
+	SDL_Surface* image = IMG_Load("assets/chess_piece_2_black_bishop.png");
+	SDL_Rect dest = {  0, 0 };
 	if (!image)
 	{
-		printf("unable to load image");
+		throw std::runtime_error("Unable to load assets");
 	}
 	SDL_Texture* render_image = SDL_CreateTextureFromSurface(this->renderer_, image);
 }

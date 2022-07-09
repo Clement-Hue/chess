@@ -1,6 +1,6 @@
 #pragma once
 #include "Square.h"
-#include <vector>
+#include <array>
 #include "BoardGame.h"
 #include "Common.h"
 
@@ -44,5 +44,12 @@ class CHESS_API Bishop final: public Piece
 {
 public:
 	explicit Bishop(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
+	std::vector<Square*> get_eligible_squares() const noexcept override;	
+};
+
+class CHESS_API Queen final: public Piece
+{
+public:
+	explicit Queen(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
 	std::vector<Square*> get_eligible_squares() const noexcept override;	
 };
