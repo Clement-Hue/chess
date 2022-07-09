@@ -8,11 +8,12 @@ TEST(RockSquareAvailable, all_squares_free)
 	BoardGame board;
 	const Rock rock{ board, board[11], PieceColor::white };
 	const auto rock_eligible_squares = rock.get_eligible_squares();
-	EXPECT_THAT(rock_eligible_squares, WhenSorted(ElementsAre(
+	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);
+	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
 		&board[3], &board[8], &board[9], &board[10], &board[12], &board[13],
 		&board[14], &board[15], &board[19], &board[27], &board[35], &board[43],
 		&board[51], &board[59]
-	)));
+		}));
 }
 
 TEST(RockSquareAvailable, rock_on_first_line)
@@ -20,11 +21,12 @@ TEST(RockSquareAvailable, rock_on_first_line)
 	BoardGame board;
 	const Rock rock{ board, board[3], PieceColor::white };
 	const auto rock_eligible_squares = rock.get_eligible_squares();
-	EXPECT_THAT(rock_eligible_squares, WhenSorted(ElementsAre(
+	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);
+	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
 		&board[0], &board[1], &board[2], &board[4], &board[5], &board[6],
 		&board[7], &board[11], &board[19], &board[27], &board[35], &board[43],
 		&board[51], &board[59]
-	)));
+	}));
 }
 
 TEST(RockSquareAvailable, left_square_taken)

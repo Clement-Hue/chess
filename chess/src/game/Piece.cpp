@@ -22,7 +22,7 @@ void Piece::move(Square& square) noexcept
 }
 
 
-void Piece::add_eligible_file_squares(std::vector<Square*>& squares) const noexcept
+void Piece::add_eligible_file_squares(std::array<Square*, NB_SQUARES>& squares) const noexcept
 {
 	for (int8_t i = this->square_->get_value(); 
 		this->is_eligible_square(squares, i)
@@ -32,7 +32,7 @@ void Piece::add_eligible_file_squares(std::vector<Square*>& squares) const noexc
 		; i -= NB_SQUARES_BY_ROW);
 }
 
-void Piece::add_eligible_row_squares(std::vector<Square*>& squares) const noexcept
+void Piece::add_eligible_row_squares(std::array<Square*, NB_SQUARES>& squares) const noexcept
 {
 	for (int8_t i = this->square_->get_value() - 1; 
 		this->square_->is_same_rank(i) && this->is_eligible_square(squares, i)
@@ -42,7 +42,7 @@ void Piece::add_eligible_row_squares(std::vector<Square*>& squares) const noexce
 		; ++i);
 }
 
-void Piece::add_eligible_diagonals(std::vector<Square*>& squares) const noexcept
+void Piece::add_eligible_diagonals(std::array<Square*, NB_SQUARES>& squares) const noexcept
 {
 	for (int8_t i = this->square_->get_value(); 
 		this->board_[i].get_file() >= this->square_->get_file() && this->is_eligible_square(squares, i)
@@ -62,7 +62,7 @@ void Piece::add_eligible_diagonals(std::vector<Square*>& squares) const noexcept
  * Predicate with side effect.
  * Add the square to the vector if the square is eligible
  */
-bool Piece::is_eligible_square(std::vector<Square*>& squares, const int8_t square_value) const noexcept
+bool Piece::is_eligible_square(std::array<Square*, NB_SQUARES>& squares, const int8_t square_value) const noexcept
 {
 	if (this->square_->get_value() == square_value) return true;
 	if (square_value > NB_SQUARES || square_value < 0) return false;
@@ -70,35 +70,47 @@ bool Piece::is_eligible_square(std::vector<Square*>& squares, const int8_t squar
 	{
 		if (this->board_[square_value].has_enemy_piece_of(*this))
 		{
-			squares.emplace_back(&this->board_[square_value]);
+			squares[square_value] =  &this->board_[square_value];
 		}
 		return false;
 	}
-	squares.emplace_back(&this->board_[square_value]);
+	squares[square_value] =  &this->board_[square_value];
 	return true;
 }
 
 
-std::vector<Square*> Rock::get_eligible_squares() const noexcept
+std::array<Square*, NB_SQUARES> Rock::get_eligible_squares() const noexcept
 {
-	std::vector<Square*> squares;
+	std::array<Square*, NB_SQUARES> squares{};
 	this->add_eligible_file_squares(squares);
 	this->add_eligible_row_squares(squares);
 	return squares;
 }
 
-std::vector<Square*> Bishop::get_eligible_squares() const noexcept
+std::array<Square*, NB_SQUARES> Bishop::get_eligible_squares() const noexcept
 {
-	std::vector<Square*> squares;
+	std::array<Square*, NB_SQUARES> squares{};
 	this->add_eligible_diagonals(squares);
 	return squares;
 }
 
-std::vector<Square*> Queen::get_eligible_squares() const noexcept
+std::array<Square*, NB_SQUARES> Queen::get_eligible_squares() const noexcept
 {
-	std::vector<Square*> squares;
+	std::array<Square*, NB_SQUARES> squares{};
 	this->add_eligible_file_squares(squares);
 	this->add_eligible_row_squares(squares);
 	this->add_eligible_diagonals(squares);
+	return squares;
+}
+
+std::array<Square*, NB_SQUARES> Knight::get_eligible_squares() const noexcept
+{
+	std::array<Square*, NB_SQUARES> squares{};
+	constexpr uint8_t iters[4] = { 1,7,8,9 };
+	for (const auto iter : iters)
+	{
+		this->is_eligible_square(squares, this->square_->get_value() + iter);
+		this->is_eligible_square(squares, this->square_->get_value() - iter);
+	}
 	return squares;
 }

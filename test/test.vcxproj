@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BishopSquare.test.cpp" />
+    <ClCompile Include="KnightSquare.test.cpp" />
     <ClCompile Include="Piece.mock.h" />
     <ClCompile Include="Piece.test.cpp" />
     <ClCompile Include="pch.cpp">
@@ -54,6 +55,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemDefinitionGroup />
