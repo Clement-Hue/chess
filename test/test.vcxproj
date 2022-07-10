@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BishopSquare.test.cpp" />
-    <ClCompile Include="KnightSquare.test.cpp" />
+    <ClCompile Include="KingSquare.test.cpp" />
     <ClCompile Include="Piece.mock.h" />
     <ClCompile Include="Piece.test.cpp" />
     <ClCompile Include="pch.cpp">

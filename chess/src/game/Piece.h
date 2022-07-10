@@ -1,11 +1,12 @@
 #pragma once
 #include "Square.h"
 #include <array>
-#include "BoardGame.h"
 #include "Constants.h"
 #include "Common.h"
 
-enum class CHESS_API PieceColor { white, black };
+class BoardGame;
+
+enum class  CHESS_API PieceColor { black , white };
 
 class CHESS_API Piece
 {
@@ -55,9 +56,27 @@ public:
 	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
 };
 
+class CHESS_API King final: public Piece
+{
+public:
+	explicit King(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
+	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
+};
+
+
 class CHESS_API Knight final: public Piece
 {
 public:
 	explicit Knight(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
 	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
 };
+
+
+class CHESS_API Pawn final: public Piece
+{
+public:
+	explicit Pawn(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
+	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
+};
+
+

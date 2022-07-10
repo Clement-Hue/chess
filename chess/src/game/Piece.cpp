@@ -1,4 +1,5 @@
 #include "Piece.h"
+#include "BoardGame.h"
 #include "Constants.h"
 
 
@@ -65,7 +66,7 @@ void Piece::add_eligible_diagonals(std::array<Square*, NB_SQUARES>& squares) con
 bool Piece::is_eligible_square(std::array<Square*, NB_SQUARES>& squares, const int8_t square_value) const noexcept
 {
 	if (this->square_->get_value() == square_value) return true;
-	if (square_value > NB_SQUARES || square_value < 0) return false;
+	if (square_value >= NB_SQUARES || square_value < 0) return false;
 	if (!this->board_[square_value].is_free())
 	{
 		if (this->board_[square_value].has_enemy_piece_of(*this))
@@ -103,14 +104,24 @@ std::array<Square*, NB_SQUARES> Queen::get_eligible_squares() const noexcept
 	return squares;
 }
 
-std::array<Square*, NB_SQUARES> Knight::get_eligible_squares() const noexcept
+std::array<Square*, NB_SQUARES> King::get_eligible_squares() const noexcept
 {
 	std::array<Square*, NB_SQUARES> squares{};
-	constexpr uint8_t iters[4] = { 1,7,8,9 };
-	for (const auto iter : iters)
+	constexpr uint8_t offsets[4] = { 1,NB_SQUARES_BY_ROW -1,NB_SQUARES_BY_ROW, NB_SQUARES_BY_ROW + 1};
+	for (const auto offset : offsets)
 	{
-		this->is_eligible_square(squares, this->square_->get_value() + iter);
-		this->is_eligible_square(squares, this->square_->get_value() - iter);
+		this->is_eligible_square(squares, this->square_->get_value() + offset);
+		this->is_eligible_square(squares, this->square_->get_value() - offset);
 	}
 	return squares;
+}
+
+std::array<Square*, NB_SQUARES> Knight::get_eligible_squares() const noexcept
+{
+	return std::array<Square*, NB_SQUARES>();
+}
+
+std::array<Square*, NB_SQUARES> Pawn::get_eligible_squares() const noexcept
+{
+	return std::array<Square*, NB_SQUARES>();
 }
