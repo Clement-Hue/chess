@@ -43,19 +43,20 @@ void Piece::add_eligible_row_squares(std::array<Square*, NB_SQUARES>& squares) c
 		; ++i);
 }
 
+
 void Piece::add_eligible_diagonals(std::array<Square*, NB_SQUARES>& squares) const noexcept
 {
 	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].get_file() >= this->square_->get_file() && this->is_eligible_square(squares, i)
+		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
 		; i += NB_SQUARES_BY_ROW + 1);
 	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].get_file() <= this->square_->get_file() && this->is_eligible_square(squares, i)
+		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
 		; i += NB_SQUARES_BY_ROW - 1);
 	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].get_file() <= this->square_->get_file() && this->is_eligible_square(squares, i)
+		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
 		; i -= NB_SQUARES_BY_ROW + 1);
 	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].get_file() >= this->square_->get_file() && this->is_eligible_square(squares, i)
+		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
 		; i -= NB_SQUARES_BY_ROW - 1);
 }
 

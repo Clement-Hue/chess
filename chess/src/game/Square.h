@@ -25,6 +25,7 @@ public:
 	bool operator==(const Square& other) const noexcept { return other.value_ == this->value_; }
 	bool operator<(const Square& other) const noexcept { return this->value_ < other.value_; }
 	bool operator>(const Square& other) const noexcept { return this->value_ > other.value_; }
+	bool is_same_diagonal(const Square& square) const noexcept;
 private:
 	uint8_t value_;
 	Piece* piece_;
