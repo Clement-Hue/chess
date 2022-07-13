@@ -29,6 +29,20 @@ TEST(RockSquareAvailable, rock_on_first_line)
 	}));
 }
 
+
+TEST(RockSquareAvailable, rock_on_edge)
+{
+	BoardGame board;
+	const Rock rock{ board, board[63], PieceColor::white };
+	const auto rock_eligible_squares = rock.get_eligible_squares();
+	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);
+	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
+		&board[7], &board[15], &board[23], &board[31], &board[39], &board[47],
+		&board[55], &board[56], &board[57], &board[58], &board[59], &board[60],
+		&board[61], &board[62]
+	}));
+}
+
 TEST(RockSquareAvailable, left_square_taken)
 {
 	BoardGame board;
