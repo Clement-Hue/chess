@@ -1,10 +1,11 @@
 #include "Piece.h"
 #include "BoardGame.h"
 #include "Constants.h"
+#include "LineMove.h"
 
 
 Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
-	color_(color)	
+                                                                        color_(color)	
 {
 	this->square_->set_piece(*this);
 }
@@ -23,106 +24,65 @@ void Piece::move(Square& square) noexcept
 }
 
 
-void Piece::add_eligible_file_squares(std::array<Square*, NB_SQUARES>& squares) const noexcept
+Piece::e_squares_type Rock::get_eligible_squares() const noexcept
 {
-	for (int8_t i = this->square_->get_value(); 
-		this->is_eligible_square(squares, i)
-		; i += NB_SQUARES_BY_ROW);
-	for (int8_t i = this->square_->get_value();
-		this->is_eligible_square(squares, i)
-		; i -= NB_SQUARES_BY_ROW);
+	e_squares_type squares{};
+	ForthFileMove(this->board_, *this).add_eligible_squares(squares);
+	BackFileMove(this->board_, *this).add_eligible_squares(squares);
+	ForthRankMove(this->board_, *this).add_eligible_squares(squares);
+	BackRankMove(this->board_, *this).add_eligible_squares(squares);
+	return squares;
 }
 
-void Piece::add_eligible_row_squares(std::array<Square*, NB_SQUARES>& squares) const noexcept
+Piece::e_squares_type Bishop::get_eligible_squares() const noexcept
 {
-	for (int8_t i = this->square_->get_value() - 1; 
-		this->square_->is_same_rank(i) && this->is_eligible_square(squares, i)
-		; --i);
-	for (int8_t i = this->square_->get_value() + 1; 
-		this->square_->is_same_rank(i) && this->is_eligible_square(squares, i)
-		; ++i);
+	e_squares_type squares{};
+	ForthDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	BackDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	ForthAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	BackAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	return squares;
 }
 
-
-void Piece::add_eligible_diagonals(std::array<Square*, NB_SQUARES>& squares) const noexcept
+Piece::e_squares_type Queen::get_eligible_squares() const noexcept
 {
-	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
-		; i += NB_SQUARES_BY_ROW + 1);
-	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
-		; i += NB_SQUARES_BY_ROW - 1);
-	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
-		; i -= NB_SQUARES_BY_ROW + 1);
-	for (int8_t i = this->square_->get_value(); 
-		this->board_[i].is_same_diagonal(*this->square_) && this->is_eligible_square(squares, i)
-		; i -= NB_SQUARES_BY_ROW - 1);
+	e_squares_type squares{};
+	ForthFileMove(this->board_, *this).add_eligible_squares(squares);
+	BackFileMove(this->board_, *this).add_eligible_squares(squares);
+	ForthRankMove(this->board_, *this).add_eligible_squares(squares);
+	BackRankMove(this->board_, *this).add_eligible_squares(squares);
+	ForthDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	BackDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	ForthAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	BackAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
+	return squares;
 }
 
-/**
- * Predicate with side effect.
- * Add the square to the vector if the square is eligible
- */
-bool Piece::is_eligible_square(std::array<Square*, NB_SQUARES>& squares, const int8_t square_value) const noexcept
+Piece::e_squares_type King::get_eligible_squares() const noexcept
 {
-	if (this->square_->get_value() == square_value) return true;
-	if (square_value >= NB_SQUARES || square_value < 0) return false;
-	if (!this->board_[square_value].is_free())
+	e_squares_type squares{};
+	constexpr int8_t diag_offset = NB_SQUARES_BY_ROW - 1;
+	constexpr int8_t antidiag_offset = NB_SQUARES_BY_ROW + 1;
+	constexpr int8_t offsets[8] = { 1, -1,diag_offset, -diag_offset, antidiag_offset, -antidiag_offset,
+	NB_SQUARES_BY_ROW, -NB_SQUARES_BY_ROW };
+	for (const auto offset : offsets)
 	{
-		if (this->board_[square_value].has_enemy_piece_of(*this))
+		const uint8_t square_value = this->square_->get_value() + offset;
+		if (!this->board_.has_square_value(square_value)) continue;
+		if (this->board_[square_value].is_free() || this->board_[square_value].has_enemy_piece_of(*this))
 		{
 			squares[square_value] =  &this->board_[square_value];
 		}
-		return false;
-	}
-	squares[square_value] =  &this->board_[square_value];
-	return true;
-}
-
-
-std::array<Square*, NB_SQUARES> Rock::get_eligible_squares() const noexcept
-{
-	std::array<Square*, NB_SQUARES> squares{};
-	this->add_eligible_file_squares(squares);
-	this->add_eligible_row_squares(squares);
-	return squares;
-}
-
-std::array<Square*, NB_SQUARES> Bishop::get_eligible_squares() const noexcept
-{
-	std::array<Square*, NB_SQUARES> squares{};
-	this->add_eligible_diagonals(squares);
-	return squares;
-}
-
-std::array<Square*, NB_SQUARES> Queen::get_eligible_squares() const noexcept
-{
-	std::array<Square*, NB_SQUARES> squares{};
-	this->add_eligible_file_squares(squares);
-	this->add_eligible_row_squares(squares);
-	this->add_eligible_diagonals(squares);
-	return squares;
-}
-
-std::array<Square*, NB_SQUARES> King::get_eligible_squares() const noexcept
-{
-	std::array<Square*, NB_SQUARES> squares{};
-	constexpr uint8_t offsets[4] = { 1,NB_SQUARES_BY_ROW -1,NB_SQUARES_BY_ROW, NB_SQUARES_BY_ROW + 1};
-	for (const auto offset : offsets)
-	{
-		this->is_eligible_square(squares, this->square_->get_value() + offset);
-		this->is_eligible_square(squares, this->square_->get_value() - offset);
 	}
 	return squares;
 }
 
-std::array<Square*, NB_SQUARES> Knight::get_eligible_squares() const noexcept
+Piece::e_squares_type Knight::get_eligible_squares() const noexcept
 {
 	return std::array<Square*, NB_SQUARES>();
 }
 
-std::array<Square*, NB_SQUARES> Pawn::get_eligible_squares() const noexcept
+Piece::e_squares_type Pawn::get_eligible_squares() const noexcept
 {
 	return std::array<Square*, NB_SQUARES>();
 }

@@ -14,6 +14,16 @@ TEST(KingSquareAvailable, all_squares_free)
 		&board[10], &board[12], &board[18] ,&board[19],  &board[20]}));
 }
 
+TEST(KingSquareAvailable, positionned_on_edge)
+{
+	BoardGame board;
+	const King knight{ board, board[63], PieceColor::white };
+	const auto king_eligible_squares = knight.get_eligible_squares();
+	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 61);
+	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
+		&board[54], &board[55], &board[62] }));
+}
+
 
 TEST(KingSquareAvailable, squares_taken)
 {

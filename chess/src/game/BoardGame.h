@@ -23,6 +23,7 @@ public:
 	Square& operator[](const uint8_t i) noexcept { return this->squares_[i]; }
 	~BoardGame() = default;
 	void init_game() noexcept;
+	bool has_square_value(const int8_t value) const noexcept { return value >= 0 && value < squares_.size(); }
 private:
 	std::vector<Square> squares_;
 	Pieces pieces_;

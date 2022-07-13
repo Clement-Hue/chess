@@ -184,6 +184,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game\LineMove.cpp" />
     <ClCompile Include="src\game\EventHandler.cpp" />
     <ClCompile Include="src\game\BoardGame.cpp" />
     <ClCompile Include="src\game\Piece.cpp" />
@@ -191,6 +192,7 @@
     <ClCompile Include="src\game\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\LineMove.h" />
     <ClInclude Include="src\Chess.h" />
     <ClInclude Include="src\game\EventHandler.h" />
     <ClInclude Include="src\game\BoardGame.h" />

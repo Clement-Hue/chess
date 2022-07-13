@@ -3,16 +3,18 @@
 #include <array>
 #include "Constants.h"
 #include "Common.h"
+#include <functional>
 
 class BoardGame;
 
-enum class  CHESS_API PieceColor { black , white };
+enum class CHESS_API PieceColor { black , white };
 
 class CHESS_API Piece
 {
 public:
+	using e_squares_type = std::array<Square*, NB_SQUARES>;
 	explicit Piece(BoardGame& board, Square& square, PieceColor color);
-	virtual std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept = 0;
+	virtual e_squares_type get_eligible_squares() const noexcept = 0;
 	void move(Square& square) noexcept;
 	Piece(const Piece&) = delete;
 	Piece(Piece&&) = delete;
@@ -28,17 +30,13 @@ protected:
 	BoardGame& board_;
 	Square* square_{nullptr};
 	PieceColor color_;
-	void add_eligible_file_squares(std::array<Square*, NB_SQUARES>&) const noexcept;
-	void add_eligible_row_squares(std::array<Square*, NB_SQUARES>&) const noexcept;
-	void add_eligible_diagonals(std::array<Square*, NB_SQUARES>&) const noexcept;
-	bool is_eligible_square(std::array<Square*, NB_SQUARES>&, int8_t) const noexcept;
 };
 
 class CHESS_API Rock final: public Piece
 {
 public:
 	explicit Rock(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::array<Square*, NB_SQUARES> get_eligible_squares() const noexcept override;	
+	e_squares_type get_eligible_squares() const noexcept override;	
 };
 
 
@@ -46,21 +44,21 @@ class CHESS_API Bishop final: public Piece
 {
 public:
 	explicit Bishop(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::array<Square*, NB_SQUARES> get_eligible_squares() const noexcept override;	
+	e_squares_type get_eligible_squares() const noexcept override;	
 };
 
 class CHESS_API Queen final: public Piece
 {
 public:
 	explicit Queen(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
+	e_squares_type get_eligible_squares() const noexcept override;	
 };
 
 class CHESS_API King final: public Piece
 {
 public:
 	explicit King(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
+	e_squares_type get_eligible_squares() const noexcept override;	
 };
 
 
@@ -68,7 +66,7 @@ class CHESS_API Knight final: public Piece
 {
 public:
 	explicit Knight(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
+	e_squares_type get_eligible_squares() const noexcept override;	
 };
 
 
@@ -76,7 +74,6 @@ class CHESS_API Pawn final: public Piece
 {
 public:
 	explicit Pawn(BoardGame& board,Square& square, const PieceColor color): Piece(board, square, color) {}
-	std::array<Square*,NB_SQUARES> get_eligible_squares() const noexcept override;	
+	e_squares_type get_eligible_squares() const noexcept override;	
 };
-
 
