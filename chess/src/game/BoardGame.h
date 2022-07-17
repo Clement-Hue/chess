@@ -13,6 +13,10 @@ class CHESS_API  BoardGame
 	{
 		pieces_type black;
 		pieces_type white;
+		pieces_type& operator[](const PieceColor color) noexcept
+		{
+			return color == PieceColor::black ? this->black : this->white;
+		}
 	};
 public:
 	BoardGame();
@@ -27,10 +31,6 @@ public:
 private:
 	std::vector<Square> squares_;
 	Pieces pieces_;
-	pieces_type& get_pieces(const PieceColor color) noexcept
-	{
-		return color == PieceColor::black ? this->pieces_.black : this->pieces_.white;
-	}
 	void init_valuable_pieces(PieceColor, uint8_t) noexcept;
 	void init_pawns(PieceColor, uint8_t) noexcept;
 };

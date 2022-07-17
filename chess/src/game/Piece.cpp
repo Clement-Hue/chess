@@ -23,8 +23,18 @@ void Piece::move(Square& square) noexcept
 	this->square_->set_piece(*this);
 }
 
+Piece::e_squares_type Piece::get_eligible_squares() const noexcept 
+{
+	auto squares = this->get_natural_eligible_squares();
+	if (this->pinned) 
+	{
+		this->pinned(squares);
+	}
+	return squares;
+}
 
-Piece::e_squares_type Rock::get_eligible_squares() const noexcept
+
+Piece::e_squares_type Rock::get_natural_eligible_squares() const noexcept
 {
 	e_squares_type squares{};
 	ForthFileMove(this->board_, *this).add_eligible_squares(squares);
@@ -34,7 +44,7 @@ Piece::e_squares_type Rock::get_eligible_squares() const noexcept
 	return squares;
 }
 
-Piece::e_squares_type Bishop::get_eligible_squares() const noexcept
+Piece::e_squares_type Bishop::get_natural_eligible_squares() const noexcept
 {
 	e_squares_type squares{};
 	ForthDiagonalMove(this->board_, *this).add_eligible_squares(squares);
@@ -44,7 +54,7 @@ Piece::e_squares_type Bishop::get_eligible_squares() const noexcept
 	return squares;
 }
 
-Piece::e_squares_type Queen::get_eligible_squares() const noexcept
+Piece::e_squares_type Queen::get_natural_eligible_squares() const noexcept
 {
 	e_squares_type squares{};
 	ForthFileMove(this->board_, *this).add_eligible_squares(squares);
@@ -58,7 +68,7 @@ Piece::e_squares_type Queen::get_eligible_squares() const noexcept
 	return squares;
 }
 
-Piece::e_squares_type King::get_eligible_squares() const noexcept
+Piece::e_squares_type King::get_natural_eligible_squares() const noexcept
 {
 	e_squares_type squares{};
 	constexpr int8_t diag_offset = NB_SQUARES_BY_ROW - 1;
@@ -77,12 +87,12 @@ Piece::e_squares_type King::get_eligible_squares() const noexcept
 	return squares;
 }
 
-Piece::e_squares_type Knight::get_eligible_squares() const noexcept
+Piece::e_squares_type Knight::get_natural_eligible_squares() const noexcept
 {
 	return std::array<Square*, NB_SQUARES>();
 }
 
-Piece::e_squares_type Pawn::get_eligible_squares() const noexcept
+Piece::e_squares_type Pawn::get_natural_eligible_squares() const noexcept
 {
 	return std::array<Square*, NB_SQUARES>();
 }

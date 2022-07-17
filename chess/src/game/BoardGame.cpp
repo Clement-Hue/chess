@@ -19,7 +19,7 @@ BoardGame::BoardGame(): squares_(create_squares())
 
 void BoardGame::init_valuable_pieces(PieceColor color, const uint8_t offset) noexcept
 {
-	auto& pieces = this->get_pieces(color);
+	auto& pieces = this->pieces_(color);
 	pieces.emplace_back(
 		std::make_unique<Rock>( *this, this->squares_[offset], color)
 	);
@@ -48,7 +48,7 @@ void BoardGame::init_valuable_pieces(PieceColor color, const uint8_t offset) noe
 
 void BoardGame::init_pawns(PieceColor color, const uint8_t offset) noexcept
 {
-	auto& pieces = this->get_pieces(color);
+	auto& pieces = this->pieces_(color);
 	for (uint8_t i = offset; i<offset+NB_SQUARES_BY_ROW; ++i)
 	{
 		pieces.emplace_back(
