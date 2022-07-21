@@ -1,7 +1,7 @@
 #include "Piece.h"
 #include "BoardGame.h"
 #include "Constants.h"
-#include "LineMove.h"
+#include "EligibleMove.h"
 
 
 Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
@@ -23,66 +23,47 @@ void Piece::move(Square& square) noexcept
 	this->square_->set_piece(*this);
 }
 
-
-Piece::e_squares_type Rock::get_eligible_squares() const noexcept
+void Rock::compute_eligible_squares() noexcept
 {
-	e_squares_type squares{};
-	ForthFileMove(this->board_, *this).add_eligible_squares(squares);
-	BackFileMove(this->board_, *this).add_eligible_squares(squares);
-	ForthRankMove(this->board_, *this).add_eligible_squares(squares);
-	BackRankMove(this->board_, *this).add_eligible_squares(squares);
-	return squares;
+	RankEligibleMove(this->board_, *this)();
+	FileEligibleMove(this->board_, *this)();
 }
 
-Piece::e_squares_type Bishop::get_eligible_squares() const noexcept
+void Bishop::compute_eligible_squares() noexcept
 {
-	e_squares_type squares{};
-	ForthDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	BackDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	ForthAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	BackAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	return squares;
+	DiagonalEligibleMove(this->board_, *this)();
+	AntiDiagonalEligibleMove(this->board_, *this)();
 }
 
-Piece::e_squares_type Queen::get_eligible_squares() const noexcept
+void Queen::compute_eligible_squares() noexcept
 {
-	e_squares_type squares{};
-	ForthFileMove(this->board_, *this).add_eligible_squares(squares);
-	BackFileMove(this->board_, *this).add_eligible_squares(squares);
-	ForthRankMove(this->board_, *this).add_eligible_squares(squares);
-	BackRankMove(this->board_, *this).add_eligible_squares(squares);
-	ForthDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	BackDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	ForthAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	BackAntiDiagonalMove(this->board_, *this).add_eligible_squares(squares);
-	return squares;
+	RankEligibleMove(this->board_, *this)();
+	FileEligibleMove(this->board_, *this)();
+	DiagonalEligibleMove(this->board_, *this)();
+	AntiDiagonalEligibleMove(this->board_, *this)();
 }
 
-Piece::e_squares_type King::get_eligible_squares() const noexcept
+void King::compute_eligible_squares() noexcept
 {
-	e_squares_type squares{};
 	constexpr int8_t diag_offset = NB_SQUARES_BY_ROW - 1;
 	constexpr int8_t antidiag_offset = NB_SQUARES_BY_ROW + 1;
 	constexpr int8_t offsets[8] = { 1, -1,diag_offset, -diag_offset, antidiag_offset, -antidiag_offset,
 	NB_SQUARES_BY_ROW, -NB_SQUARES_BY_ROW };
 	for (const auto offset : offsets)
 	{
-		const uint8_t square_value = this->square_->get_value() + offset;
+		const int8_t square_value = this->square_->get_value() + offset;
 		if (!this->board_.has_square_value(square_value)) continue;
 		if (this->board_[square_value].is_free() || this->board_[square_value].has_enemy_piece_of(*this))
 		{
-			squares[square_value] =  &this->board_[square_value];
+			this->eligible_squares_[square_value] =  &this->board_[square_value];
 		}
 	}
-	return squares;
 }
 
-Piece::e_squares_type Knight::get_eligible_squares() const noexcept
+void Knight::compute_eligible_squares() noexcept
 {
-	return std::array<Square*, NB_SQUARES>();
 }
 
-Piece::e_squares_type Pawn::get_eligible_squares() const noexcept
+void Pawn::compute_eligible_squares() noexcept
 {
-	return std::array<Square*, NB_SQUARES>();
 }

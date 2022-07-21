@@ -16,5 +16,10 @@ bool Square::has_friend_piece_of(const Piece& piece) const noexcept
 
 bool Square::is_same_diagonal(const Square& square) const noexcept
 {
-	return abs(square.get_file() - this->get_file()) == abs(square.get_rank() - this->get_rank());
+	return square.get_file() - this->get_file() == -(square.get_rank() - this->get_rank());
+}
+
+bool Square::is_same_anti_diagonal(const Square& square) const noexcept
+{
+	return square.get_file() - this->get_file() == square.get_rank() - this->get_rank();
 }

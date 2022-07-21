@@ -6,8 +6,9 @@
 TEST(BishopSquareAvailable, all_squares_free)
 {
 	BoardGame board;
-	const Bishop bishop{ board, board[11], PieceColor::white };
-	const auto bishop_eligible_squares = bishop.get_eligible_squares();
+	Bishop bishop{ board, board[11], PieceColor::white };
+	bishop.compute_eligible_squares();
+	const auto& bishop_eligible_squares = bishop.get_eligible_squares();
 	EXPECT_EQ(std::count(bishop_eligible_squares.begin(), bishop_eligible_squares.end(), nullptr), 55);
 	EXPECT_THAT(bishop_eligible_squares, IsSupersetOf({
 		&board[2], &board[4], &board[18], &board[20], &board[25], &board[29],
@@ -21,8 +22,9 @@ TEST(BishopSquareAvailable, diagonal_squares_taken)
 	const MockPiece p1{ board, board[25], PieceColor::white };
 	const MockPiece p2{ board, board[38], PieceColor::white };
 	const MockPiece p3{ board, board[2], PieceColor::black };
-	const Bishop bishop{ board, board[11], PieceColor::white };
-	const auto bishop_eligible_squares = bishop.get_eligible_squares();
+	Bishop bishop{ board, board[11], PieceColor::white };
+	bishop.compute_eligible_squares();
+	const auto& bishop_eligible_squares = bishop.get_eligible_squares();
 	EXPECT_EQ(std::count(bishop_eligible_squares.begin(), bishop_eligible_squares.end(), nullptr), 59);
 	EXPECT_THAT(bishop_eligible_squares, IsSupersetOf({
 		&board[2], &board[4], &board[18], &board[20], &board[29]

@@ -6,7 +6,7 @@ static std::vector<Square> create_squares()
 {
 	std::vector<Square> squares;
 	squares.reserve(NB_SQUARES);
-	for (uint8_t i = 0; i<NB_SQUARES; i++)
+	for (int8_t i = 0; i<NB_SQUARES; i++)
 	{
 		squares.emplace_back(Square{ i });
 	}
