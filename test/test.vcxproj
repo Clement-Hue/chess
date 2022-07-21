@@ -36,6 +36,8 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BishopSquare.test.cpp" />
+    <ClCompile Include="KingSquare.test.cpp" />
     <ClCompile Include="Piece.mock.h" />
     <ClCompile Include="Piece.test.cpp" />
     <ClCompile Include="pch.cpp">
@@ -44,6 +46,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="QueenSquares.test.cpp" />
     <ClCompile Include="RockSquares.test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +55,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemDefinitionGroup />
@@ -84,6 +88,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>$(SolutionDir)chess/src/;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,6 +120,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>$(SolutionDir)chess/src/;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

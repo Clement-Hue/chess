@@ -35,8 +35,14 @@ private:
 	SDL_Renderer* renderer_{ nullptr };
 	BoardGame board_;
 
+	std::tuple<int, int> get_case_dimensions() const noexcept
+	{
+		return { this->window_size_.width / NB_SQUARES_BY_ROW, this->window_size_.height / NB_SQUARES_BY_ROW };
+	}
+
 	void init_window_and_renderer();
 	void draw_board() const noexcept;
+	void load_assets() const;
 	void app_loop();
 	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
 };

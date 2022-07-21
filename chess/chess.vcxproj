@@ -142,8 +142,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>CHESS_GAME_DLL;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CHESS_GAME_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,8 +155,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>CHESS_GAME_DLL;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CHESS_GAME_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,8 +172,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>CHESS_GAME_DLL;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CHESS_GAME_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -181,13 +184,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game\EligibleMove.cpp" />
     <ClCompile Include="src\game\EventHandler.cpp" />
     <ClCompile Include="src\game\BoardGame.cpp" />
     <ClCompile Include="src\game\Piece.cpp" />
+    <ClCompile Include="src\game\Pin.cpp" />
+    <ClCompile Include="src\game\Pin.h" />
     <ClCompile Include="src\game\Square.cpp" />
     <ClCompile Include="src\game\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\EligibleMove.h" />
     <ClInclude Include="src\Chess.h" />
     <ClInclude Include="src\game\EventHandler.h" />
     <ClInclude Include="src\game\BoardGame.h" />

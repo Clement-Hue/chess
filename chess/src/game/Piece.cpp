@@ -1,64 +1,69 @@
 #include "Piece.h"
+#include "BoardGame.h"
 #include "Constants.h"
+#include "EligibleMove.h"
 
 
-Piece::Piece(BoardGame& board, Square& square, const Color color): board_(board), square_(&square),
-	color_(color)	
+Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
+                                                                        color_(color)	
 {
 	this->square_->set_piece(*this);
 }
 
 void Piece::move(Square& square) noexcept
 {
+	const auto piece_on_square = square.get_piece();
+	if (piece_on_square && piece_on_square->is_friend_of(*this)) return;
+	if (piece_on_square && piece_on_square->is_enemy_of(*this))
+	{
+		piece_on_square->remove_square();
+	}
 	this->square_->remove_piece();
 	this->square_ = &square;
 	this->square_->set_piece(*this);
 }
 
-
-std::vector<Square*> Rock::eligible_squares() const noexcept
+void Rock::compute_eligible_squares() noexcept
 {
-	std::vector<Square*> squares;
-	this->add_eligible_file_squares(squares);
-	this->add_eligible_row_squares(squares);
-	return squares;
+	RankEligibleMove(this->board_, *this)();
+	FileEligibleMove(this->board_, *this)();
 }
 
-void Piece::add_eligible_file_squares(std::vector<Square*>& squares) const noexcept
+void Bishop::compute_eligible_squares() noexcept
 {
-	for (int8_t i = this->square_->get_value() + NB_SQUARES_BY_ROW;
-		this->is_eligible_square(squares, i)
-		; i += NB_SQUARES_BY_ROW);
-	for (int8_t i = this->square_->get_value() - NB_SQUARES_BY_ROW;
-		this->is_eligible_square(squares, i)
-		; i -= NB_SQUARES_BY_ROW);
+	DiagonalEligibleMove(this->board_, *this)();
+	AntiDiagonalEligibleMove(this->board_, *this)();
 }
 
-void Piece::add_eligible_row_squares(std::vector<Square*>& squares) const noexcept
+void Queen::compute_eligible_squares() noexcept
 {
-	for (int8_t i = this->square_->get_value() - 1; 
-		this->square_->is_same_rank(i) && this->is_eligible_square(squares, i)
-		; --i);
-	for (int8_t i = this->square_->get_value() + 1; 
-		this->square_->is_same_rank(i) && this->is_eligible_square(squares, i)
-		; ++i);
+	RankEligibleMove(this->board_, *this)();
+	FileEligibleMove(this->board_, *this)();
+	DiagonalEligibleMove(this->board_, *this)();
+	AntiDiagonalEligibleMove(this->board_, *this)();
 }
 
-/**
- * Predicate with side effect.
- * Add the square to the vector if the square is eligible
- */
-bool Piece::is_eligible_square(std::vector<Square*>& squares, const int8_t square_value) const noexcept
+void King::compute_eligible_squares() noexcept
 {
-	if (square_value > NB_SQUARES || square_value < 0) return false;
-	if (!this->board_[square_value].is_free())
+	constexpr int8_t diag_offset = NB_SQUARES_BY_ROW - 1;
+	constexpr int8_t antidiag_offset = NB_SQUARES_BY_ROW + 1;
+	constexpr int8_t offsets[8] = { 1, -1,diag_offset, -diag_offset, antidiag_offset, -antidiag_offset,
+	NB_SQUARES_BY_ROW, -NB_SQUARES_BY_ROW };
+	for (const auto offset : offsets)
 	{
-		if (this->board_[square_value].has_enemy_piece_of(*this))
+		const int8_t square_value = this->square_->get_value() + offset;
+		if (!this->board_.has_square_value(square_value)) continue;
+		if (this->board_[square_value].is_free() || this->board_[square_value].has_enemy_piece_of(*this))
 		{
-			squares.emplace_back(&this->board_[square_value]);
+			this->eligible_squares_[square_value] =  &this->board_[square_value];
 		}
-		return false;
 	}
-	squares.emplace_back(&this->board_[square_value]);
-	return true;
+}
+
+void Knight::compute_eligible_squares() noexcept
+{
+}
+
+void Pawn::compute_eligible_squares() noexcept
+{
 }

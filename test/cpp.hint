@@ -1,0 +1,4 @@
+// Les fichiers hint permettent à l'IDE Visual Studio d'interpréter les identificateurs Visual C++
+// tels que les noms de fonctions et de macros.
+// Pour plus d'informations, consultez https://go.microsoft.com/fwlink/?linkid=865984
+#define MATCHER_P2(name, p0, p1, description) GMOCK_INTERNAL_MATCHER(name, name##MatcherP2, description, (p0, p1))
