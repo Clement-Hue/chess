@@ -45,18 +45,37 @@ void Queen::compute_eligible_squares() noexcept
 
 void King::compute_eligible_squares() noexcept
 {
-	constexpr int8_t diag_offset = NB_SQUARES_BY_ROW - 1;
-	constexpr int8_t antidiag_offset = NB_SQUARES_BY_ROW + 1;
-	constexpr int8_t offsets[8] = { 1, -1,diag_offset, -diag_offset, antidiag_offset, -antidiag_offset,
-	NB_SQUARES_BY_ROW, -NB_SQUARES_BY_ROW };
-	for (const auto offset : offsets)
+	if (const auto& square_it = ++this->board_.rank_it(*this->square_))
 	{
-		const int8_t square_value = this->square_->get_value() + offset;
-		if (!this->board_.has_square_value(square_value)) continue;
-		if (this->board_[square_value].is_free() || this->board_[square_value].has_enemy_piece_of(*this))
-		{
-			this->eligible_squares_[square_value] =  &this->board_[square_value];
-		}
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = --this->board_.rank_it(*this->square_))
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = ++this->board_.file_it(*this->square_))
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = --this->board_.file_it(*this->square_))
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = ++this->board_.diagonal_it(*this->square_))
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = --this->board_.diagonal_it(*this->square_))
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = ++this->board_.anti_diagonal_it(*this->square_)) 
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
+	}
+	if (const auto& square_it = --this->board_.anti_diagonal_it(*this->square_))
+	{
+		this->eligible_squares_[square_it->get_value()] = *square_it;
 	}
 }
 

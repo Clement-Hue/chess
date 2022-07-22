@@ -1,9 +1,9 @@
 #pragma once
-#include "Piece.h"
-#include "Square.h"
 #include <vector>
-#include "Common.h"
 #include <memory>
+#include "Common.h"
+#include "Piece.h"
+#include "BoardIterator.h"
 
 
 class CHESS_API  BoardGame
@@ -24,7 +24,15 @@ public:
 	~BoardGame() = default;
 	void init_game() noexcept;
 	bool has_square_value(const int8_t value) const noexcept { return value >= 0 && value < squares_.size(); }
+	BoardIterator& rank_it(const Square& square) { return this->rank_iterator_.begin(square); }
+	BoardIterator& file_it(const Square& square) { return this->file_iterator_.begin(square); }
+	BoardIterator& diagonal_it(const Square& square) { return this->diagonal_iterator_.begin(square); }
+	BoardIterator& anti_diagonal_it(const Square& square) { return this->anti_diagonal_iterator_.begin(square); }
 private:
+	RankIterator rank_iterator_{ *this };
+	FileIterator file_iterator_{ *this };
+	DiagonalIterator diagonal_iterator_{ *this };
+	AntiDiagonalIterator anti_diagonal_iterator_{ *this };
 	std::vector<Square> squares_;
 	Pieces pieces_;
 	pieces_type& get_pieces(const PieceColor color) noexcept

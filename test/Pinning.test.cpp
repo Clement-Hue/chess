@@ -11,7 +11,7 @@ TEST(PinTest, piece_pinned_on_rank)
 	Rock rock{ board, board[45], PieceColor::black };
 	queen.compute_eligible_squares();
 	rock.compute_eligible_squares();
-	queen.filter_eligible_square_if_pinned();
+	queen.filter_eligible_squares_if_pinned();
 	const auto& queen_eligible_squares = queen.get_eligible_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 61);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
@@ -28,7 +28,7 @@ TEST(PinTest, piece_pinned_on_file)
 	Rock rock{ board, board[15], PieceColor::black };
 	queen.compute_eligible_squares();
 	rock.compute_eligible_squares();
-	queen.filter_eligible_square_if_pinned();
+	queen.filter_eligible_squares_if_pinned();
 	const auto& queen_eligible_squares = queen.get_eligible_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 58);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
@@ -45,7 +45,7 @@ TEST(PinTest, piece_pinned_on_diagonal)
 	Bishop bishop{ board, board[42], PieceColor::black };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
-	queen.filter_eligible_square_if_pinned();
+	queen.filter_eligible_squares_if_pinned();
 	const auto& queen_eligible_squares = queen.get_eligible_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 61);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
@@ -61,7 +61,7 @@ TEST(PinTest, piece_pinned_on_anti_diagonal)
 	Bishop bishop{ board, board[54], PieceColor::black };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
-	queen.filter_eligible_square_if_pinned();
+	queen.filter_eligible_squares_if_pinned();
 	const auto& queen_eligible_squares = queen.get_eligible_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 60);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
@@ -78,7 +78,7 @@ TEST(PinTest, not_pinned_if_friend_piece_between)
 	Bishop bishop{ board, board[54], PieceColor::black };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
-	queen.filter_eligible_square_if_pinned();
+	queen.filter_eligible_squares_if_pinned();
 	const auto& queen_eligible_squares = queen.get_eligible_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 41);
 }
@@ -93,7 +93,7 @@ TEST(PinTest, not_pinned_if_enemy_piece_between)
 	Bishop bishop{ board, board[54], PieceColor::black };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
-	queen.filter_eligible_square_if_pinned();
+	queen.filter_eligible_squares_if_pinned();
 	const auto& queen_eligible_squares = queen.get_eligible_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 40);
 }

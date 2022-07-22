@@ -184,6 +184,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game\BoardIterator.cpp" />
     <ClCompile Include="src\game\EligibleMove.cpp" />
     <ClCompile Include="src\game\EventHandler.cpp" />
     <ClCompile Include="src\game\BoardGame.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="src\game\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\BoardIterator.h" />
     <ClInclude Include="src\game\EligibleMove.h" />
     <ClInclude Include="src\Chess.h" />
     <ClInclude Include="src\game\EventHandler.h" />

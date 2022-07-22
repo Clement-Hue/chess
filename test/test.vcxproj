@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BishopSquare.test.cpp" />
+    <ClCompile Include="BoardIterator.test.cpp" />
     <ClCompile Include="KingSquare.test.cpp" />
     <ClCompile Include="Piece.mock.h" />
     <ClCompile Include="Piece.test.cpp" />

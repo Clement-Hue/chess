@@ -1,4 +1,6 @@
 #include "Pin.h"
+#include "Piece.h"
+#include "Square.h"
 
 using square_fn_type = bool (Square::*) (const Square&) const ;
 static void base_filter(Piece& piece,  const square_fn_type predicate )
