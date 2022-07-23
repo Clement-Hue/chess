@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "game/BoardGame.h"
+#include "game/BoardIterator.h"
 
 
 TEST(RankIteration, add_operator)
@@ -73,4 +74,14 @@ TEST(AntiDiagonalIteration, all_operator)
 	EXPECT_EQ(iterator->get_value(), 55);
 }
 
-
+TEST(Iterator, change_begin_square)
+{
+	BoardGame board;
+	RankIterator rank_iterator{ board };
+	auto& it_1 = rank_iterator.begin(board[0]);
+	++it_1;
+	EXPECT_EQ(it_1->get_value(), 1);
+	auto& it_2 = rank_iterator.begin(board[10]);
+	++it_2;
+	EXPECT_EQ(it_2->get_value(), 11);
+}

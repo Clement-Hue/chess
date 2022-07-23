@@ -1,6 +1,5 @@
 #include "Piece.h"
 #include "BoardGame.h"
-#include "Constants.h"
 #include "EligibleMove.h"
 
 
@@ -45,37 +44,18 @@ void Queen::compute_eligible_squares() noexcept
 
 void King::compute_eligible_squares() noexcept
 {
-	if (const auto& square_it = ++this->board_.rank_it(*this->square_))
+	BoardIterator iterators[8] = {
+		++RankIterator(this->board_).begin(*this->square_), --RankIterator(this->board_).begin(*this->square_),
+		++FileIterator(this->board_).begin(*this->square_), --FileIterator(this->board_).begin(*this->square_),
+		++DiagonalIterator(this->board_).begin(*this->square_), --DiagonalIterator(this->board_).begin(*this->square_),
+		++AntiDiagonalIterator(this->board_).begin(*this->square_), --AntiDiagonalIterator(this->board_).begin (*this->square_)
+	};
+	for (const auto& square_it: iterators)
 	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = --this->board_.rank_it(*this->square_))
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = ++this->board_.file_it(*this->square_))
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = --this->board_.file_it(*this->square_))
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = ++this->board_.diagonal_it(*this->square_))
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = --this->board_.diagonal_it(*this->square_))
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = ++this->board_.anti_diagonal_it(*this->square_)) 
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
-	}
-	if (const auto& square_it = --this->board_.anti_diagonal_it(*this->square_))
-	{
-		this->eligible_squares_[square_it->get_value()] = *square_it;
+		if ( square_it && !square_it->has_friend_piece_of(*this) )
+		{
+			this->eligible_squares_[square_it->get_value()] = &*square_it;
+		}
 	}
 }
 

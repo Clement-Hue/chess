@@ -15,8 +15,7 @@ BoardIterator::operator bool() const noexcept
 		(this->square_->*this->predicate_)(this->square_value_);
 }
 
-Square* BoardIterator::operator*() const noexcept
+Square& BoardIterator::operator*() const noexcept
 {
-	if (!*this) return nullptr;
-	return &this->board_[this->square_value_];
+	return this->board_[this->square_value_];
 }

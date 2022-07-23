@@ -47,16 +47,16 @@ public:
 		return iterator;
 	};
 	explicit operator bool() const noexcept;
-	Square* operator*() const noexcept;
+	Square& operator*() const noexcept;
 	Square* operator->() const noexcept
 	{
-		return **this;
+		return &**this;
 	}
 protected:
-	BoardGame& board_;
 	const Square* square_{nullptr};
 	int8_t square_value_{0};
 private:
+	BoardGame& board_;
 	int8_t offset_;
 	square_fn_type predicate_;
 };

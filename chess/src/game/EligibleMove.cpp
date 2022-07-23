@@ -6,17 +6,17 @@ void EligibleMove::add_eligible_squares(const increment_fn_type increment_fn)  n
 	for (auto& square_iterator = this->iterator_.begin(*this->piece_.get_square());
 		square_iterator ; increment_fn(square_iterator))
 	{
-		if (*square_iterator == this->piece_.get_square()) continue;
+		if (&*square_iterator == this->piece_.get_square()) continue;
 		if (!square_iterator->is_free())
 		{
 			if (square_iterator->has_enemy_piece_of(this->piece_))
 			{
-				this->piece_.get_eligible_square(square_iterator->get_value()) = *square_iterator;
+				this->piece_.get_eligible_square(square_iterator->get_value()) = &*square_iterator;
 				this->check_pinning(*square_iterator->get_piece(), increment_fn);
 			}
 			break;
 		}
-		this->piece_.get_eligible_square(square_iterator->get_value()) = *square_iterator;
+		this->piece_.get_eligible_square(square_iterator->get_value()) = &*square_iterator;
 	}
 }
 
@@ -26,7 +26,7 @@ void EligibleMove::check_pinning(Piece& piece, const increment_fn_type increment
 		square_iterator && !square_iterator->has_friend_piece_of(this->piece_)
 		; increment_fn(square_iterator))
 	{
-		if (*square_iterator == piece.get_square()) continue;
+		if (&*square_iterator == piece.get_square()) continue;
 		if (square_iterator->has_enemy_piece_of(this->piece_))
 		{
 			if (dynamic_cast<King*>( square_iterator->get_piece()))
