@@ -1,6 +1,6 @@
 #include "Piece.h"
 #include "BoardGame.h"
-#include "EligibleMove.h"
+#include "LinearEligibleMove.h"
 
 
 Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
