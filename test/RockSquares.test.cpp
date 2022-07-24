@@ -3,7 +3,7 @@
 #include "game/Piece.h"
 #include "Piece.mock.h"
 
-TEST(RockSquareAvailable, all_squares_free)
+TEST(RockSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
 	Rock rock{ board, board[11], PieceColor::white };
@@ -17,7 +17,7 @@ TEST(RockSquareAvailable, all_squares_free)
 		}));
 }
 
-TEST(RockSquareAvailable, rock_on_first_line)
+TEST(RockSquareAvailableTest, rock_on_first_line)
 {
 	BoardGame board;
 	Rock rock{ board, board[3], PieceColor::white };
@@ -32,7 +32,7 @@ TEST(RockSquareAvailable, rock_on_first_line)
 }
 
 
-TEST(RockSquareAvailable, rock_on_edge)
+TEST(RockSquareAvailableTest, rock_on_edge)
 {
 	BoardGame board;
 	Rock rock{ board, board[63], PieceColor::white };
@@ -46,7 +46,7 @@ TEST(RockSquareAvailable, rock_on_edge)
 	}));
 }
 
-TEST(RockSquareAvailable, left_square_taken)
+TEST(RockSquareAvailableTest, left_square_taken)
 {
 	BoardGame board;
 	const MockPiece piece{board, board[10]};
@@ -58,7 +58,7 @@ TEST(RockSquareAvailable, left_square_taken)
 	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[10])));
 }
 
-TEST(RockSquareAvailable, right_square_taken)
+TEST(RockSquareAvailableTest, right_square_taken)
 {
 	BoardGame board;
 	const MockPiece piece{board, board[12]};
@@ -71,7 +71,7 @@ TEST(RockSquareAvailable, right_square_taken)
 	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[15])));
 }
 
-TEST(RockSquareAvailable, upper_square_taken)
+TEST(RockSquareAvailableTest, upper_square_taken)
 {
 	BoardGame board;
 	const MockPiece piece{board, board[41]};
@@ -84,7 +84,7 @@ TEST(RockSquareAvailable, upper_square_taken)
 	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[58])));
 }
 
-TEST(RockSquareAvailable, lower_square_taken)
+TEST(RockSquareAvailableTest, lower_square_taken)
 {
 	BoardGame board;
 	const MockPiece piece{board, board[3]};
@@ -95,7 +95,7 @@ TEST(RockSquareAvailable, lower_square_taken)
 	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[3])));
 }
 
-TEST(RockSquareAvailable, enemy_squares_are_available_squares)
+TEST(RockSquareAvailableTest, enemy_squares_are_available_squares)
 {
 	BoardGame board;
 	const MockPiece p1 = { board, board[3], PieceColor::black };

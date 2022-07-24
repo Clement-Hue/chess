@@ -1,7 +1,6 @@
 #include "Piece.h"
 #include "BoardGame.h"
-#include "Constants.h"
-#include "EligibleMove.h"
+#include "LinearEligibleMove.h"
 
 
 Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
@@ -45,17 +44,17 @@ void Queen::compute_eligible_squares() noexcept
 
 void King::compute_eligible_squares() noexcept
 {
-	constexpr int8_t diag_offset = NB_SQUARES_BY_ROW - 1;
-	constexpr int8_t antidiag_offset = NB_SQUARES_BY_ROW + 1;
-	constexpr int8_t offsets[8] = { 1, -1,diag_offset, -diag_offset, antidiag_offset, -antidiag_offset,
-	NB_SQUARES_BY_ROW, -NB_SQUARES_BY_ROW };
-	for (const auto offset : offsets)
+	BoardIterator iterators[8] = {
+		++RankIterator(this->board_).begin(*this->square_), --RankIterator(this->board_).begin(*this->square_),
+		++FileIterator(this->board_).begin(*this->square_), --FileIterator(this->board_).begin(*this->square_),
+		++DiagonalIterator(this->board_).begin(*this->square_), --DiagonalIterator(this->board_).begin(*this->square_),
+		++AntiDiagonalIterator(this->board_).begin(*this->square_), --AntiDiagonalIterator(this->board_).begin (*this->square_)
+	};
+	for (const auto& square_it: iterators)
 	{
-		const int8_t square_value = this->square_->get_value() + offset;
-		if (!this->board_.has_square_value(square_value)) continue;
-		if (this->board_[square_value].is_free() || this->board_[square_value].has_enemy_piece_of(*this))
+		if ( square_it && !square_it->has_friend_piece_of(*this) )
 		{
-			this->eligible_squares_[square_value] =  &this->board_[square_value];
+			this->eligible_squares_[square_it->get_value()] = &*square_it;
 		}
 	}
 }

@@ -1,5 +1,7 @@
 #pragma once
-#include "Piece.h"
+#include "Common.h"
+
+class Piece;
 
  namespace pin
 {

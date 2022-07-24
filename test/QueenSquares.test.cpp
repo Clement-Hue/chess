@@ -4,7 +4,7 @@
 #include "Piece.mock.h"
 
 
-TEST(QueenSquareAvailable, all_squares_free)
+TEST(QueenSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
 	Queen queen{ board, board[11], PieceColor::white };
@@ -20,7 +20,7 @@ TEST(QueenSquareAvailable, all_squares_free)
 }
 
 
-TEST(QueenSquareAvailable, squares_taken)
+TEST(QueenSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
 	const MockPiece p1{ board, board[25], PieceColor::white };

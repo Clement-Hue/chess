@@ -30,13 +30,16 @@
     <ClCompile Include="src\game\EventHandler.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\EligibleMove.cpp">
+    <ClCompile Include="src\game\LinearEligibleMove.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\game\Pin.h">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\game\Pin.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\BoardIterator.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +68,10 @@
     <ClInclude Include="src\Chess.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\EligibleMove.h">
+    <ClInclude Include="src\game\LinearEligibleMove.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\BoardIterator.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #pragma once
-#include "BoardGame.h"
 #include "Common.h"
+
+class BoardGame;
 
 class CHESS_API EventHandler
 {

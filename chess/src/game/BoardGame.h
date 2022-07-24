@@ -1,9 +1,9 @@
 #pragma once
+#include <vector>
+#include <memory>
+#include "Common.h"
 #include "Piece.h"
 #include "Square.h"
-#include <vector>
-#include "Common.h"
-#include <memory>
 
 
 class CHESS_API  BoardGame

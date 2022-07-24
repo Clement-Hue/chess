@@ -1,10 +1,10 @@
 #pragma once
-#include "Square.h"
 #include <array>
 #include "Constants.h"
 #include "Common.h"
 
 class BoardGame;
+class Square;
 
 enum class CHESS_API PieceColor { black , white };
 
@@ -30,7 +30,7 @@ public:
 	void set_eligible_square(const int8_t i, Square& square) noexcept { this->eligible_squares_[i] = &square; }
 	Square*& get_eligible_square(const int8_t i) noexcept { return this->eligible_squares_[i]; }
 	void set_pinning_filter(const pinning_filter_type func) { this->pinning_filter_ = func; }
-	void filter_eligible_square_if_pinned() noexcept { if (this->pinning_filter_) this->pinning_filter_(*this); }
+	void filter_eligible_squares_if_pinned() noexcept { if (this->pinning_filter_) this->pinning_filter_(*this); }
 protected:
 	pinning_filter_type pinning_filter_{nullptr};
 	BoardGame& board_;

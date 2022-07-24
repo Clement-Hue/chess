@@ -3,7 +3,7 @@
 #include "game/Piece.h"
 #include "Piece.mock.h"
 
-TEST(KingSquareAvailable, all_squares_free)
+TEST(KingSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
 	King knight{ board, board[11], PieceColor::white };
@@ -15,7 +15,7 @@ TEST(KingSquareAvailable, all_squares_free)
 		&board[10], &board[12], &board[18] ,&board[19],  &board[20]}));
 }
 
-TEST(KingSquareAvailable, positionned_on_edge)
+TEST(KingSquareAvailableTest, positionned_on_edge)
 {
 	BoardGame board;
 	King knight{ board, board[63], PieceColor::white };
@@ -27,7 +27,7 @@ TEST(KingSquareAvailable, positionned_on_edge)
 }
 
 
-TEST(KingSquareAvailable, squares_taken)
+TEST(KingSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
 	const MockPiece p1{ board, board[18], PieceColor::white };
