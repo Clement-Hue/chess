@@ -3,7 +3,7 @@
 #include "game/Piece.h"
 #include "Piece.mock.h"
 
-TEST(BishopSquareAvailable, all_squares_free)
+TEST(BishopSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
 	Bishop bishop{ board, board[11], PieceColor::white };
@@ -16,7 +16,7 @@ TEST(BishopSquareAvailable, all_squares_free)
 }
 
 
-TEST(BishopSquareAvailable, diagonal_squares_taken)
+TEST(BishopSquareAvailableTest, diagonal_squares_taken)
 {
 	BoardGame board;
 	const MockPiece p1{ board, board[25], PieceColor::white };

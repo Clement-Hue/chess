@@ -3,7 +3,7 @@
 #include "game/BoardIterator.h"
 
 
-TEST(RankIteration, add_operator)
+TEST(RankIteratorTest, add_operator)
 {
 	BoardGame board;
 	RankIterator rank_iterator{ board };
@@ -16,7 +16,7 @@ TEST(RankIteration, add_operator)
 	EXPECT_FALSE(iterator);
 }
 
-TEST(RankIteration, minus_operator)
+TEST(RankIteratorTest, minus_operator)
 {
 	BoardGame board;
 	RankIterator rank_iterator{ board };
@@ -28,7 +28,7 @@ TEST(RankIteration, minus_operator)
 }
 
 
-TEST(FileIteration, all_operator)
+TEST(FileIteratorTest, all_operator)
 {
 	BoardGame board;
 	FileIterator file_iterator{ board };
@@ -44,7 +44,7 @@ TEST(FileIteration, all_operator)
 }
 
 
-TEST(DiagonalIteration, all_operator)
+TEST(DiagonalIteratorTest, all_operator)
 {
 	BoardGame board;
 	DiagonalIterator diagonal_iterator{ board };
@@ -58,7 +58,7 @@ TEST(DiagonalIteration, all_operator)
 	EXPECT_EQ(iterator->get_value(), 1);
 }
 
-TEST(AntiDiagonalIteration, all_operator)
+TEST(AntiDiagonalIteratorTest, all_operator)
 {
 	BoardGame board;
 	AntiDiagonalIterator anti_diagonal_iterator{ board };
@@ -74,7 +74,7 @@ TEST(AntiDiagonalIteration, all_operator)
 	EXPECT_EQ(iterator->get_value(), 55);
 }
 
-TEST(Iterator, change_begin_square)
+TEST(BoardIteratorTest, change_begin_square)
 {
 	BoardGame board;
 	RankIterator rank_iterator{ board };
