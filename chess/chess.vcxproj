@@ -185,7 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\game\BoardIterator.cpp" />
-    <ClCompile Include="src\game\LinearEligibleMove.cpp" />
+    <ClCompile Include="src\game\LinearEligibleSquares.cpp" />
     <ClCompile Include="src\game\EventHandler.cpp" />
     <ClCompile Include="src\game\BoardGame.cpp" />
     <ClCompile Include="src\game\Piece.cpp" />
@@ -196,7 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game\BoardIterator.h" />
-    <ClInclude Include="src\game\LinearEligibleMove.h" />
+    <ClInclude Include="src\game\LinearEligibleSquares.h" />
     <ClInclude Include="src\Chess.h" />
     <ClInclude Include="src\game\EventHandler.h" />
     <ClInclude Include="src\game\BoardGame.h" />

@@ -1,6 +1,7 @@
 #include "Piece.h"
 #include "BoardGame.h"
-#include "LinearEligibleMove.h"
+#include "BoardIterator.h"
+#include "LinearEligibleSquares.h"
 
 
 Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
@@ -24,22 +25,22 @@ void Piece::move(Square& square) noexcept
 
 void Rock::compute_eligible_squares() noexcept
 {
-	RankEligibleMove(this->board_, *this)();
-	FileEligibleMove(this->board_, *this)();
+	linear_eligible_squares::add_rank_squares(*this, this->board_);
+	linear_eligible_squares::add_file_squares(*this, this->board_);
 }
 
 void Bishop::compute_eligible_squares() noexcept
 {
-	DiagonalEligibleMove(this->board_, *this)();
-	AntiDiagonalEligibleMove(this->board_, *this)();
+	linear_eligible_squares::add_diagonal_squares(*this, this->board_);
+	linear_eligible_squares::add_anti_diagonal_squares(*this, this->board_);
 }
 
 void Queen::compute_eligible_squares() noexcept
 {
-	RankEligibleMove(this->board_, *this)();
-	FileEligibleMove(this->board_, *this)();
-	DiagonalEligibleMove(this->board_, *this)();
-	AntiDiagonalEligibleMove(this->board_, *this)();
+	linear_eligible_squares::add_rank_squares(*this, this->board_);
+	linear_eligible_squares::add_file_squares(*this, this->board_);
+	linear_eligible_squares::add_diagonal_squares(*this, this->board_);
+	linear_eligible_squares::add_anti_diagonal_squares(*this, this->board_);
 }
 
 void King::compute_eligible_squares() noexcept

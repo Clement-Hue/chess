@@ -13,22 +13,22 @@ static void base_filter(Piece& piece,  const square_fn_type predicate )
 	}
 }
 
-void pin::rank_filter(Piece& piece)
+CHESS_API void pin::rank_filter(Piece& piece)
 {
 	base_filter(piece, &Square::is_same_rank);
 }
 
-void pin::file_filter(Piece& piece)
+CHESS_API void pin::file_filter(Piece& piece)
 {
 	base_filter(piece, &Square::is_same_file);
 }
 
-void pin::diagonal_filter(Piece& piece)
+CHESS_API void pin::diagonal_filter(Piece& piece)
 {
 	base_filter(piece, &Square::is_same_diagonal);
 }
 
-void pin::anti_diagonal_filter(Piece& piece)
+CHESS_API void pin::anti_diagonal_filter(Piece& piece)
 {
 	base_filter(piece, &Square::is_same_anti_diagonal);
 }
