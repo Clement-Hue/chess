@@ -84,11 +84,28 @@ CHESS_API void linear_eligible_squares::add_anti_diagonal_squares(Piece& piece, 
 
 void PawnEligibleSquares::visit(BlackColor&) const
 {
-	this->add_file_eligible_squares<BlackColor>([](BoardIterator& it) {++it; });
+	const auto increment_fn = [](BoardIterator& it) {++it; };
+	this->add_file_eligible_squares<BlackColor>(increment_fn);
+	this->add_takeable_squares(increment_fn);
 }
 
 void PawnEligibleSquares::visit(WhiteColor&) const
 {
-	this->add_file_eligible_squares<WhiteColor>([](BoardIterator& it) {--it; });
+	const auto increment_fn = [](BoardIterator& it) {--it; };
+	this->add_file_eligible_squares<WhiteColor>(increment_fn);
+	this->add_takeable_squares(increment_fn);
+}
+
+void PawnEligibleSquares::add_takeable_squares(const increment_fn_type increment_fn) const noexcept
+{
+	BoardIterator iterators[2] = { DiagonalIterator(this->board_),  AntiDiagonalIterator(this->board_) };
+	for (auto& square_it : iterators)
+	{
+		square_it.begin(*this->pawn_.get_square());
+		if (increment_fn(square_it), square_it && square_it->has_enemy_piece_of(this->pawn_))
+		{
+			this->pawn_.get_eligible_square(square_it->get_value()) = &*square_it;
+		}
+	}
 }
 
