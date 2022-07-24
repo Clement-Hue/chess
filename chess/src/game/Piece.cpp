@@ -1,11 +1,12 @@
 #include "Piece.h"
 #include "BoardGame.h"
 #include "BoardIterator.h"
-#include "LinearEligibleSquares.h"
+#include "EligibleSquares.h"
+#include "PieceColor.h"
 
 
-Piece::Piece(BoardGame& board, Square& square, const PieceColor color): board_(board), square_(&square),
-                                                                        color_(color)	
+Piece::Piece(BoardGame& board, Square& square, std::unique_ptr<PieceColor> color):
+board_(board), square_(&square), color_(std::move(color))	
 {
 	this->square_->set_piece(*this);
 }
@@ -64,6 +65,8 @@ void Knight::compute_eligible_squares() noexcept
 {
 }
 
+
 void Pawn::compute_eligible_squares() noexcept
 {
+	this->get_color().accept(PawnEligibleSquares(*this, this->board_));
 }

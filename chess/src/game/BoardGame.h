@@ -27,11 +27,23 @@ public:
 private:
 	std::vector<Square> squares_;
 	Pieces pieces_;
-	pieces_type& get_pieces(const PieceColor color) noexcept
-	{
-		return color == PieceColor::black ? this->pieces_.black : this->pieces_.white;
-	}
-	void init_valuable_pieces(PieceColor, uint8_t) noexcept;
-	void init_pawns(PieceColor, uint8_t) noexcept;
+	template <typename Color>
+	pieces_type& get_pieces()  noexcept = delete;
+	template <typename Color>
+	void init_valuable_pieces() noexcept;
+	template <typename Color>
+	void init_pawns() noexcept;
 };
+
+template <>
+inline BoardGame::pieces_type& BoardGame::get_pieces<BlackColor>() noexcept
+{
+	return this->pieces_.black;
+}
+
+template <>
+inline BoardGame::pieces_type& BoardGame::get_pieces<WhiteColor>() noexcept
+{
+	return this->pieces_.white;
+}
 

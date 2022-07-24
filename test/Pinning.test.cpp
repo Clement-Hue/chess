@@ -6,9 +6,9 @@
 TEST(PinTest, piece_pinned_on_rank)
 {
 	BoardGame board;
-	King king{ board, board[13], PieceColor::white };
-	Queen queen{ board, board[29], PieceColor::white };
-	Rock rock{ board, board[45], PieceColor::black };
+	King king{ board, board[13], std::make_unique<WhiteColor>() };
+	Queen queen{ board, board[29], std::make_unique<WhiteColor>() };
+	Rock rock{ board, board[45], std::make_unique<BlackColor>()};
 	queen.compute_eligible_squares();
 	rock.compute_eligible_squares();
 	queen.filter_eligible_squares_if_pinned();
@@ -23,9 +23,9 @@ TEST(PinTest, piece_pinned_on_rank)
 TEST(PinTest, piece_pinned_on_file)
 {
 	BoardGame board;
-	King king{ board, board[8], PieceColor::white };
-	Queen queen{ board, board[14], PieceColor::white };
-	Rock rock{ board, board[15], PieceColor::black };
+	King king{ board, board[8], std::make_unique<WhiteColor>() };
+	Queen queen{ board, board[14], std::make_unique<WhiteColor>()};
+	Rock rock{ board, board[15], std::make_unique<BlackColor>() };
 	queen.compute_eligible_squares();
 	rock.compute_eligible_squares();
 	queen.filter_eligible_squares_if_pinned();
@@ -40,9 +40,9 @@ TEST(PinTest, piece_pinned_on_file)
 TEST(PinTest, piece_pinned_on_diagonal)
 {
 	BoardGame board;
-	King king{ board, board[14], PieceColor::white };
-	Queen queen{ board, board[28], PieceColor::white };
-	Bishop bishop{ board, board[42], PieceColor::black };
+	King king{ board, board[14], std::make_unique<WhiteColor>() };
+	Queen queen{ board, board[28], std::make_unique<WhiteColor>() };
+	Bishop bishop{ board, board[42], std::make_unique<BlackColor>() };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
 	queen.filter_eligible_squares_if_pinned();
@@ -56,9 +56,9 @@ TEST(PinTest, piece_pinned_on_diagonal)
 TEST(PinTest, piece_pinned_on_anti_diagonal)
 {
 	BoardGame board;
-	King king{ board, board[9], PieceColor::white };
-	Queen queen{ board, board[27], PieceColor::white };
-	Bishop bishop{ board, board[54], PieceColor::black };
+	King king{ board, board[9], std::make_unique<WhiteColor>() };
+	Queen queen{ board, board[27], std::make_unique<WhiteColor>() };
+	Bishop bishop{ board, board[54], std::make_unique<BlackColor>() };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
 	queen.filter_eligible_squares_if_pinned();
@@ -72,10 +72,10 @@ TEST(PinTest, piece_pinned_on_anti_diagonal)
 TEST(PinTest, not_pinned_if_friend_piece_between)
 {
 	BoardGame board;
-	King king{ board, board[9], PieceColor::white };
-	Pawn pawn{ board, board[18], PieceColor::white };
-	Queen queen{ board, board[27], PieceColor::white };
-	Bishop bishop{ board, board[54], PieceColor::black };
+	King king{ board, board[9], std::make_unique<WhiteColor>() };
+	Pawn pawn{ board, board[18], std::make_unique<WhiteColor>() };
+	Queen queen{ board, board[27], std::make_unique<WhiteColor>()};
+	Bishop bishop{ board, board[54], std::make_unique<BlackColor>() };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
 	queen.filter_eligible_squares_if_pinned();
@@ -87,10 +87,10 @@ TEST(PinTest, not_pinned_if_friend_piece_between)
 TEST(PinTest, not_pinned_if_enemy_piece_between)
 {
 	BoardGame board;
-	King king{ board, board[9], PieceColor::white };
-	Pawn pawn{ board, board[18], PieceColor::black };
-	Queen queen{ board, board[27], PieceColor::white };
-	Bishop bishop{ board, board[54], PieceColor::black };
+	King king{ board, board[9], std::make_unique<WhiteColor>()};
+	Pawn pawn{ board, board[18], std::make_unique<BlackColor>() };
+	Queen queen{ board, board[27], std::make_unique<WhiteColor>() };
+	Bishop bishop{ board, board[54], std::make_unique<BlackColor>() };
 	queen.compute_eligible_squares();
 	bishop.compute_eligible_squares();
 	queen.filter_eligible_squares_if_pinned();

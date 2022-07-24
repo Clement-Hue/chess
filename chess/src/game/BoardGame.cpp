@@ -17,42 +17,46 @@ BoardGame::BoardGame(): squares_(create_squares())
 {
 }
 
-void BoardGame::init_valuable_pieces(PieceColor color, const uint8_t offset) noexcept
+template <typename Color>
+void BoardGame::init_valuable_pieces() noexcept
 {
-	auto& pieces = this->get_pieces(color);
+	auto& pieces = this->get_pieces<Color>();
+	const auto offset = Color::first_rank * NB_SQUARES_BY_ROW;
 	pieces.emplace_back(
-		std::make_unique<Rock>( *this, this->squares_[offset], color)
+		std::make_unique<Rock>( *this, this->squares_[offset], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<Knight>( *this, this->squares_[offset + 1], color)
+		std::make_unique<Knight>( *this, this->squares_[offset + 1], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<Bishop>( *this, this->squares_[offset + 2], color)
+		std::make_unique<Bishop>( *this, this->squares_[offset + 2], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<Queen>( *this, this->squares_[offset + 3], color)
+		std::make_unique<Queen>( *this, this->squares_[offset + 3], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<King>( *this, this->squares_[offset + 4], color)
+		std::make_unique<King>( *this, this->squares_[offset + 4], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<Bishop>( *this, this->squares_[offset + 5], color)
+		std::make_unique<Bishop>( *this, this->squares_[offset + 5], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<Knight>( *this, this->squares_[offset + 6], color)
+		std::make_unique<Knight>( *this, this->squares_[offset + 6], std::make_unique<Color>())
 	);
 	pieces.emplace_back(
-		std::make_unique<Rock>( *this, this->squares_[offset + 7], color)
+		std::make_unique<Rock>(*this, this->squares_[offset + 7], std::make_unique<Color>())
 	);
 }
 
-void BoardGame::init_pawns(PieceColor color, const uint8_t offset) noexcept
+template <typename Color>
+void BoardGame::init_pawns() noexcept
 {
-	auto& pieces = this->get_pieces(color);
+	auto& pieces = this->get_pieces<Color>();
+	const auto offset = Color::second_rank * NB_SQUARES_BY_ROW;
 	for (uint8_t i = offset; i<offset+NB_SQUARES_BY_ROW; ++i)
 	{
 		pieces.emplace_back(
-			std::make_unique<Pawn>( *this, this->squares_[i], color)
+			std::make_unique<Pawn>( *this, this->squares_[i], std::make_unique<Color>())
 		);
 	}
 }
@@ -60,10 +64,10 @@ void BoardGame::init_pawns(PieceColor color, const uint8_t offset) noexcept
 
 void BoardGame::init_game() noexcept
 {
-	this->init_valuable_pieces(PieceColor::black, 0);
-	this->init_valuable_pieces(PieceColor::white, NB_SQUARES - NB_SQUARES_BY_ROW   );
-	this->init_pawns(PieceColor::black, 8);
-	this->init_pawns(PieceColor::white, 48);
+	this->init_valuable_pieces<BlackColor>();
+	this->init_valuable_pieces<WhiteColor>();
+	this->init_pawns<BlackColor>();
+	this->init_pawns<WhiteColor>();
 }
 
 
