@@ -37,7 +37,7 @@ private:
 
 	std::tuple<int, int> get_case_dimensions() const noexcept
 	{
-		return { this->window_size_.width / NB_SQUARES_BY_ROW, this->window_size_.height / NB_SQUARES_BY_ROW };
+		return { this->window_size_.width / NB_COLUMNS, this->window_size_.height / NB_COLUMNS };
 	}
 
 	void init_window_and_renderer();

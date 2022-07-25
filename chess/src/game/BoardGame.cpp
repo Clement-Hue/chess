@@ -22,7 +22,7 @@ template <typename Color>
 void BoardGame::init_valuable_pieces() noexcept
 {
 	auto& pieces = this->get_pieces<Color>();
-	constexpr auto init_square_value = Color::first_rank * NB_SQUARES_BY_ROW;
+	constexpr auto init_square_value = Color::first_rank * NB_COLUMNS;
 	auto square_it = RankIterator(*this).begin(this->squares_[init_square_value]);
 	pieces.emplace_back(
 		std::make_unique<Rock>( *this, *square_it, std::make_unique<Color>())
@@ -54,7 +54,7 @@ template <typename Color>
 void BoardGame::init_pawns() noexcept
 {
 	auto& pieces = this->get_pieces<Color>();
-	constexpr auto init_square_value = Color::second_rank * NB_SQUARES_BY_ROW;
+	constexpr auto init_square_value = Color::second_rank * NB_COLUMNS;
 	for (auto& square_it = RankIterator(*this).begin(this->squares_[init_square_value]); 
 		square_it; ++square_it)
 	{

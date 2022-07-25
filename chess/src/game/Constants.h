@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
 
-constexpr uint8_t NB_SQUARES = 64;
-constexpr uint8_t NB_SQUARES_BY_ROW = 8;
+constexpr int8_t NB_ROWS = 8;
+constexpr int8_t NB_COLUMNS = 8;
+constexpr int8_t NB_SQUARES = NB_COLUMNS * NB_ROWS;

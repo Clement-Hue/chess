@@ -1,6 +1,7 @@
 #pragma once
 #include <typeinfo>
 #include "Common.h"
+#include "Constants.h"
 
 class WhiteColor;
 class BlackColor;
@@ -37,7 +38,7 @@ class CHESS_API BlackColor final: public PieceColor
 {
 public:
 	static constexpr  int8_t first_rank = 0;
-	static constexpr  int8_t second_rank = 1;
+	static constexpr  int8_t second_rank = first_rank + 1;
 	BlackColor() : PieceColor() {}
 	void accept(const ColorVisitor& visitor) override { visitor.visit(*this); }
 };
@@ -45,8 +46,8 @@ public:
 class CHESS_API WhiteColor final: public PieceColor
 {
 public:
-	static constexpr  int8_t first_rank = 7;
-	static constexpr  int8_t second_rank = 6;
+	static constexpr  int8_t first_rank = NB_ROWS - 1;
+	static constexpr  int8_t second_rank = first_rank - 1;
 	WhiteColor() : PieceColor() {}
 	void accept(const ColorVisitor& visitor) override { visitor.visit(*this); }
 };

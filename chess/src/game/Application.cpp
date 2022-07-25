@@ -78,7 +78,7 @@ static std::array<SDL_Rect, NbRect> create_white_squares(const int case_width, c
 
 		if (i % 4 == 0) // line break
 		{
-			white_squares[i].x = (i % NB_SQUARES_BY_ROW == 0) ? 0 : case_width;
+			white_squares[i].x = (i % NB_COLUMNS == 0) ? 0 : case_width;
 			white_squares[i].y = white_squares[i - 1].y + case_height;
 		}
 		white_squares[i].w = case_width;

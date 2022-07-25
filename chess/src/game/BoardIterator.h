@@ -71,19 +71,19 @@ public:
 class CHESS_API FileIterator final: public BoardIterator
 {
 public:
-	explicit FileIterator(BoardGame& board): BoardIterator(board, NB_SQUARES_BY_ROW, &Square::is_same_file) {}
+	explicit FileIterator(BoardGame& board): BoardIterator(board, NB_COLUMNS, &Square::is_same_file) {}
 };
 
 
 class CHESS_API DiagonalIterator final: public BoardIterator
 {
 public:
-	explicit DiagonalIterator(BoardGame& board): BoardIterator(board, NB_SQUARES_BY_ROW - 1, &Square::is_same_diagonal) {}
+	explicit DiagonalIterator(BoardGame& board): BoardIterator(board, NB_COLUMNS - 1, &Square::is_same_diagonal) {}
 };
 
 
 class CHESS_API AntiDiagonalIterator final: public BoardIterator
 {
 public:
-	explicit AntiDiagonalIterator(BoardGame& board): BoardIterator(board, NB_SQUARES_BY_ROW + 1, &Square::is_same_anti_diagonal) {}
+	explicit AntiDiagonalIterator(BoardGame& board): BoardIterator(board, NB_COLUMNS + 1, &Square::is_same_anti_diagonal) {}
 };

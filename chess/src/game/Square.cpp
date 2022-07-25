@@ -3,12 +3,12 @@
 
 static int8_t get_file_of_value(const int8_t value)
 {
-	 return value % NB_SQUARES_BY_ROW; 
+	 return value % NB_COLUMNS; 
 }
 
 static int8_t get_rank_of_value(const int8_t value)
 {
-	return value / NB_SQUARES_BY_ROW; 
+	return value / NB_COLUMNS; 
 }
 
 bool Square::has_enemy_piece_of(const Piece& piece) const noexcept
