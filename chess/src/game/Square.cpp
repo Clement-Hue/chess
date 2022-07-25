@@ -52,3 +52,13 @@ bool Square::is_same_anti_diagonal(const int8_t value) const noexcept
 {
 	return get_file_of_value(value)  - this->get_file() == get_rank_of_value(value) - this->get_rank();
 }
+
+bool Square::is_same_rank(const int8_t value) const noexcept
+{
+	return this->get_rank() == get_rank_of_value(value);
+}
+
+bool Square::is_same_file(const int8_t value) const noexcept
+{
+	return this->get_file() == get_file_of_value(value);
+}

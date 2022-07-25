@@ -27,8 +27,10 @@ void Application::app_loop()
 	{
 		while (SDL_PollEvent(&e))
 		{
-			const auto handler = this->event_handler_factory(e, quit);
-			if (handler != nullptr) (* handler)();
+			if (const auto handler = this->event_handler_factory(e, quit))
+			{
+				(*handler)();
+			}
 		}
 	}
 }

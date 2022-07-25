@@ -8,8 +8,8 @@ TEST(QueenSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
 	Queen queen{ board, board[11], std::make_unique<WhiteColor>() };
-	queen.compute_eligible_squares();
-	const auto& queen_eligible_squares = queen.get_eligible_squares();
+	queen.compute_pseudo_legal_squares();
+	const auto& queen_eligible_squares = queen.get_legal_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 41);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
 		&board[2],&board[3], &board[4], &board[8], &board[9], &board[10],
@@ -28,8 +28,8 @@ TEST(QueenSquareAvailableTest, squares_taken)
 	const MockPiece p3{ board, board[2], std::make_unique<BlackColor>() };
 	const MockPiece p4{ board, board[27], std::make_unique<BlackColor>() };
 	Queen queen{ board, board[11], std::make_unique<WhiteColor>() };
-	queen.compute_eligible_squares();
-	const auto& queen_eligible_squares = queen.get_eligible_squares();
+	queen.compute_pseudo_legal_squares();
+	const auto& queen_eligible_squares = queen.get_legal_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 49);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
 		&board[2], &board[3], &board[4], &board[8], &board[9], &board[10],

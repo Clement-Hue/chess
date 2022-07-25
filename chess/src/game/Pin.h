@@ -1,12 +1,11 @@
 #pragma once
-#include "Common.h"
 
 class Piece;
 
  namespace pin
 {
-	CHESS_API void rank_filter(Piece& piece);
-	CHESS_API void file_filter(Piece& piece);
-	CHESS_API void diagonal_filter(Piece& piece);
-	CHESS_API void anti_diagonal_filter(Piece& piece);
+	void rank_filter(Piece& piece);
+	void file_filter(Piece& piece);
+	void diagonal_filter(Piece& piece);
+	void anti_diagonal_filter(Piece& piece);
 }
