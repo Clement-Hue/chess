@@ -5,8 +5,11 @@
 #include "PieceColor.h"
 #include <memory>
 
+#include "BoardIterator.h"
+
 class BoardGame;
 class Square;
+class BoardIterator;
 
 
 class CHESS_API Piece
@@ -75,6 +78,9 @@ class CHESS_API Knight final: public Piece
 public:
 	Knight(BoardGame& board,Square& square, std::unique_ptr<PieceColor> color): Piece(board, square, std::move(color)) {}
 	void compute_eligible_squares() noexcept override;	
+private:
+	template <typename It1, typename It2>
+	void add_eligible_squares() noexcept;
 };
 
 
@@ -85,3 +91,24 @@ public:
 	void compute_eligible_squares() noexcept override;	
 };
 
+template<typename It1, typename It2>
+void Knight::add_eligible_squares() noexcept
+{
+	BoardIterator first_it[2] = {
+		It1(this->board_).begin(*this->get_square())+=2,
+		It1(this->board_).begin(*this->get_square())-=2,
+	};
+	for (const auto& it_1 : first_it)
+	{
+		if (!it_1) continue;
+		BoardIterator second_it[2] = {
+			It2(this->board_).begin(*it_1)+=1,
+			It2(this->board_).begin(*it_1)-=1,
+		};
+		for (const auto& it_2: second_it)
+		{
+			if (!it_2 || it_2->has_friend_piece_of(*this)) continue;
+			this->eligible_squares_[it_2->get_value()] = &*it_2;
+		}
+	}
+}

@@ -63,6 +63,8 @@ void King::compute_eligible_squares() noexcept
 
 void Knight::compute_eligible_squares() noexcept
 {
+	this->add_eligible_squares<FileIterator, RankIterator>();
+	this->add_eligible_squares<RankIterator, FileIterator>();
 }
 
 
