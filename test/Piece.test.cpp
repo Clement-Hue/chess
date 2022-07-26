@@ -17,14 +17,14 @@ TEST(BoardGameTest, construct_board_squares)
 TEST(PieceTest, link_piece_and_square_on_construct)
 {
 	BoardGame board;
-	const MockPiece piece{ board, board[2] };
+	auto& piece = board.get_color(0).create_piece<MockPiece>(&board[2]);
 	EXPECT_EQ(board[2].get_piece(), &piece) << "Pieces are not the same";
 }
 
 TEST(PieceTest, link_piece_and_square_when_moving_piece)
 {
 	BoardGame board;
-	MockPiece piece{ board, board[2] };
+	auto& piece = board.get_color(0).create_piece<MockPiece>(&board[2]);
 	piece.move(board[4]);
 	EXPECT_EQ(board[4].get_piece(), &piece) << "Piece hasn't moved";
 	EXPECT_NE(board[2].get_piece(), &piece) << "Piece still present on old square";
@@ -33,8 +33,8 @@ TEST(PieceTest, link_piece_and_square_when_moving_piece)
 TEST(PieceTest, piece_catch_an_enemy)
 {
 	BoardGame board;
-	MockPiece black_p{ board, board[2], std::make_unique<BlackColor>() };
-	const MockPiece white_p{ board, board[5], std::make_unique<WhiteColor>() };
+	auto& black_p = board.get_color(1).create_piece<MockPiece>(&board[2]);
+	const auto& white_p = board.get_color(0).create_piece<MockPiece>(&board[5]);
 	black_p.move(board[5]);
 	EXPECT_EQ(board[5].get_piece(), &black_p);
 	EXPECT_EQ(board[2].get_piece(), nullptr);
@@ -45,12 +45,12 @@ TEST(PieceTest, piece_catch_an_enemy)
 TEST(PieceTest, cannot_move_to_friend_square)
 {
 	BoardGame board;
-	MockPiece p1{ board, board[2], std::make_unique<WhiteColor>() };
-	const MockPiece p2{ board, board[5], std::make_unique<WhiteColor>() };
+	auto& p1 = board.get_color(0).create_piece<MockPiece>(&board[2]);
+	const auto& p2 = board.get_color(0).create_piece<MockPiece>(&board[5]);
 	p1.move(board[5]);
 	EXPECT_EQ(board[5].get_piece(), &p2);
 	EXPECT_EQ(board[2].get_piece(), &p1);
-	EXPECT_EQ(board[2].get_piece()->get_color(), WhiteColor());
+	EXPECT_TRUE(board[2].get_piece()->get_color() == WhiteColor(board));;
 }
 
 template <typename T, typename Color>
@@ -119,13 +119,12 @@ TEST(PieceTest, init_board_game_white_valuable_pieces)
 
 TEST(PieceColorTest, color_equality)
 {
-	const BlackColor black;
-	const WhiteColor white;
-	const PieceColor* pt_color = &black;
-	EXPECT_TRUE(*pt_color == BlackColor());
-	pt_color = &white;
-	EXPECT_TRUE(*pt_color != BlackColor());
-	EXPECT_TRUE(WhiteColor() == WhiteColor());
-	EXPECT_TRUE(WhiteColor() != BlackColor());
-	EXPECT_FALSE(WhiteColor() == BlackColor());
+	BoardGame board;
+	const PieceColor* pt_color = &board.get_color(1);
+	EXPECT_TRUE(*pt_color == BlackColor(board));
+	pt_color = &board.get_color(0);
+	EXPECT_TRUE(*pt_color != BlackColor(board));
+	EXPECT_TRUE(WhiteColor(board) == WhiteColor(board));
+	EXPECT_TRUE(WhiteColor(board) != BlackColor(board));
+	EXPECT_FALSE(WhiteColor(board) == BlackColor(board));
 }

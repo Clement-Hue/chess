@@ -6,7 +6,7 @@
 TEST(PawnSquareAvailableTest, white_pawn_in_middle_of_board)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[24], std::make_unique<WhiteColor>() };
+	auto& pawn = board.get_color(0).create_piece<Pawn>(&board[24]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
@@ -17,7 +17,7 @@ TEST(PawnSquareAvailableTest, white_pawn_in_middle_of_board)
 TEST(PawnSquareAvailableTest, black_pawn_in_middle_of_board)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[24], std::make_unique<BlackColor>() };
+	auto& pawn = board.get_color(1).create_piece<Pawn>(&board[24]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
@@ -29,7 +29,7 @@ TEST(PawnSquareAvailableTest, black_pawn_in_middle_of_board)
 TEST(PawnSquareAvailableTest, black_pawn_at_start)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[10], std::make_unique<BlackColor>() };
+	auto& pawn = board.get_color(1).create_piece<Pawn>(&board[10]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
@@ -40,7 +40,7 @@ TEST(PawnSquareAvailableTest, black_pawn_at_start)
 TEST(PawnSquareAvailableTest, white_pawn_at_start)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[50], std::make_unique<WhiteColor>() };
+	auto& pawn = board.get_color(0).create_piece<Pawn>(&board[50]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
@@ -52,8 +52,8 @@ TEST(PawnSquareAvailableTest, white_pawn_at_start)
 TEST(PawnSquareAvailableTest, pawn_blocked_by_enemy)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[50], std::make_unique<WhiteColor>() };
-	MockPiece piece{ board, board[42], std::make_unique<BlackColor>() };
+	auto& pawn = board.get_color(0).create_piece<Pawn>(&board[50]);
+	board.get_color(1).create_piece<MockPiece>(&board[42]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
@@ -64,8 +64,8 @@ TEST(PawnSquareAvailableTest, pawn_blocked_by_enemy)
 TEST(PawnSquareAvailableTest, pawn_blocked_by_friend)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[50], std::make_unique<WhiteColor>() };
-	MockPiece piece{ board, board[34], std::make_unique<WhiteColor>() };
+	auto& pawn = board.get_color(0).create_piece<Pawn>(&board[50]);
+	board.get_color(0).create_piece<MockPiece>(&board[34]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
@@ -75,7 +75,7 @@ TEST(PawnSquareAvailableTest, pawn_blocked_by_friend)
 TEST(PawnSquareAvailableTest, pawn_on_edge)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[1], std::make_unique<WhiteColor>() };
+	auto& pawn = board.get_color(0).create_piece<Pawn>(&board[1]);
 	pawn.compute_pseudo_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
 	EXPECT_EQ(std::count(pawn_eligible_squares.begin(), pawn_eligible_squares.end(), nullptr), 64);
@@ -85,9 +85,9 @@ TEST(PawnSquareAvailableTest, pawn_on_edge)
 TEST(PawnSquareAvailableTest, takeable_black_enemy_pieces)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[50], std::make_unique<WhiteColor>() };
-	MockPiece p1{ board, board[41], std::make_unique<BlackColor>() };
-	MockPiece p2{ board, board[43], std::make_unique<BlackColor>() };
+	auto& pawn = board.get_color(0).create_piece<Pawn>(&board[50]);
+	board.get_color(1).create_piece<MockPiece>(&board[41]);
+	board.get_color(1).create_piece<MockPiece>(&board[43]);
 	pawn.compute_pseudo_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
 	EXPECT_EQ(std::count(pawn_eligible_squares.begin(), pawn_eligible_squares.end(), nullptr), 60);
@@ -98,8 +98,8 @@ TEST(PawnSquareAvailableTest, takeable_black_enemy_pieces)
 TEST(PawnSquareAvailableTest, takeable_white_enemy_pieces)
 {
 	BoardGame board;
-	Pawn pawn{ board, board[34], std::make_unique<BlackColor>() };
-	MockPiece p1{ board, board[43], std::make_unique<WhiteColor>() };
+	auto& pawn = board.get_color(1).create_piece<Pawn>(&board[34]);
+	board.get_color(0).create_piece<MockPiece>(&board[43]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();

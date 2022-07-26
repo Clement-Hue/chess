@@ -12,12 +12,12 @@ void PawnPseudoLegalSquares::visit(WhiteColor& color) const
 	this->add_takeable_squares<WhiteColor>(color);
 }
 
-void PawnLegalTakeableSquares::visit(BlackColor& color) const
+void PawnLegalSquares::visit(BlackColor& color) const
 {
 	this->remove_not_legal_takeable_squares<BlackColor>(color);
 }
 
-void PawnLegalTakeableSquares::visit(WhiteColor& color) const
+void PawnLegalSquares::visit(WhiteColor& color) const
 {
 	this->remove_not_legal_takeable_squares<WhiteColor>(color);
 }

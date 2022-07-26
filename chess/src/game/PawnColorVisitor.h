@@ -30,10 +30,10 @@ private:
 	void add_takeable_squares(PieceColor& color) const noexcept;
 };
 
-class PawnLegalTakeableSquares final: public PawnColorVisitor
+class PawnLegalSquares final: public PawnColorVisitor
 {
 public:
-	PawnLegalTakeableSquares(Pawn& pawn): PawnColorVisitor(pawn) {}
+	PawnLegalSquares(Pawn& pawn): PawnColorVisitor(pawn) {}
 	void visit(BlackColor& color) const override;
 	void visit(WhiteColor& color) const override;
 private:
@@ -72,7 +72,7 @@ void PawnPseudoLegalSquares::add_takeable_squares(PieceColor& color) const noexc
 }
 
 template <typename Color>
-void PawnLegalTakeableSquares::remove_not_legal_takeable_squares(PieceColor& color) const noexcept
+void PawnLegalSquares::remove_not_legal_takeable_squares(PieceColor& color) const noexcept
 {
 	this->takeable_squares<Color>(color, [](Pawn& pawn, const BoardIterator& square_it)
 		{

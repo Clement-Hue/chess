@@ -42,6 +42,8 @@ public:
 	int8_t get_first_rank() const noexcept { return this->first_rank_; }
 	int8_t get_second_rank() const noexcept { return this->second_rank_; }
 	BoardGame& get_board() const noexcept { return this->board_; }
+	template <typename P>
+	P& create_piece(Square* square) noexcept;
 protected:
 	using pieces_type = std::vector<std::unique_ptr<Piece>>;
 	pieces_type pieces_;
@@ -63,3 +65,14 @@ public:
 	WhiteColor(BoardGame& board) : PieceColor(board, NB_ROWS - 1, NB_ROWS - 2) {}
 	void accept(const ColorVisitor& visitor) override { visitor.visit(*this); }
 };
+
+
+template <typename P>
+P& PieceColor::create_piece(Square* square) noexcept
+{
+	auto piece_pt = std::make_unique<P>(square, *this);
+	P& piece  = *piece_pt;
+	this->pieces_.emplace_back(std::move(piece_pt));
+	return piece;
+}
+

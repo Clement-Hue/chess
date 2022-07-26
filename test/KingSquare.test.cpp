@@ -6,7 +6,7 @@
 TEST(KingSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	King knight{ board, board[11], std::make_unique<WhiteColor>() };
+	auto& knight = board.get_color(0).create_piece<King>(&board[11]);
 	knight.compute_pseudo_legal_squares();
 	const auto& king_eligible_squares = knight.get_legal_squares();
 	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 56);
@@ -18,7 +18,7 @@ TEST(KingSquareAvailableTest, all_squares_free)
 TEST(KingSquareAvailableTest, positionned_on_edge)
 {
 	BoardGame board;
-	King knight{ board, board[63], std::make_unique<WhiteColor>() };
+	auto& knight = board.get_color(0).create_piece<King>(&board[63]);
 	knight.compute_pseudo_legal_squares();
 	const auto& king_eligible_squares = knight.get_legal_squares();
 	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 61);
@@ -30,10 +30,10 @@ TEST(KingSquareAvailableTest, positionned_on_edge)
 TEST(KingSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
-	const MockPiece p1{ board, board[18], std::make_unique<WhiteColor>() };
-	const MockPiece p2{ board, board[3], std::make_unique<WhiteColor>() };
-	const MockPiece p3{ board, board[2], std::make_unique<BlackColor>() };
-	King king{ board, board[11], std::make_unique<WhiteColor>() };
+	board.get_color(0).create_piece<MockPiece>(&board[18]);
+	board.get_color(0).create_piece<MockPiece>(&board[3]);
+	board.get_color(1).create_piece<MockPiece>(&board[2]);
+	auto& king = board.get_color(0).create_piece<King>(&board[11]);
 	king.compute_pseudo_legal_squares();
 	const auto& king_eligible_squares = king.get_legal_squares();
 	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 58);

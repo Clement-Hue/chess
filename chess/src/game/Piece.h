@@ -16,7 +16,7 @@ public:
 	using pinning_filter_type = void (*)(Piece&);
 	virtual void compute_pseudo_legal_squares() noexcept = 0;
 	void move(Square& square) noexcept;
-	Piece(Square& square, PieceColor& color);
+	Piece(Square* square, PieceColor& color);
 	Piece(const Piece&) = delete;
 	Piece(Piece&&) = delete;
 	Piece& operator=(const Piece&) = delete;
@@ -42,7 +42,7 @@ protected:
 class CHESS_API Rock final: public Piece
 {
 public:
-	Rock(Square& square, PieceColor& color) : Piece(square, color) {}
+	Rock(Square* square, PieceColor& color) : Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 };
 
@@ -50,21 +50,21 @@ public:
 class CHESS_API Bishop final: public Piece
 {
 public:
-	Bishop(Square& square, PieceColor& color): Piece(square, color) {}
+	Bishop(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 };
 
 class CHESS_API Queen final: public Piece
 {
 public:
-	Queen(Square& square, PieceColor& color): Piece(square, color) {}
+	Queen(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 };
 
 class CHESS_API King final: public Piece
 {
 public:
-	King(Square& square, PieceColor& color): Piece(square, color) {}
+	King(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 };
 
@@ -72,7 +72,7 @@ public:
 class CHESS_API Knight final: public Piece
 {
 public:
-	Knight(Square& square, PieceColor& color): Piece(square, color) {}
+	Knight(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 private:
 	template <typename It1, typename It2>
@@ -83,7 +83,7 @@ private:
 class CHESS_API Pawn final: public Piece
 {
 public:
-	Pawn(Square& square, PieceColor& color): Piece(square, color) {}
+	Pawn(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 	void compute_legal_squares() noexcept override;
 };

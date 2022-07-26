@@ -6,7 +6,7 @@
 TEST(KnightSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	Knight knight{ board, board[35], std::make_unique<WhiteColor>() };
+	auto& knight = board.get_color(0).create_piece<Knight>(&board[35]);
 	knight.compute_pseudo_legal_squares();
 	const auto& bishop_eligible_squares = knight.get_legal_squares();
 	EXPECT_EQ(std::count(bishop_eligible_squares.begin(), bishop_eligible_squares.end(), nullptr), 56);
@@ -20,9 +20,9 @@ TEST(KnightSquareAvailableTest, all_squares_free)
 TEST(KnightSquareAvailableTest, squares_taken_by_friends)
 {
 	BoardGame board;
-	Knight knight{ board, board[35], std::make_unique<WhiteColor>() };
-	MockPiece p1{ board, board[18], std::make_unique<WhiteColor>() };
-	MockPiece p2{ board, board[50], std::make_unique<WhiteColor>() };
+	auto& knight = board.get_color(0).create_piece<Knight>(&board[35]);
+	board.get_color(0).create_piece<MockPiece>(&board[18]);
+	board.get_color(0).create_piece<MockPiece>(&board[50]);
 	knight.compute_pseudo_legal_squares();
 	const auto& bishop_eligible_squares = knight.get_legal_squares();
 	EXPECT_EQ(std::count(bishop_eligible_squares.begin(), bishop_eligible_squares.end(), nullptr), 58);

@@ -6,8 +6,8 @@
 #include "PawnColorVisitor.h"
 
 
-Piece::Piece(Square& square, PieceColor& color):
-square_(&square), color_(color)
+Piece::Piece(Square* square, PieceColor& color):
+square_(square), color_(color)
 {
 	this->square_->set_piece(*this);
 }
@@ -114,5 +114,5 @@ void Pawn::compute_pseudo_legal_squares() noexcept
 void Pawn::compute_legal_squares() noexcept 
 {
 	Piece::compute_legal_squares();
-	this->get_color().accept(PawnLegalTakeableSquares(*this));
+	this->get_color().accept(PawnLegalSquares(*this));
 }
