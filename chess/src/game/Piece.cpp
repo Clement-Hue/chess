@@ -6,8 +6,8 @@
 #include "PawnColorVisitor.h"
 
 
-Piece::Piece(BoardGame& board, Square& square, PieceColor& color):
-board_(board), square_(&square), color_(color)
+Piece::Piece(Square& square, PieceColor& color):
+square_(&square), color_(color)
 {
 	this->square_->set_piece(*this);
 }
@@ -42,40 +42,63 @@ void Piece::move(Square& square) noexcept
 
 void Rock::compute_pseudo_legal_squares() noexcept
 {
-	linear_pseudo_legal_squares::add_rank_squares(*this, this->board_);
-	linear_pseudo_legal_squares::add_file_squares(*this, this->board_);
+	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
+	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
 }
 
 void Bishop::compute_pseudo_legal_squares() noexcept
 {
-	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->board_);
-	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->board_);
+	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
+	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
 }
 
 void Queen::compute_pseudo_legal_squares() noexcept
 {
-	linear_pseudo_legal_squares::add_rank_squares(*this, this->board_);
-	linear_pseudo_legal_squares::add_file_squares(*this, this->board_);
-	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->board_);
-	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->board_);
+	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
+	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
+	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
+	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
 }
 
 void King::compute_pseudo_legal_squares() noexcept
 {
 	BoardIterator iterators[8] = {
-		++RankIterator(this->board_).begin(*this->square_), --RankIterator(this->board_).begin(*this->square_),
-		++FileIterator(this->board_).begin(*this->square_), --FileIterator(this->board_).begin(*this->square_),
-		++DiagonalIterator(this->board_).begin(*this->square_), --DiagonalIterator(this->board_).begin(*this->square_),
-		++AntiDiagonalIterator(this->board_).begin(*this->square_), --AntiDiagonalIterator(this->board_).begin (*this->square_)
+		++RankIterator(this->color_.get_board()).begin(*this->square_), --RankIterator(this->color_.get_board()).begin(*this->square_),
+		++FileIterator(this->color_.get_board()).begin(*this->square_), --FileIterator(this->color_.get_board()).begin(*this->square_),
+		++DiagonalIterator(this->color_.get_board()).begin(*this->square_), --DiagonalIterator(this->color_.get_board()).begin(*this->square_),
+		++AntiDiagonalIterator(this->color_.get_board()).begin(*this->square_), --AntiDiagonalIterator(this->color_.get_board()).begin (*this->square_)
 	};
 	for (const auto& square_it: iterators)
 	{
 		if ( square_it && !square_it->has_friend_piece_of(*this) )
 		{
-			this->legal_squares[square_it->get_value()] = &*square_it;
+			this->legal_squares_[square_it->get_value()] = &*square_it;
 		}
 	}
 }
+
+template<typename It1, typename It2>
+void Knight::add_eligible_squares() noexcept
+{
+	BoardIterator first_it[2] = {
+		It1(this->color_.get_board()).begin(*this->get_square())+=2,
+		It1(this->color_.get_board()).begin(*this->get_square())-=2,
+	};
+	for (const auto& it_1 : first_it)
+	{
+		if (!it_1) continue;
+		BoardIterator second_it[2] = {
+			It2(this->color_.get_board()).begin(*it_1)+=1,
+			It2(this->color_.get_board()).begin(*it_1)-=1,
+		};
+		for (const auto& it_2: second_it)
+		{
+			if (!it_2 || it_2->has_friend_piece_of(*this)) continue;
+			this->legal_squares_[it_2->get_value()] = &*it_2;
+		}
+	}
+}
+
 
 void Knight::compute_pseudo_legal_squares() noexcept
 {
@@ -85,11 +108,11 @@ void Knight::compute_pseudo_legal_squares() noexcept
 
 void Pawn::compute_pseudo_legal_squares() noexcept
 {
-	this->get_color().accept(PawnPseudoLegalSquares(*this, this->board_));
+	this->get_color().accept(PawnPseudoLegalSquares(*this ));
 }
 
 void Pawn::compute_legal_squares() noexcept 
 {
 	Piece::compute_legal_squares();
-	this->get_color().accept(PawnLegalTakeableSquares(*this, this->board_));
+	this->get_color().accept(PawnLegalTakeableSquares(*this));
 }

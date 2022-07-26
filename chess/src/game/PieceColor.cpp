@@ -8,28 +8,28 @@ void PieceColor::init_valuable_pieces() noexcept
 	const int8_t init_square_value = this->first_rank_ * NB_COLUMNS;
 	auto& square_it = RankIterator(this->board_).begin(this->board_[init_square_value]);
 	this->pieces_.emplace_back(
-		std::make_unique<Rock>( this->board_, *square_it, *this)
+		std::make_unique<Rock>(  *square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<Knight>(this->board_, *++square_it, *this)
+		std::make_unique<Knight>( *++square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<Bishop>(this->board_, *++square_it, *this)
+		std::make_unique<Bishop>( *++square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<Queen>(this->board_, *++square_it, *this)
+		std::make_unique<Queen>( *++square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<King>( this->board_, *++square_it, *this)
+		std::make_unique<King>(  *++square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<Bishop>( this->board_, *++square_it, *this)
+		std::make_unique<Bishop>(  *++square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<Knight>( this->board_, *++square_it, *this)
+		std::make_unique<Knight>( *++square_it, *this)
 	);
 	this->pieces_.emplace_back(
-		std::make_unique<Rock>( this->board_, *++square_it, *this)
+		std::make_unique<Rock>( *++square_it, *this)
 	);
 }
 
@@ -40,7 +40,7 @@ void PieceColor::init_pawns() noexcept
 		square_it; ++square_it)
 	{
 		this->pieces_.emplace_back(
-			std::make_unique<Pawn>( this->board_, *square_it, *this)
+			std::make_unique<Pawn>( *square_it, *this)
 		);
 	}
 }

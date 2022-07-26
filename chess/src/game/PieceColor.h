@@ -41,6 +41,7 @@ public:
 	void init_pawns() noexcept;
 	int8_t get_first_rank() const noexcept { return this->first_rank_; }
 	int8_t get_second_rank() const noexcept { return this->second_rank_; }
+	BoardGame& get_board() const noexcept { return this->board_; }
 protected:
 	using pieces_type = std::vector<std::unique_ptr<Piece>>;
 	pieces_type pieces_;
