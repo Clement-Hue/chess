@@ -45,11 +45,11 @@ private:
 template <typename Color>
 void PawnPseudoLegalSquares::add_file_eligible_squares() const noexcept
 {
-	auto square_it = FileIterator(this->board_).begin(*this->pawn_.get_square());
+	auto& square_it = FileIterator(this->board_).begin(*this->pawn_.get_square());
 	if (this->increment_fn<Color>(square_it); square_it && square_it->is_free())
 	{
 		this->pawn_.get_legal_square(square_it->get_value()) = &*square_it;
-		if (this->pawn_.get_square()->get_rank() == Color::second_rank)
+		if (this->pawn_.get_square()->get_rank() == this->pawn_.get_color().get_second_rank())
 		{
 			if (this->increment_fn<Color>(square_it); square_it && square_it->is_free())
 			{

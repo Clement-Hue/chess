@@ -1,6 +1,5 @@
 #include "BoardGame.h"
 #include "Constants.h"
-#include "Piece.h"
 #include "BoardIterator.h"
 
 static std::vector<Square> create_squares()
@@ -18,59 +17,14 @@ BoardGame::BoardGame(): squares_(create_squares())
 {
 }
 
-template <typename Color>
-void BoardGame::init_valuable_pieces() noexcept
-{
-	auto& pieces = this->get_pieces<Color>();
-	constexpr auto init_square_value = Color::first_rank * NB_COLUMNS;
-	auto square_it = RankIterator(*this).begin(this->squares_[init_square_value]);
-	pieces.emplace_back(
-		std::make_unique<Rock>( *this, *square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<Knight>( *this, *++square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<Bishop>( *this, *++square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<Queen>( *this, *++square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<King>( *this, *++square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<Bishop>( *this, *++square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<Knight>( *this, *++square_it, std::make_unique<Color>())
-	);
-	pieces.emplace_back(
-		std::make_unique<Rock>( *this, *++square_it, std::make_unique<Color>())
-	);
-}
-
-template <typename Color>
-void BoardGame::init_pawns() noexcept
-{
-	auto& pieces = this->get_pieces<Color>();
-	constexpr auto init_square_value = Color::second_rank * NB_COLUMNS;
-	for (auto& square_it = RankIterator(*this).begin(this->squares_[init_square_value]); 
-		square_it; ++square_it)
-	{
-		pieces.emplace_back(
-			std::make_unique<Pawn>( *this, *square_it, std::make_unique<Color>())
-		);
-	}
-}
-
 
 void BoardGame::init_game() noexcept
 {
-	this->init_valuable_pieces<BlackColor>();
-	this->init_valuable_pieces<WhiteColor>();
-	this->init_pawns<BlackColor>();
-	this->init_pawns<WhiteColor>();
+	for (const auto& color: this->colors_)
+	{
+		color->init_pawns();
+		color->init_valuable_pieces();
+	}
 }
 
 

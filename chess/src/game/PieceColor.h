@@ -1,10 +1,14 @@
 #pragma once
 #include <typeinfo>
+#include <vector>
+#include <memory>
 #include "Common.h"
 #include "Constants.h"
+#include "Piece.h"
 
 class WhiteColor;
 class BlackColor;
+class BoardGame;
 
 class CHESS_API ColorVisitor
 {
@@ -22,32 +26,39 @@ public:
 class CHESS_API PieceColor
 {
 protected:
-	PieceColor() = default;
+	PieceColor(BoardGame& board, const int8_t first_rank, const int8_t second_rank):
+		board_(board), first_rank_(first_rank), second_rank_(second_rank) {}
 public:
-	PieceColor(const PieceColor&) = default;
-	PieceColor(PieceColor&&) = default;
+	PieceColor(const PieceColor&) = delete;
+	PieceColor(PieceColor&&) = delete;
 	PieceColor& operator=(const PieceColor&) = delete;
 	PieceColor& operator=(PieceColor&&) = delete;
 	virtual bool operator==(const PieceColor& other) const noexcept { return typeid(*this) == typeid(other); }
 	virtual bool operator!=(const PieceColor& other) const noexcept { return !(*this == other); }
 	virtual ~PieceColor() = default;
 	virtual void accept(const ColorVisitor& visitor) = 0;
+	void init_valuable_pieces() noexcept;
+	void init_pawns() noexcept;
+	int8_t get_first_rank() const noexcept { return this->first_rank_; }
+	int8_t get_second_rank() const noexcept { return this->second_rank_; }
+protected:
+	using pieces_type = std::vector<std::unique_ptr<Piece>>;
+	pieces_type pieces_;
+	BoardGame& board_;
+	int8_t first_rank_;
+	int8_t second_rank_;
 };
 
 class CHESS_API BlackColor final: public PieceColor
 {
 public:
-	static constexpr  int8_t first_rank = 0;
-	static constexpr  int8_t second_rank = first_rank + 1;
-	BlackColor() : PieceColor() {}
+	BlackColor(BoardGame& board) : PieceColor(board, 0, 1) {}
 	void accept(const ColorVisitor& visitor) override { visitor.visit(*this); }
 };
 
 class CHESS_API WhiteColor final: public PieceColor
 {
 public:
-	static constexpr  int8_t first_rank = NB_ROWS - 1;
-	static constexpr  int8_t second_rank = first_rank - 1;
-	WhiteColor() : PieceColor() {}
+	WhiteColor(BoardGame& board) : PieceColor(board, NB_ROWS - 1, NB_ROWS - 2) {}
 	void accept(const ColorVisitor& visitor) override { visitor.visit(*this); }
 };

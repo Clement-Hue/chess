@@ -1,5 +1,6 @@
 #include "Square.h"
 #include "Piece.h"
+#include "PieceColor.h"
 
 static int8_t get_file_of_value(const int8_t value)
 {

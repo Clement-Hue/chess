@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include "Common.h"
-#include "Constants.h"
 
 class Piece;
 

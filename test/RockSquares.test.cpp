@@ -7,7 +7,7 @@
 TEST(RockSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	Rock rock{ board, board[11], std::make_unique<WhiteColor>()};
+	Rock rock{ board, board[11], board.get_color(0) };
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
 	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);

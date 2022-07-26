@@ -6,10 +6,20 @@
 #include "PawnColorVisitor.h"
 
 
-Piece::Piece(BoardGame& board, Square& square, std::unique_ptr<PieceColor> color):
-board_(board), square_(&square), color_(std::move(color))	
+Piece::Piece(BoardGame& board, Square& square, PieceColor& color):
+board_(board), square_(&square), color_(color)
 {
 	this->square_->set_piece(*this);
+}
+
+bool Piece::is_enemy_of(const Piece& piece) const noexcept
+{
+	return this->get_color() != piece.get_color(); 
+}
+
+bool Piece::is_friend_of(const Piece& piece) const noexcept
+{
+	return !this->is_enemy_of(piece);
 }
 
 void Piece::compute_legal_squares() noexcept
