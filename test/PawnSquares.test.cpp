@@ -89,6 +89,7 @@ TEST(PawnSquareAvailableTest, takeable_black_enemy_pieces)
 	board.get_color(1).create_piece<MockPiece>(&board[41]);
 	board.get_color(1).create_piece<MockPiece>(&board[43]);
 	pawn.compute_pseudo_legal_squares();
+	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
 	EXPECT_EQ(std::count(pawn_eligible_squares.begin(), pawn_eligible_squares.end(), nullptr), 60);
 	EXPECT_THAT(pawn_eligible_squares, IsSupersetOf({ &board[41],&board[42], &board[43], &board[34]}));

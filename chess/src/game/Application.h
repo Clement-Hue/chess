@@ -1,8 +1,8 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <memory>
 #include "BoardGame.h"
 #include "EventHandler.h"
-#include <memory>
 #include "Common.h"
 
 struct WindowSize

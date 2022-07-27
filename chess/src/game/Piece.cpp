@@ -1,13 +1,12 @@
 #include "Piece.h"
 #include "BoardGame.h"
 #include "BoardIterator.h"
-#include "PseudoLegalSquares.h"
+#include "LinearLegalSquares.h"
 #include "PieceColor.h"
-#include "PawnColorVisitor.h"
+#include "PawnLegalSquares.h"
 
 
-Piece::Piece(Square* square, PieceColor& color):
-square_(square), color_(color)
+Piece::Piece(Square* square, PieceColor& color): square_(square), color_(color)
 {
 	this->square_->set_piece(*this);
 }
@@ -77,6 +76,23 @@ void King::compute_pseudo_legal_squares() noexcept
 	}
 }
 
+void King::compute_legal_squares() noexcept
+{
+	Piece::compute_legal_squares();
+	for (const auto& color: this->color_.get_board().get_colors())
+	{
+		if (*color == this->get_color()) continue;
+		for (const auto& piece: color->get_pieces())
+		{
+			for (const auto& square: piece->get_legal_squares())
+			{
+				if (!square) continue;
+				this->legal_squares_[square->get_value()] = nullptr;
+			}
+		}
+	}
+}
+
 template<typename It1, typename It2>
 void Knight::add_eligible_squares() noexcept
 {
@@ -108,7 +124,7 @@ void Knight::compute_pseudo_legal_squares() noexcept
 
 void Pawn::compute_pseudo_legal_squares() noexcept
 {
-	this->get_color().accept(PawnPseudoLegalSquares(*this ));
+	this->get_color().accept(PawnPseudoLegalSquares(*this));
 }
 
 void Pawn::compute_legal_squares() noexcept 

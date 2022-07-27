@@ -8,6 +8,7 @@
 
 class CHESS_API  BoardGame
 {
+	using colors_type = std::array<std::unique_ptr<PieceColor>, 2>;
 public:
 	BoardGame();
 	BoardGame(const BoardGame&) = delete;
@@ -19,8 +20,9 @@ public:
 	void init_game() noexcept;
 	bool has_square_value(const int8_t value) const noexcept { return value >= 0 && value < squares_.size(); }
 	PieceColor& get_color(const int8_t i) const  noexcept { return *this->colors_[i]; }
+	const colors_type& get_colors() const  noexcept { return this->colors_; }
 private:
 	std::vector<Square> squares_;
-	std::unique_ptr<PieceColor> colors_[2]  { std::make_unique<WhiteColor>(*this), std::make_unique<BlackColor>(*this) };
+	colors_type colors_  { std::make_unique<WhiteColor>(*this), std::make_unique<BlackColor>(*this) };
 };
 

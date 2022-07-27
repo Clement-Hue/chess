@@ -25,8 +25,6 @@ public:
 	void visit(WhiteColor&) const override;
 private:
 	template <typename Color>
-	void add_file_eligible_squares(PieceColor& color) const noexcept;
-	template <typename Color>
 	void add_takeable_squares(PieceColor& color) const noexcept;
 };
 
@@ -39,10 +37,12 @@ public:
 private:
 	template <typename Color>
 	void remove_not_legal_takeable_squares(PieceColor& color) const noexcept;
+	template <typename Color>
+	void add_file_eligible_squares(PieceColor& color) const noexcept;
 };
 
 template <typename Color>
-void PawnPseudoLegalSquares::add_file_eligible_squares(PieceColor& color) const noexcept
+void PawnLegalSquares::add_file_eligible_squares(PieceColor& color) const noexcept
 {
 	auto& square_it = FileIterator(color.get_board()).begin(*this->pawn_.get_square());
 	if (this->increment_fn<Color>(square_it); square_it && square_it->is_free())

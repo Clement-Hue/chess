@@ -1,5 +1,4 @@
-#include "PseudoLegalSquares.h"
-#include "Pin.h"
+#include "LinearLegalSquares.h"
 #include "BoardGame.h"
 
 class LinearPseudoLegalSquares
@@ -16,7 +15,6 @@ private:
 	BoardIterator iterator_;
 	Piece::pinning_filter_type pinning_filter_;
 };
-
 
 void LinearPseudoLegalSquares::add_pseudo_legal_squares(const increment_fn_type increment_fn)  noexcept
 {
@@ -61,24 +59,46 @@ void LinearPseudoLegalSquares::operator()() noexcept
 	this->add_pseudo_legal_squares([](BoardIterator& it) {--it; });
 }
 
-
-CHESS_API void linear_pseudo_legal_squares::add_rank_squares(Piece& piece, BoardGame& board)
+using square_fn_type = bool (Square::*) (const Square&) const ;
+static void base_filter(Piece& piece,  const square_fn_type predicate )
 {
-	LinearPseudoLegalSquares(piece, RankIterator(board), pin::rank_filter)();
+	auto& eligible_squares = piece.get_legal_squares();
+	for (int8_t i =0 ; i < eligible_squares.size(); ++i)
+	{
+		if (!eligible_squares[i] || (piece.get_square()->*predicate)(*eligible_squares[i])) continue;
+		piece.get_legal_square(i) = nullptr;
+	}
 }
 
-CHESS_API void linear_pseudo_legal_squares::add_file_squares(Piece& piece, BoardGame& board)
+void linear_pseudo_legal_squares::add_rank_squares(Piece& piece, BoardGame& board)
 {
-	LinearPseudoLegalSquares(piece, FileIterator(board), pin::file_filter)();
+	LinearPseudoLegalSquares(piece, RankIterator(board), [](Piece& p)
+	{
+		base_filter(p, &Square::is_same_rank);
+	})();
 }
 
-CHESS_API void linear_pseudo_legal_squares::add_diagonal_squares(Piece& piece, BoardGame& board)
+void linear_pseudo_legal_squares::add_file_squares(Piece& piece, BoardGame& board)
 {
-	LinearPseudoLegalSquares(piece, DiagonalIterator(board), pin::diagonal_filter)();
+	LinearPseudoLegalSquares(piece, FileIterator(board), [](Piece& p)
+	{
+		base_filter(p, &Square::is_same_file);
+	})();
 }
 
-CHESS_API void linear_pseudo_legal_squares::add_anti_diagonal_squares(Piece& piece, BoardGame& board)
+void linear_pseudo_legal_squares::add_diagonal_squares(Piece& piece, BoardGame& board)
 {
-	LinearPseudoLegalSquares(piece, AntiDiagonalIterator(board), pin::anti_diagonal_filter)();
+	LinearPseudoLegalSquares(piece, DiagonalIterator(board), [](Piece& p)
+	{
+		base_filter(p, &Square::is_same_diagonal);
+	})();
+}
+
+void linear_pseudo_legal_squares::add_anti_diagonal_squares(Piece& piece, BoardGame& board)
+{
+	LinearPseudoLegalSquares(piece, AntiDiagonalIterator(board), [](Piece& p)
+	{
+		base_filter(p, &Square::is_same_anti_diagonal);
+	})();
 }
 

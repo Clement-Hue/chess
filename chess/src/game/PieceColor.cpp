@@ -1,4 +1,3 @@
-#include <memory>
 #include "PieceColor.h"
 #include "BoardIterator.h"
 #include "BoardGame.h"

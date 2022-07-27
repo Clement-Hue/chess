@@ -10,7 +10,7 @@ class WhiteColor;
 class BlackColor;
 class BoardGame;
 
-class CHESS_API ColorVisitor
+class ColorVisitor
 {
 public:
 	ColorVisitor() = default;
@@ -26,6 +26,7 @@ public:
 class CHESS_API PieceColor
 {
 protected:
+	using pieces_type = std::vector<std::unique_ptr<Piece>>;
 	PieceColor(BoardGame& board, const int8_t first_rank, const int8_t second_rank):
 		board_(board), first_rank_(first_rank), second_rank_(second_rank) {}
 public:
@@ -42,10 +43,10 @@ public:
 	int8_t get_first_rank() const noexcept { return this->first_rank_; }
 	int8_t get_second_rank() const noexcept { return this->second_rank_; }
 	BoardGame& get_board() const noexcept { return this->board_; }
+	const pieces_type& get_pieces() noexcept { return this->pieces_; }
 	template <typename P>
 	P& create_piece(Square* square) noexcept;
 protected:
-	using pieces_type = std::vector<std::unique_ptr<Piece>>;
 	pieces_type pieces_;
 	BoardGame& board_;
 	int8_t first_rank_;

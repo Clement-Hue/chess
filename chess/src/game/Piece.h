@@ -4,10 +4,8 @@
 #include "Common.h"
 #include "BoardIterator.h"
 
-class BoardGame;
 class Square;
 class PieceColor;
-
 
 class CHESS_API Piece
 {
@@ -66,6 +64,7 @@ class CHESS_API King final: public Piece
 public:
 	King(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
+	void compute_legal_squares() noexcept override;
 };
 
 
