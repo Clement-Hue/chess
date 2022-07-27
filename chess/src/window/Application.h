@@ -1,9 +1,9 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <memory>
-#include "BoardGame.h"
 #include "EventHandler.h"
-#include "Common.h"
+#include "../game/BoardGame.h"
+#include "../Common.h"
 
 struct WindowSize
 {

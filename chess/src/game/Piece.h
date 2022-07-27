@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 #include "Constants.h"
-#include "Common.h"
+#include "../Common.h"
 #include "BoardIterator.h"
 
 class Square;

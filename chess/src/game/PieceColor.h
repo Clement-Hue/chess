@@ -2,7 +2,7 @@
 #include <typeinfo>
 #include <vector>
 #include <memory>
-#include "Common.h"
+#include "../Common.h"
 #include "Constants.h"
 #include "Piece.h"
 

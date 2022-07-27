@@ -1,5 +1,5 @@
 #pragma once
-#include "Common.h"
+#include "../Common.h"
 #include "Constants.h"
 #include "Square.h"
 #include <cstdint>
