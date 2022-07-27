@@ -28,9 +28,11 @@ public:
 	Application& operator=(Application&&) = delete;
 	~Application();
 private:
+	static constexpr int8_t NB_SPRITES = 12;
 	const WindowSize window_size_;
 	const CaseColor primary_color_;
 	const CaseColor secondary_color_;
+	SDL_Texture* sprites_[NB_SPRITES];
 	SDL_Window* window_{ nullptr };
 	SDL_Renderer* renderer_{ nullptr };
 	BoardGame board_;
@@ -42,7 +44,7 @@ private:
 
 	void init_window_and_renderer();
 	void draw_board() const noexcept;
-	void load_assets() const;
+	void load_assets() ;
 	void app_loop();
 	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
 };

@@ -62,10 +62,10 @@ void LinearPseudoLegalSquares::operator()() noexcept
 using square_fn_type = bool (Square::*) (const Square&) const ;
 static void base_filter(Piece& piece,  const square_fn_type predicate )
 {
-	auto& eligible_squares = piece.get_legal_squares();
-	for (int8_t i =0 ; i < eligible_squares.size(); ++i)
+	auto& legal_squares = piece.get_legal_squares();
+	for (int8_t i =0 ; i < legal_squares.size(); ++i)
 	{
-		if (!eligible_squares[i] || (piece.get_square()->*predicate)(*eligible_squares[i])) continue;
+		if (!legal_squares[i] || (piece.get_square()->*predicate)(*legal_squares[i])) continue;
 		piece.get_legal_square(i) = nullptr;
 	}
 }

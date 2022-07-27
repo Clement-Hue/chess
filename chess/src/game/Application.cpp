@@ -47,8 +47,12 @@ void Application::init()
 
 Application::~Application()
 {
-	SDL_DestroyWindow(this->window_);
+	for (const auto sprite : this->sprites_)
+	{
+		SDL_DestroyTexture(sprite);
+	}
 	SDL_DestroyRenderer(this->renderer_);
+	SDL_DestroyWindow(this->window_);
 	SDL_Quit();
 }
 
@@ -98,19 +102,27 @@ void Application::draw_board() const noexcept
 	SDL_RenderClear(this->renderer_);
 	SDL_SetRenderDrawColor(this->renderer_, this->secondary_color_.r, this->secondary_color_.g, 
 		this->secondary_color_.b, this->secondary_color_.a);
-	const auto& [case_width, case_height] = this->get_case_dimensions();
+	const auto [case_width, case_height] = this->get_case_dimensions();
 	const auto white_squares = create_white_squares<nb_rect>(case_width, case_height);
 	SDL_RenderFillRects(this->renderer_, white_squares.data(), nb_rect);
 	SDL_RenderPresent(this->renderer_);
 }
 
-void Application::load_assets() const
+void Application::load_assets() 
 {
-	SDL_Surface* image = IMG_Load("assets/chess_piece_2_black_bishop.png");
-	SDL_Rect dest = {  0, 0 };
-	if (!image)
+	const std::string sprite_names[NB_SPRITES] = {
+		"king_w.png", "king_b.png", "queen_w.png", "queen_b.png", "bishop_w.png",
+		"bishop_b.png", "knight_b.png", "knight_w.png", "pawn_w.png", "pawn_b.png",
+		"rock_w.png", "rock_b.png"
+	};
+	const auto [case_width, case_height] = this->get_case_dimensions();
+	const SDL_Rect dest = {  0, 0, case_width, case_height  };
+	for (int8_t i = 0; i < sprite_names->size(); ++i)
 	{
-		throw std::runtime_error("Unable to load assets");
+		const auto surface =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+		this->sprites_[i] = SDL_CreateTextureFromSurface(this->renderer_, surface);
+		SDL_FreeSurface(surface);
+		SDL_RenderCopy(this->renderer_, this->sprites_[i], nullptr, &dest);
 	}
-	SDL_Texture* render_image = SDL_CreateTextureFromSurface(this->renderer_, image);
+	SDL_RenderPresent(this->renderer_);
 }
