@@ -2,6 +2,22 @@
 #include "AssetFactory.h"
 #include <string>
 
+static PieceAssetFactory::surfaces_type create_surfaces(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names)
+{
+	PieceAssetFactory::surfaces_type surfaces{nullptr};
+	for (int8_t i = 0; i < surfaces.size(); ++i)
+	{
+		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+	}
+	return surfaces;
+}
+
+
+PieceAssetFactory::PieceAssetFactory(Application& app, const std::array<std::string, NB_SURFACES>& sprite_names): app_(app),
+	surfaces_(create_surfaces(sprite_names))
+{
+}
+
 void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const noexcept
 {
 	const auto [case_width, case_height] = this->app_.get_case_dimensions();
@@ -21,31 +37,29 @@ PieceAssetFactory::~PieceAssetFactory()
 	}
 }
 
-static  PieceAssetFactory::surfaces_type create_surfaces(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names)
+
+void AssetFactory::create_piece_assets(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names, PieceColor& color ) const noexcept
 {
-	PieceAssetFactory::surfaces_type surfaces{nullptr};
-	for (int8_t i = 0; i < surfaces.size(); ++i)
+	for (const auto& piece: color.get_pieces())
 	{
-		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+		piece->accept(PieceAssetFactory(this->app_, sprite_names));
 	}
-	return surfaces;
 }
 
-BlackAssetFactory::BlackAssetFactory(Application& app): PieceAssetFactory(app, 
-	create_surfaces( {
-		"king_b.png", "queen_b.png", 
+void AssetFactory::visit(BlackColor& color) const
+{
+	this->create_piece_assets({
+		"king_b.png", "queen_b.png",
 		"bishop_b.png",  "knight_b.png", "pawn_b.png",
 		 "rock_b.png"
-	})) 
-{
+		}, color);
 }
 
-WhiteAssetFactory::WhiteAssetFactory(Application& app): PieceAssetFactory(app, 
-	create_surfaces({
-		"king_w.png", "queen_w.png", 
+void AssetFactory::visit(WhiteColor& color) const
+{
+	this->create_piece_assets({
+		"king_w.png", "queen_w.png",
 		"bishop_w.png",  "knight_w.png", "pawn_w.png",
 		 "rock_w.png"
-	})
-	)
-{
+	}, color);
 }
