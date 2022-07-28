@@ -67,6 +67,17 @@ void Application::render_square_asset(const Asset& asset, const CaseColor& color
 	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &asset.rect);
 }
 
+void Application::render_legal_squares(const Piece& piece) const noexcept
+{
+	for (const auto square : piece.get_legal_squares())
+	{
+		if (!square) continue;
+		auto rect = this->get_rect_of_square(*square);
+		SDL_SetRenderDrawColor(this->renderer_, 55, 205, 0, 255);
+		SDL_RenderFillRect(this->renderer_, &rect);
+	}
+}
+
 void Application::set_current_asset(Asset* asset) noexcept
 {
 	if (this->current_asset_ == asset) return;
@@ -78,6 +89,7 @@ void Application::set_current_asset(Asset* asset) noexcept
 		);
 	}
 	this->render_square_asset(*asset, { 255,205,0,255 });
+	// this->render_legal_squares(asset->piece);
 	SDL_RenderPresent(this->renderer_);
 	this->current_asset_ = asset;
 }
@@ -149,3 +161,10 @@ void Application::load_assets()
 		color->accept(AssetFactory(*this));
 	}
 }
+
+SDL_Rect Application::get_rect_of_square(const Square& square) const noexcept
+{
+	const auto [case_width, case_height] = this->get_case_dimensions();
+	return {  square.get_file() * case_width, square.get_rank() * case_height, case_width, case_height  };
+}
+

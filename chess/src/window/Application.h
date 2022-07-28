@@ -43,7 +43,7 @@ public:
 		return { this->window_size_.width / NB_COLUMNS, this->window_size_.height / NB_COLUMNS };
 	}
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;
-	void render_square_asset(const Asset&, const CaseColor&) const noexcept;
+	SDL_Rect get_rect_of_square(const Square& square) const noexcept;
 private:
 	Asset* current_asset_{nullptr};
 	const WindowSize window_size_;
@@ -57,6 +57,8 @@ private:
 	void draw_board() const noexcept;
 	void load_assets() ;
 	void app_loop();
+	void render_square_asset(const Asset&, const CaseColor&) const noexcept;
+	void render_legal_squares(const Piece& piece) const noexcept;
 	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
 };
 

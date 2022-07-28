@@ -25,6 +25,7 @@ TEST(BoardGameTest, should_simulate_a_game)
 	auto& pawn_b = board.get_color(1).get_piece(0);
 	auto& pawn_w = board.get_color(0).get_piece(0);
 	EXPECT_TRUE(pawn_b.get_legal_square(17));
+	EXPECT_FALSE(pawn_w.get_legal_square(41));
 	pawn_w.move(board[40]);
 	EXPECT_EQ(*pawn_w.get_square(), board[40]);
 	EXPECT_FALSE(pawn_b.get_legal_square(17));
