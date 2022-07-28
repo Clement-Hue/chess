@@ -7,9 +7,9 @@
 TEST(QueenSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	Queen queen{ board, board[11], PieceColor::white };
-	queen.compute_eligible_squares();
-	const auto& queen_eligible_squares = queen.get_eligible_squares();
+	auto& queen = board.get_color(0).create_piece<Queen>(&board[11]);
+	queen.compute_pseudo_legal_squares();
+	const auto& queen_eligible_squares = queen.get_legal_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 41);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
 		&board[2],&board[3], &board[4], &board[8], &board[9], &board[10],
@@ -23,13 +23,13 @@ TEST(QueenSquareAvailableTest, all_squares_free)
 TEST(QueenSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
-	const MockPiece p1{ board, board[25], PieceColor::white };
-	const MockPiece p2{ board, board[38], PieceColor::white };
-	const MockPiece p3{ board, board[2], PieceColor::black };
-	const MockPiece p4{ board, board[27], PieceColor::black };
-	Queen queen{ board, board[11], PieceColor::white };
-	queen.compute_eligible_squares();
-	const auto& queen_eligible_squares = queen.get_eligible_squares();
+	board.get_color(0).create_piece<MockPiece>(&board[25]);
+	board.get_color(0).create_piece<MockPiece>(&board[38]);
+	board.get_color(1).create_piece<MockPiece>(&board[2]);
+	board.get_color(1).create_piece<MockPiece>(&board[27]);
+	auto& queen = board.get_color(0).create_piece<Queen>(&board[11]);
+	queen.compute_pseudo_legal_squares();
+	const auto& queen_eligible_squares = queen.get_legal_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 49);
 	EXPECT_THAT(queen_eligible_squares, IsSupersetOf({
 		&board[2], &board[3], &board[4], &board[8], &board[9], &board[10],

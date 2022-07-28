@@ -1,6 +1,6 @@
 #include "BoardGame.h"
 #include "Constants.h"
-#include "Piece.h"
+#include "BoardIterator.h"
 
 static std::vector<Square> create_squares()
 {
@@ -17,53 +17,39 @@ BoardGame::BoardGame(): squares_(create_squares())
 {
 }
 
-void BoardGame::init_valuable_pieces(PieceColor color, const uint8_t offset) noexcept
-{
-	auto& pieces = this->get_pieces(color);
-	pieces.emplace_back(
-		std::make_unique<Rock>( *this, this->squares_[offset], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<Knight>( *this, this->squares_[offset + 1], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<Bishop>( *this, this->squares_[offset + 2], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<Queen>( *this, this->squares_[offset + 3], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<King>( *this, this->squares_[offset + 4], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<Bishop>( *this, this->squares_[offset + 5], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<Knight>( *this, this->squares_[offset + 6], color)
-	);
-	pieces.emplace_back(
-		std::make_unique<Rock>( *this, this->squares_[offset + 7], color)
-	);
-}
 
-void BoardGame::init_pawns(PieceColor color, const uint8_t offset) noexcept
+void BoardGame::init_game() const noexcept
 {
-	auto& pieces = this->get_pieces(color);
-	for (uint8_t i = offset; i<offset+NB_SQUARES_BY_ROW; ++i)
+	for (const auto& color: this->colors_)
 	{
-		pieces.emplace_back(
-			std::make_unique<Pawn>( *this, this->squares_[i], color)
-		);
+		color->init_pawns();
+		color->init_valuable_pieces();
 	}
+	this->compute_legal_squares();
 }
 
 
-void BoardGame::init_game() noexcept
+void BoardGame::next_turn() noexcept
 {
-	this->init_valuable_pieces(PieceColor::black, 0);
-	this->init_valuable_pieces(PieceColor::white, NB_SQUARES - NB_SQUARES_BY_ROW   );
-	this->init_pawns(PieceColor::black, 8);
-	this->init_pawns(PieceColor::white, 48);
+	++this->turn_;
+	if (this->turn_ == this->colors_.size())
+	{
+		this->turn_ = 0;
+	}
+	this->compute_legal_squares();
 }
 
+PieceColor& BoardGame::get_turn() const noexcept
+{
+	return *this->colors_[this->turn_]; 
+}
+
+void BoardGame::compute_legal_squares() const noexcept
+{
+	for (const auto& color: this->colors_)
+	{
+		color->compute_pseudo_legal_squares();
+	}
+	this->colors_[this->turn_]->compute_legal_squares();
+}
 

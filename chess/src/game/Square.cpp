@@ -1,14 +1,15 @@
 #include "Square.h"
 #include "Piece.h"
+#include "PieceColor.h"
 
 static int8_t get_file_of_value(const int8_t value)
 {
-	 return value % NB_SQUARES_BY_ROW; 
+	 return value % NB_COLUMNS; 
 }
 
 static int8_t get_rank_of_value(const int8_t value)
 {
-	return value / NB_SQUARES_BY_ROW; 
+	return value / NB_COLUMNS; 
 }
 
 bool Square::has_enemy_piece_of(const Piece& piece) const noexcept
@@ -51,4 +52,14 @@ bool Square::is_same_anti_diagonal(const Square& square) const noexcept
 bool Square::is_same_anti_diagonal(const int8_t value) const noexcept
 {
 	return get_file_of_value(value)  - this->get_file() == get_rank_of_value(value) - this->get_rank();
+}
+
+bool Square::is_same_rank(const int8_t value) const noexcept
+{
+	return this->get_rank() == get_rank_of_value(value);
+}
+
+bool Square::is_same_file(const int8_t value) const noexcept
+{
+	return this->get_file() == get_file_of_value(value);
 }

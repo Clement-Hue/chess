@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "Common.h"
-#include "Constants.h"
+#include "../Common.h"
 
 class Piece;
 
@@ -19,8 +18,8 @@ public:
 	bool is_same_diagonal(const int8_t value) const noexcept;
 	bool is_same_anti_diagonal(const Square& square) const noexcept;
 	bool is_same_anti_diagonal(const int8_t value) const noexcept;
-	bool is_same_rank(const int8_t value) const noexcept { return this->get_rank() == value / NB_SQUARES_BY_ROW; }
-	bool is_same_file(const int8_t value) const noexcept { return this->get_file() == value % NB_SQUARES_BY_ROW; }
+	bool is_same_rank(const int8_t value) const noexcept;
+	bool is_same_file(const int8_t value) const noexcept;
 	bool is_free() const noexcept { return this->piece_ == nullptr; }
 	bool has_enemy_piece_of(const Piece& piece) const noexcept;
 	bool has_friend_piece_of(const Piece& piece) const noexcept;

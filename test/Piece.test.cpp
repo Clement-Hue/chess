@@ -17,14 +17,15 @@ TEST(BoardGameTest, construct_board_squares)
 TEST(PieceTest, link_piece_and_square_on_construct)
 {
 	BoardGame board;
-	const MockPiece piece{ board, board[2] };
+	auto& piece = board.get_color(0).create_piece<MockPiece>(&board[2]);
 	EXPECT_EQ(board[2].get_piece(), &piece) << "Pieces are not the same";
 }
 
 TEST(PieceTest, link_piece_and_square_when_moving_piece)
 {
 	BoardGame board;
-	MockPiece piece{ board, board[2] };
+	auto& piece = board.get_color(0).create_piece<MockPiece>(&board[2]);
+	piece.get_legal_square(4) = &board[4];
 	piece.move(board[4]);
 	EXPECT_EQ(board[4].get_piece(), &piece) << "Piece hasn't moved";
 	EXPECT_NE(board[2].get_piece(), &piece) << "Piece still present on old square";
@@ -33,11 +34,13 @@ TEST(PieceTest, link_piece_and_square_when_moving_piece)
 TEST(PieceTest, piece_catch_an_enemy)
 {
 	BoardGame board;
-	MockPiece black_p{ board, board[2], PieceColor::black };
-	const MockPiece white_p{ board, board[5], PieceColor::white };
+	board.set_turn(1);
+	auto& black_p = board.get_color(1).create_piece<MockPiece>(&board[2]);
+	const auto& white_p = board.get_color(0).create_piece<MockPiece>(&board[5]);
+	black_p.get_legal_square(5) = &board[5];
 	black_p.move(board[5]);
-	EXPECT_EQ(board[5].get_piece(), &black_p);
-	EXPECT_EQ(board[2].get_piece(), nullptr);
+	EXPECT_EQ(board[5].get_piece(), &black_p) << "Black piece hasn't moved";
+	EXPECT_EQ(board[2].get_piece(), nullptr) << "White piece still on the board";
 	EXPECT_EQ(black_p.get_square(), &board[5]);
 	EXPECT_EQ(white_p.get_square(), nullptr);
 }
@@ -45,18 +48,18 @@ TEST(PieceTest, piece_catch_an_enemy)
 TEST(PieceTest, cannot_move_to_friend_square)
 {
 	BoardGame board;
-	MockPiece p1{ board, board[2], PieceColor::white };
-	const MockPiece p2{ board, board[5], PieceColor::white };
+	auto& p1 = board.get_color(0).create_piece<MockPiece>(&board[2]);
+	const auto& p2 = board.get_color(0).create_piece<MockPiece>(&board[5]);
 	p1.move(board[5]);
 	EXPECT_EQ(board[5].get_piece(), &p2);
 	EXPECT_EQ(board[2].get_piece(), &p1);
-	EXPECT_EQ(board[2].get_piece()->get_color(), PieceColor::white);
+	EXPECT_TRUE(board[2].get_piece()->get_color() == WhiteColor(board));;
 }
 
-template <typename T>
-void is_in_board(const Square& square, const PieceColor color)
+template <typename T, typename Color>
+void is_in_board(const Square& square )
 {
-	EXPECT_EQ(square.get_piece()->get_color(), color) << "Invalid piece color";
+	EXPECT_EQ(typeid(square.get_piece()->get_color()), typeid(Color)) << "Invalid piece color";
 	EXPECT_TRUE( dynamic_cast<T*>(square.get_piece()) ) << "Invalid type of piece";
 }
 
@@ -65,55 +68,88 @@ TEST(PieceTest, init_board_game_black_pawn)
 {
 	BoardGame board;
 	board.init_game();
-	is_in_board<Pawn>(board[8], PieceColor::black);
-	is_in_board<Pawn>(board[9], PieceColor::black);
-	is_in_board<Pawn>(board[10], PieceColor::black);
-	is_in_board<Pawn>(board[11], PieceColor::black);
-	is_in_board<Pawn>(board[12], PieceColor::black);
-	is_in_board<Pawn>(board[13], PieceColor::black);
-	is_in_board<Pawn>(board[14], PieceColor::black);
-	is_in_board<Pawn>(board[15], PieceColor::black);
+	is_in_board<Pawn, BlackColor>(board[8]);
+	is_in_board<Pawn, BlackColor>(board[9]);
+	is_in_board<Pawn, BlackColor>(board[10]);
+	is_in_board<Pawn, BlackColor>(board[11]);
+	is_in_board<Pawn, BlackColor>(board[12]);
+	is_in_board<Pawn, BlackColor>(board[13]);
+	is_in_board<Pawn, BlackColor>(board[14]);
+	is_in_board<Pawn, BlackColor>(board[15]);
 }
 
 TEST(PieceTest, init_board_game_white_pawn)
 {
 	BoardGame board;
 	board.init_game();
-	is_in_board<Pawn>(board[48], PieceColor::white);
-	is_in_board<Pawn>(board[49], PieceColor::white);
-	is_in_board<Pawn>(board[50], PieceColor::white);
-	is_in_board<Pawn>(board[51], PieceColor::white);
-	is_in_board<Pawn>(board[52], PieceColor::white);
-	is_in_board<Pawn>(board[53], PieceColor::white);
-	is_in_board<Pawn>(board[54], PieceColor::white);
-	is_in_board<Pawn>(board[55], PieceColor::white);
+	is_in_board<Pawn, WhiteColor>(board[48]);
+	is_in_board<Pawn, WhiteColor>(board[49]);
+	is_in_board<Pawn, WhiteColor>(board[50]);
+	is_in_board<Pawn, WhiteColor>(board[51]);
+	is_in_board<Pawn, WhiteColor>(board[52]);
+	is_in_board<Pawn, WhiteColor>(board[53]);
+	is_in_board<Pawn, WhiteColor>(board[54]);
+	is_in_board<Pawn, WhiteColor>(board[55]);
 }
 
 TEST(PieceTest, init_board_game_black_valuable_pieces)
 {
 	BoardGame board;
 	board.init_game();
-	is_in_board<Rock>(board[0], PieceColor::black);
-	is_in_board<Knight>(board[1], PieceColor::black);
-	is_in_board<Bishop>(board[2], PieceColor::black);
-	is_in_board<Queen>(board[3], PieceColor::black);
-	is_in_board<King>(board[4], PieceColor::black);
-	is_in_board<Bishop>(board[5], PieceColor::black);
-	is_in_board<Knight>(board[6], PieceColor::black);
-	is_in_board<Rock>(board[7], PieceColor::black);
+	is_in_board<Rock, BlackColor>(board[0]);
+	is_in_board<Knight, BlackColor>(board[1]);
+	is_in_board<Bishop, BlackColor>(board[2]);
+	is_in_board<Queen, BlackColor>(board[3]);
+	is_in_board<King, BlackColor>(board[4]);
+	is_in_board<Bishop, BlackColor>(board[5]);
+	is_in_board<Knight, BlackColor>(board[6]);
+	is_in_board<Rock, BlackColor>(board[7]);
 }
 
 TEST(PieceTest, init_board_game_white_valuable_pieces)
 {
 	BoardGame board;
 	board.init_game();
-	is_in_board<Rock>(board[56], PieceColor::white);
-	is_in_board<Knight>(board[57], PieceColor::white);
-	is_in_board<Bishop>(board[58], PieceColor::white);
-	is_in_board<Queen>(board[59], PieceColor::white);
-	is_in_board<King>(board[60], PieceColor::white);
-	is_in_board<Bishop>(board[61], PieceColor::white);
-	is_in_board<Knight>(board[62], PieceColor::white);
-	is_in_board<Rock>(board[63], PieceColor::white);
+	is_in_board<Rock, WhiteColor>(board[56]);
+	is_in_board<Knight, WhiteColor>(board[57]);
+	is_in_board<Bishop, WhiteColor>(board[58]);
+	is_in_board<Queen, WhiteColor>(board[59]);
+	is_in_board<King, WhiteColor>(board[60]);
+	is_in_board<Bishop, WhiteColor>(board[61]);
+	is_in_board<Knight, WhiteColor>(board[62]);
+	is_in_board<Rock, WhiteColor>(board[63]);
 }
 
+TEST(PieceColorTest, color_equality)
+{
+	BoardGame board;
+	const PieceColor* pt_color = &board.get_color(1);
+	EXPECT_TRUE(*pt_color == BlackColor(board));
+	pt_color = &board.get_color(0);
+	EXPECT_TRUE(*pt_color != BlackColor(board));
+	EXPECT_TRUE(WhiteColor(board) == WhiteColor(board));
+	EXPECT_TRUE(WhiteColor(board) != BlackColor(board));
+	EXPECT_FALSE(WhiteColor(board) == BlackColor(board));
+}
+
+TEST(PieceTest, not_allowed_to_move_to_not_legal_square)
+{
+	BoardGame board;
+	auto& rock = board.get_color(0).create_piece<Rock>(&board[40]);
+	rock.move(board[48]);
+	EXPECT_EQ(rock.get_square(), &board[40]);
+	rock.compute_pseudo_legal_squares();
+	rock.compute_legal_squares();
+	rock.move(board[48]);
+	EXPECT_EQ(rock.get_square(), &board[48]);
+}
+
+TEST(PieceTest, not_allowed_to_move_if_not_the_turn)
+{
+	BoardGame board;
+	auto& rock = board.get_color(1).create_piece<Rock>(&board[40]);
+	rock.compute_pseudo_legal_squares();
+	rock.compute_legal_squares();
+	rock.move(board[48]);
+	EXPECT_EQ(rock.get_square(), &board[40]);
+}

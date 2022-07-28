@@ -6,9 +6,9 @@
 TEST(KingSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	King knight{ board, board[11], PieceColor::white };
-	knight.compute_eligible_squares();
-	const auto& king_eligible_squares = knight.get_eligible_squares();
+	auto& knight = board.get_color(0).create_piece<King>(&board[11]);
+	knight.compute_pseudo_legal_squares();
+	const auto& king_eligible_squares = knight.get_legal_squares();
 	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 56);
 	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
 		&board[2], &board[3], &board[4],
@@ -18,9 +18,9 @@ TEST(KingSquareAvailableTest, all_squares_free)
 TEST(KingSquareAvailableTest, positionned_on_edge)
 {
 	BoardGame board;
-	King knight{ board, board[63], PieceColor::white };
-	knight.compute_eligible_squares();
-	const auto& king_eligible_squares = knight.get_eligible_squares();
+	auto& king = board.get_color(0).create_piece<King>(&board[63]);
+	king.compute_pseudo_legal_squares();
+	const auto& king_eligible_squares = king.get_legal_squares();
 	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 61);
 	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
 		&board[54], &board[55], &board[62] }));
@@ -30,15 +30,47 @@ TEST(KingSquareAvailableTest, positionned_on_edge)
 TEST(KingSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
-	const MockPiece p1{ board, board[18], PieceColor::white };
-	const MockPiece p2{ board, board[3], PieceColor::white };
-	const MockPiece p3{ board, board[2], PieceColor::black };
-	King king{ board, board[11], PieceColor::white };
-	king.compute_eligible_squares();
-	const auto& king_eligible_squares = king.get_eligible_squares();
+	board.get_color(0).create_piece<MockPiece>(&board[18]);
+	board.get_color(0).create_piece<MockPiece>(&board[3]);
+	board.get_color(1).create_piece<MockPiece>(&board[2]);
+	auto& king = board.get_color(0).create_piece<King>(&board[11]);
+	king.compute_pseudo_legal_squares();
+	const auto& king_eligible_squares = king.get_legal_squares();
 	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 58);
 	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
 		&board[2],  &board[4], &board[10], &board[12], &board[19],  &board[20]})
 		);
+}
+
+
+TEST(KingSquareAvailableTest, squares_attacked)
+{
+	BoardGame board;
+	auto& rock = board.get_color(1).create_piece<Rock>(&board[7]);
+	auto& king = board.get_color(0).create_piece<King>(&board[11]);
+	auto& friend_rock = board.get_color(0).create_piece<Rock>(&board[21]);
+	rock.compute_pseudo_legal_squares();
+	king.compute_pseudo_legal_squares();
+	friend_rock.compute_pseudo_legal_squares();
+	king.compute_legal_squares();
+	const auto& king_eligible_squares = king.get_legal_squares();
+	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 59);
+	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
+		&board[10], &board[12], &board[18] ,&board[19],  &board[20]}));
+}
+
+
+TEST(KingSquareAvailableTest, pawn_attack_squares)
+{
+	BoardGame board;
+	auto& pawn = board.get_color(1).create_piece<Pawn>(&board[3]);
+	auto& king = board.get_color(0).create_piece<King>(&board[19]);
+	pawn.compute_pseudo_legal_squares();
+	king.compute_pseudo_legal_squares();
+	king.compute_legal_squares();
+	const auto& king_eligible_squares = king.get_legal_squares();
+	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 58);
+	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
+		&board[11], &board[18], &board[20], &board[26] ,&board[27],  &board[28]}));
 }
 
