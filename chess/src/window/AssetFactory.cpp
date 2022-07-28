@@ -20,6 +20,7 @@ PieceAssetFactory::PieceAssetFactory(Application& app, const std::array<std::str
 
 void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const noexcept
 {
+	if (!piece.get_square()) return;
 	const auto [case_width, case_height] = this->app_.get_case_dimensions();
 	const SDL_Rect dest = {  piece.get_square()->get_file() * case_width, piece.get_square()->get_rank() * case_height, case_width, case_height  };
 	SDL_Texture* const texture = SDL_CreateTextureFromSurface(this->app_.renderer_, surface);

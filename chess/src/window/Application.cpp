@@ -23,6 +23,7 @@ std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event
 
 void Application::app_loop()
 {
+	SDL_RenderPresent(this->renderer_);
 	bool quit = false;
 	SDL_Event e;
 	while (!quit)
@@ -40,9 +41,9 @@ void Application::app_loop()
 
 void Application::init()
 {
+	this->board_.init_game();
 	this->init_window_and_renderer();
 	this->draw_board();
-	this->board_.init_game();
 	this->load_assets();
 	this->app_loop();
 }
@@ -108,7 +109,6 @@ void Application::draw_board() const noexcept
 	const auto [case_width, case_height] = this->get_case_dimensions();
 	const auto white_squares = create_white_squares<nb_rect>(case_width, case_height);
 	SDL_RenderFillRects(this->renderer_, white_squares.data(), nb_rect);
-	SDL_RenderPresent(this->renderer_);
 }
 
 void Application::load_assets() 
@@ -117,5 +117,4 @@ void Application::load_assets()
 	{
 		color->accept(AssetFactory(*this));
 	}
-	SDL_RenderPresent(this->renderer_);
 }
