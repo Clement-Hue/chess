@@ -2,6 +2,7 @@
 #include <typeinfo>
 #include <vector>
 #include <memory>
+
 #include "../Common.h"
 #include "Constants.h"
 #include "Piece.h"
@@ -44,8 +45,12 @@ public:
 	int8_t get_second_rank() const noexcept { return this->second_rank_; }
 	BoardGame& get_board() const noexcept { return this->board_; }
 	const pieces_type& get_pieces() noexcept { return this->pieces_; }
+	Piece& get_piece(const int8_t i) const noexcept { return *this->pieces_[i]; }
 	template <typename P>
 	P& create_piece(Square* square) noexcept;
+	bool is_turn() const noexcept;
+	void compute_legal_squares() const noexcept;
+	void compute_pseudo_legal_squares() const noexcept;
 protected:
 	pieces_type pieces_;
 	BoardGame& board_;

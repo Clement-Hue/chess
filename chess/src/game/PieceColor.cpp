@@ -26,3 +26,26 @@ void PieceColor::init_pawns() noexcept
 	}
 }
 
+bool PieceColor::is_turn() const noexcept
+{
+	return this->board_.get_turn() == *this;
+}
+
+void PieceColor::compute_legal_squares() const noexcept
+{
+	for (const auto& piece: this->pieces_)
+	{
+		piece->compute_legal_squares();
+	}
+}
+
+void PieceColor::compute_pseudo_legal_squares() const noexcept
+{
+	for (const auto& piece: this->pieces_)
+	{
+		piece->compute_pseudo_legal_squares();
+	}
+}
+
+
+

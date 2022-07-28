@@ -25,6 +25,31 @@ void BoardGame::init_game() noexcept
 		color->init_pawns();
 		color->init_valuable_pieces();
 	}
+	this->compute_legal_squares();
 }
 
+
+void BoardGame::next_turn() noexcept
+{
+	++this->turn_;
+	if (this->turn_ == this->colors_.size())
+	{
+		this->turn_ = 0;
+	}
+	this->compute_legal_squares();
+}
+
+PieceColor& BoardGame::get_turn() const noexcept
+{
+	return *this->colors_[this->turn_]; 
+}
+
+void BoardGame::compute_legal_squares() const noexcept
+{
+	for (const auto& color: this->colors_)
+	{
+		color->compute_pseudo_legal_squares();
+	}
+	this->colors_[this->turn_]->compute_legal_squares();
+}
 

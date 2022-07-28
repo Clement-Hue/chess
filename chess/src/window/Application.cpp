@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-#include "SDL2/SDL_image.h"
 #include <stdexcept>
 #include <array>
 #include <memory>
@@ -12,14 +11,15 @@ std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event
 {
 	if (e.type == SDL_QUIT)
 	{
-		return std::make_unique<QuitHandler>(this->board_, quit);
+		return std::make_unique<QuitHandler>(*this ,quit);
 	}
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		return std::make_unique<MouseButtonHandler>(this->board_);
+		return std::make_unique<MouseButtonHandler>(*this);
 	}
 	return nullptr;
 }
+
 
 void Application::app_loop()
 {
@@ -32,7 +32,7 @@ void Application::app_loop()
 		{
 			if (const auto handler = this->event_handler_factory(e, quit))
 			{
-				(*handler)();
+				(*handler)(e);
 			}
 		}
 	}
@@ -58,6 +58,37 @@ Application::~Application()
 	SDL_DestroyRenderer(this->renderer_);
 	SDL_DestroyWindow(this->window_);
 	SDL_Quit();
+}
+
+void Application::render_square_asset(const Asset& asset, const CaseColor& color ) const noexcept
+{
+	SDL_SetRenderDrawColor(this->renderer_, color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(this->renderer_, &asset.rect);
+	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &asset.rect);
+}
+
+void Application::set_current_asset(Asset* asset) noexcept
+{
+	if (this->current_asset_ == asset) return;
+	if (this->current_asset_)
+	{
+		this->render_square_asset(
+			*this->current_asset_,
+			this->get_square_case_color(*this->current_asset_->piece.get_square())
+		);
+	}
+	this->render_square_asset(*asset, { 255,205,0,255 });
+	SDL_RenderPresent(this->renderer_);
+	this->current_asset_ = asset;
+}
+
+const CaseColor& Application::get_square_case_color(const Square& square) const noexcept
+{
+	if ((square.get_file() + square.get_rank()) % 2)
+	{
+		return this->primary_color_;
+	}
+	return this->secondary_color_;
 }
 
 void Application::init_window_and_renderer()

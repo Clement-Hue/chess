@@ -28,6 +28,8 @@ void Piece::compute_legal_squares() noexcept
 
 void Piece::move(Square& square) noexcept
 {
+	if (!this->get_color().is_turn()) return;
+	if (!this->legal_squares_[square.get_value()]) return;
 	const auto piece_on_square = square.get_piece();
 	if (piece_on_square && piece_on_square->is_friend_of(*this)) return;
 	if (piece_on_square && piece_on_square->is_enemy_of(*this))
@@ -37,6 +39,7 @@ void Piece::move(Square& square) noexcept
 	this->square_->remove_piece();
 	this->square_ = &square;
 	this->square_->set_piece(*this);
+	this->color_.get_board().next_turn();
 }
 
 void Rock::compute_pseudo_legal_squares() noexcept

@@ -1,6 +1,5 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <string>
 #include "../game/Piece.h"
 #include "../game/PieceColor.h"
 #include "Application.h"

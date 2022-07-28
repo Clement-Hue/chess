@@ -36,6 +36,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoardGame.test.cpp" />
     <ClCompile Include="BishopSquare.test.cpp" />
     <ClCompile Include="BoardIterator.test.cpp" />
     <ClCompile Include="KingSquare.test.cpp" />

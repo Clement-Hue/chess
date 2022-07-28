@@ -25,6 +25,7 @@ TEST(PieceTest, link_piece_and_square_when_moving_piece)
 {
 	BoardGame board;
 	auto& piece = board.get_color(0).create_piece<MockPiece>(&board[2]);
+	piece.get_legal_square(4) = &board[4];
 	piece.move(board[4]);
 	EXPECT_EQ(board[4].get_piece(), &piece) << "Piece hasn't moved";
 	EXPECT_NE(board[2].get_piece(), &piece) << "Piece still present on old square";
@@ -33,11 +34,13 @@ TEST(PieceTest, link_piece_and_square_when_moving_piece)
 TEST(PieceTest, piece_catch_an_enemy)
 {
 	BoardGame board;
+	board.set_turn(1);
 	auto& black_p = board.get_color(1).create_piece<MockPiece>(&board[2]);
 	const auto& white_p = board.get_color(0).create_piece<MockPiece>(&board[5]);
+	black_p.get_legal_square(5) = &board[5];
 	black_p.move(board[5]);
-	EXPECT_EQ(board[5].get_piece(), &black_p);
-	EXPECT_EQ(board[2].get_piece(), nullptr);
+	EXPECT_EQ(board[5].get_piece(), &black_p) << "Black piece hasn't moved";
+	EXPECT_EQ(board[2].get_piece(), nullptr) << "White piece still on the board";
 	EXPECT_EQ(black_p.get_square(), &board[5]);
 	EXPECT_EQ(white_p.get_square(), nullptr);
 }
@@ -127,4 +130,26 @@ TEST(PieceColorTest, color_equality)
 	EXPECT_TRUE(WhiteColor(board) == WhiteColor(board));
 	EXPECT_TRUE(WhiteColor(board) != BlackColor(board));
 	EXPECT_FALSE(WhiteColor(board) == BlackColor(board));
+}
+
+TEST(PieceTest, not_allowed_to_move_to_not_legal_square)
+{
+	BoardGame board;
+	auto& rock = board.get_color(0).create_piece<Rock>(&board[40]);
+	rock.move(board[48]);
+	EXPECT_EQ(rock.get_square(), &board[40]);
+	rock.compute_pseudo_legal_squares();
+	rock.compute_legal_squares();
+	rock.move(board[48]);
+	EXPECT_EQ(rock.get_square(), &board[48]);
+}
+
+TEST(PieceTest, not_allowed_to_move_if_not_the_turn)
+{
+	BoardGame board;
+	auto& rock = board.get_color(1).create_piece<Rock>(&board[40]);
+	rock.compute_pseudo_legal_squares();
+	rock.compute_legal_squares();
+	rock.move(board[48]);
+	EXPECT_EQ(rock.get_square(), &board[40]);
 }
