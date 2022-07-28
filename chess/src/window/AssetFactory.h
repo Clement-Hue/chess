@@ -11,13 +11,8 @@ class PieceAssetFactory final: public PieceVisitor
 public:
 	static constexpr int8_t NB_SURFACES = 6;
 	using surfaces_type = std::array<SDL_Surface*, NB_SURFACES>;
-	PieceAssetFactory(Application& app, const std::array<std::string,NB_SURFACES >& sprite_names);
-	PieceAssetFactory(const PieceAssetFactory&) = delete;
-	PieceAssetFactory(PieceAssetFactory&&) = delete;
-	PieceAssetFactory& operator=(const PieceAssetFactory&) = delete;
-	PieceAssetFactory& operator=(PieceAssetFactory&&) = delete;
+	PieceAssetFactory(Application& app, surfaces_type& surfaces): app_(app), surfaces_(surfaces) {}
 	void create_asset(Piece& piece, SDL_Surface* surface) const noexcept;
-	~PieceAssetFactory() override;
 	void visit(Bishop& piece) const override
 	{
 		this->create_asset(piece, this->surfaces_[2]);
@@ -44,14 +39,14 @@ public:
 	}
 protected:
 	Application& app_;
-	surfaces_type surfaces_;
+	surfaces_type& surfaces_;
 };
 
 class AssetFactory final: public ColorVisitor
 {
 public:
 	AssetFactory(Application& app): app_(app) {}
-	void create_piece_assets(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names,PieceColor& color) const noexcept;
+	void create_piece_assets(PieceAssetFactory::surfaces_type& surfaces,PieceColor& color) const noexcept;
 	void visit(BlackColor& color) const override;
 	void visit(WhiteColor& color) const override;
 private:

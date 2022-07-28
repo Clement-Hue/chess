@@ -13,11 +13,6 @@ static PieceAssetFactory::surfaces_type create_surfaces(const std::array<std::st
 }
 
 
-PieceAssetFactory::PieceAssetFactory(Application& app, const std::array<std::string, NB_SURFACES>& sprite_names): app_(app),
-	surfaces_(create_surfaces(sprite_names))
-{
-}
-
 void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const noexcept
 {
 	if (!piece.get_square()) return;
@@ -30,37 +25,41 @@ void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const n
 	SDL_RenderCopy(this->app_.renderer_, texture, nullptr, &dest);
 }
 
-PieceAssetFactory::~PieceAssetFactory()
+
+void clear_surfaces(const PieceAssetFactory::surfaces_type& surfaces)
 {
-	for (const auto& surface: this->surfaces_)
+	for (const auto& surface: surfaces)
 	{
 		SDL_FreeSurface(surface);
 	}
 }
 
-
-void AssetFactory::create_piece_assets(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names, PieceColor& color ) const noexcept
+void AssetFactory::create_piece_assets(PieceAssetFactory::surfaces_type& surfaces, PieceColor& color ) const noexcept
 {
 	for (const auto& piece: color.get_pieces())
 	{
-		piece->accept(PieceAssetFactory(this->app_, sprite_names));
+		piece->accept(PieceAssetFactory(this->app_, surfaces));
 	}
 }
 
 void AssetFactory::visit(BlackColor& color) const
 {
-	this->create_piece_assets({
+	auto surfaces = create_surfaces({
 		"king_b.png", "queen_b.png",
 		"bishop_b.png",  "knight_b.png", "pawn_b.png",
 		 "rock_b.png"
-		}, color);
+		});
+	this->create_piece_assets(surfaces , color);
+	clear_surfaces(surfaces);
 }
 
 void AssetFactory::visit(WhiteColor& color) const
 {
-	this->create_piece_assets({
+	auto surfaces = create_surfaces({
 		"king_w.png", "queen_w.png",
 		"bishop_w.png",  "knight_w.png", "pawn_w.png",
 		 "rock_w.png"
-	}, color);
+		});
+	this->create_piece_assets(surfaces , color);
+	clear_surfaces(surfaces);
 }
