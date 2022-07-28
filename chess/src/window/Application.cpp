@@ -113,23 +113,9 @@ void Application::draw_board() const noexcept
 
 void Application::load_assets() 
 {
-	const std::string sprite_names[NB_SURFACES] = {
-		"king_w.png", "king_b.png", "queen_w.png", "queen_b.png", "bishop_w.png",
-		"bishop_b.png",  "knight_w.png","knight_b.png", "pawn_w.png", "pawn_b.png",
-		"rock_w.png", "rock_b.png"
-	};
-	std::array<SDL_Surface*, NB_SURFACES> surfaces{nullptr};
-	for (int8_t i = 0; i < surfaces.size(); ++i)
-	{
-		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
-	}
 	for (const auto& color: this->board_.get_colors())
 	{
-		color->accept(AssetFactory(*this, surfaces));
-	}
-	for (const auto& surface: surfaces)
-	{
-		SDL_FreeSurface(surface);
+		color->accept(AssetFactory(*this));
 	}
 	SDL_RenderPresent(this->renderer_);
 }
