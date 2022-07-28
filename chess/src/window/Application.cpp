@@ -1,10 +1,12 @@
 #include <SDL2/SDL.h>
 #include "SDL2/SDL_image.h"
-#include "Application.h"
 #include <stdexcept>
 #include <array>
 #include <memory>
+#include "AssetFactory.h"
+#include "Application.h"
 #include "EventHandler.h"
+#include "../game/BoardGame.h"
 
 std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event& e, bool& quit)
 {
@@ -40,6 +42,7 @@ void Application::init()
 {
 	this->init_window_and_renderer();
 	this->draw_board();
+	this->board_.init_game();
 	this->load_assets();
 	this->app_loop();
 }
@@ -47,9 +50,9 @@ void Application::init()
 
 Application::~Application()
 {
-	for (const auto sprite : this->sprites_)
+	for (const auto& asset : this->assets_)
 	{
-		SDL_DestroyTexture(sprite);
+		SDL_DestroyTexture(asset.texture);
 	}
 	SDL_DestroyRenderer(this->renderer_);
 	SDL_DestroyWindow(this->window_);
@@ -110,19 +113,23 @@ void Application::draw_board() const noexcept
 
 void Application::load_assets() 
 {
-	const std::string sprite_names[NB_SPRITES] = {
+	const std::string sprite_names[NB_SURFACES] = {
 		"king_w.png", "king_b.png", "queen_w.png", "queen_b.png", "bishop_w.png",
-		"bishop_b.png", "knight_b.png", "knight_w.png", "pawn_w.png", "pawn_b.png",
+		"bishop_b.png",  "knight_w.png","knight_b.png", "pawn_w.png", "pawn_b.png",
 		"rock_w.png", "rock_b.png"
 	};
-	const auto [case_width, case_height] = this->get_case_dimensions();
-	const SDL_Rect dest = {  0, 0, case_width, case_height  };
-	for (int8_t i = 0; i < sprite_names->size(); ++i)
+	std::array<SDL_Surface*, NB_SURFACES> surfaces{nullptr};
+	for (int8_t i = 0; i < surfaces.size(); ++i)
 	{
-		const auto surface =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
-		this->sprites_[i] = SDL_CreateTextureFromSurface(this->renderer_, surface);
+		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+	}
+	for (const auto& color: this->board_.get_colors())
+	{
+		color->accept(AssetFactory(*this, surfaces));
+	}
+	for (const auto& surface: surfaces)
+	{
 		SDL_FreeSurface(surface);
-		SDL_RenderCopy(this->renderer_, this->sprites_[i], nullptr, &dest);
 	}
 	SDL_RenderPresent(this->renderer_);
 }

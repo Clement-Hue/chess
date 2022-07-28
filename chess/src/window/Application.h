@@ -5,6 +5,13 @@
 #include "../game/BoardGame.h"
 #include "../Common.h"
 
+struct Asset
+{
+	Piece& piece;
+	SDL_Texture* texture;
+	SDL_Rect dest;
+};
+
 struct WindowSize
 {
 	const int width, height;
@@ -17,6 +24,7 @@ struct CaseColor
 class CHESS_API Application
 {
 public:
+	static constexpr int8_t NB_SURFACES = 12;
 	explicit Application(const WindowSize window_size = {800,800},
 		const CaseColor primary_color = { 180, 255, 255,255 }
 		, const CaseColor secondary_color = { 255, 255, 255, 255 }) :
@@ -28,11 +36,10 @@ public:
 	Application& operator=(Application&&) = delete;
 	~Application();
 private:
-	static constexpr int8_t NB_SPRITES = 12;
 	const WindowSize window_size_;
 	const CaseColor primary_color_;
 	const CaseColor secondary_color_;
-	SDL_Texture* sprites_[NB_SPRITES];
+	std::vector<Asset> assets_;
 	SDL_Window* window_{ nullptr };
 	SDL_Renderer* renderer_{ nullptr };
 	BoardGame board_;
@@ -47,5 +54,6 @@ private:
 	void load_assets() ;
 	void app_loop();
 	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
+	friend class PieceAssetFactory;
 };
 

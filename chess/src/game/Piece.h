@@ -6,6 +6,29 @@
 
 class Square;
 class PieceColor;
+class Rock;
+class Bishop;
+class Knight;
+class Pawn;
+class King;
+class Queen;
+
+class CHESS_API PieceVisitor
+{
+public:
+	PieceVisitor() = default;
+	PieceVisitor(const PieceVisitor&) = delete;
+	PieceVisitor(PieceVisitor&&) = delete;
+	PieceVisitor& operator=(const PieceVisitor&) = delete;
+	PieceVisitor& operator=(PieceVisitor&&) = delete;
+	virtual void visit(Queen& piece) const = 0;
+	virtual void visit(King& piece) const = 0;
+	virtual void visit(Rock& piece) const = 0;
+	virtual void visit(Bishop& piece) const = 0;
+	virtual void visit(Knight& piece) const = 0;
+	virtual void visit(Pawn& piece) const = 0;
+	virtual ~PieceVisitor() = default;
+};
 
 class CHESS_API Piece
 {
@@ -29,6 +52,7 @@ public:
 	Square*& get_legal_square(const int8_t i) noexcept { return this->legal_squares_[i]; }
 	void set_pinning_filter(const pinning_filter_type func) { this->pinning_filter_ = func; }
 	virtual void compute_legal_squares() noexcept;
+	virtual void accept(const PieceVisitor& visitor) = 0;
 protected:
 	void filter_legal_squares_if_pinned() noexcept { if (this->pinning_filter_) this->pinning_filter_(*this); }
 	pinning_filter_type pinning_filter_{nullptr};
@@ -42,6 +66,7 @@ class CHESS_API Rock final: public Piece
 public:
 	Rock(Square* square, PieceColor& color) : Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
+	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 };
 
 
@@ -50,6 +75,7 @@ class CHESS_API Bishop final: public Piece
 public:
 	Bishop(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
+	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 };
 
 class CHESS_API Queen final: public Piece
@@ -57,6 +83,7 @@ class CHESS_API Queen final: public Piece
 public:
 	Queen(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
+	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 };
 
 class CHESS_API King final: public Piece
@@ -65,6 +92,7 @@ public:
 	King(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 	void compute_legal_squares() noexcept override;
+	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 };
 
 
@@ -73,6 +101,7 @@ class CHESS_API Knight final: public Piece
 public:
 	Knight(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
+	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 private:
 	template <typename It1, typename It2>
 	void add_eligible_squares() noexcept;
@@ -85,6 +114,7 @@ public:
 	Pawn(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_squares() noexcept override;	
 	void compute_legal_squares() noexcept override;
+	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 };
 
 

@@ -8,4 +8,5 @@ class MockPiece final: public Piece
 public:
 	MockPiece(Square* square, PieceColor& color): Piece( square, color) {}
 	void compute_pseudo_legal_squares() noexcept override {}
+	void accept(const PieceVisitor& visitor) override {}
 };
