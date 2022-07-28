@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "../Common.h"
 #include "BoardIterator.h"
+#include "PieceColor.h"
 
 class Square;
 class PieceColor;
@@ -115,6 +116,7 @@ public:
 	void compute_pseudo_legal_squares() noexcept override;	
 	void compute_legal_squares() noexcept override;
 	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
+	bool has_moved() const noexcept;
 };
 
 

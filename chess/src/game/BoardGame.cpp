@@ -18,7 +18,7 @@ BoardGame::BoardGame(): squares_(create_squares())
 }
 
 
-void BoardGame::init_game() noexcept
+void BoardGame::init_game() const noexcept
 {
 	for (const auto& color: this->colors_)
 	{

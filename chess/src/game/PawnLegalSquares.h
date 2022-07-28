@@ -38,23 +38,18 @@ private:
 	template <typename Color>
 	void remove_not_legal_takeable_squares(PieceColor& color) const noexcept;
 	template <typename Color>
-	void add_file_eligible_squares(PieceColor& color) const noexcept;
+	void add_file_legal_squares(PieceColor& color) const noexcept;
 };
 
 template <typename Color>
-void PawnLegalSquares::add_file_eligible_squares(PieceColor& color) const noexcept
+void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 {
 	auto& square_it = FileIterator(color.get_board()).begin(*this->pawn_.get_square());
-	if (this->increment_fn<Color>(square_it); square_it && square_it->is_free())
+	const int8_t nb_squares = !this->pawn_.has_moved() ? 2 : 1;
+	this->increment_fn<Color>(square_it);
+	for (int8_t i = 0;  i<nb_squares && square_it && square_it->is_free() ; ++i, this->increment_fn<Color>(square_it))
 	{
 		this->pawn_.get_legal_square(square_it->get_value()) = &*square_it;
-		if (this->pawn_.get_square()->get_rank() == this->pawn_.get_color().get_second_rank())
-		{
-			if (this->increment_fn<Color>(square_it); square_it && square_it->is_free())
-			{
-				this->pawn_.get_legal_square(square_it->get_value()) = &*square_it;
-			}
-		}
 	}
 }
 

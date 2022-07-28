@@ -135,3 +135,8 @@ void Pawn::compute_legal_squares() noexcept
 	Piece::compute_legal_squares();
 	this->get_color().accept(PawnLegalSquares(*this));
 }
+
+bool Pawn::has_moved() const noexcept
+{
+	return this->square_->get_rank() != this->color_.get_second_rank();
+}
