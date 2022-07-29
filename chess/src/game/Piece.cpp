@@ -79,6 +79,9 @@ void King::compute_pseudo_legal_squares() noexcept
 	}
 }
 
+/**
+ * Remove from legal squares list the squares that are attacked by enemy pieces
+ */
 void King::compute_legal_squares() noexcept
 {
 	Piece::compute_legal_squares();

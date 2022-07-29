@@ -24,7 +24,7 @@ struct CaseColor
 class CHESS_API Application
 {
 public:
-	explicit Application(const WindowSize window_size = {800,800},
+	explicit Application(const WindowSize window_size = { 800,800 },
 		const CaseColor primary_color = { 180, 255, 255,255 }
 		, const CaseColor secondary_color = { 255, 255, 255, 255 }) :
 	window_size_(window_size),primary_color_(primary_color), secondary_color_(secondary_color) {}
