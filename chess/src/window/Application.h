@@ -24,10 +24,11 @@ struct CaseColor
 class CHESS_API Application
 {
 public:
-	explicit Application(const WindowSize window_size = { 800,800 },
+	explicit Application(BoardGame board = {}, const WindowSize window_size = { 800,800 },
 		const CaseColor primary_color = { 180, 255, 255,255 }
 		, const CaseColor secondary_color = { 255, 255, 255, 255 }) :
-	window_size_(window_size),primary_color_(primary_color), secondary_color_(secondary_color) {}
+	window_size_(window_size),primary_color_(primary_color), secondary_color_(secondary_color),
+	board_(std::move(board)) {}
 	void init();
 	Application(const Application&) = delete;
 	Application(Application&&) = delete;
@@ -44,6 +45,7 @@ public:
 	}
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;
 	SDL_Rect get_rect_of_square(const Square& square) const noexcept;
+	BoardGame& get_board() noexcept { return this->board_; }
 private:
 	Asset* current_asset_{nullptr};
 	const WindowSize window_size_;

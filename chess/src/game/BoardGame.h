@@ -11,9 +11,8 @@ class CHESS_API  BoardGame
 	using colors_type = std::array<std::unique_ptr<PieceColor>, 2>;
 public:
 	BoardGame();
-	BoardGame(colors_type);
 	BoardGame(const BoardGame&) = delete;
-	BoardGame(BoardGame&& other) = default;
+	BoardGame(BoardGame&& other) noexcept;
 	BoardGame& operator=(const BoardGame&) = delete;
 	BoardGame& operator=(BoardGame&&) = delete;
 	Square& operator[](const int8_t i) noexcept { return this->squares_[i]; }
@@ -25,10 +24,11 @@ public:
 	PieceColor& get_turn() const noexcept;
 	void set_turn(const int8_t i) noexcept { this->turn_ = i; }
 	void next_turn() noexcept;
+	void set_default_pieces() const noexcept;
 private:
 	void compute_legal_squares() const noexcept;
 	std::vector<Square> squares_;
-	colors_type colors_  { std::make_unique<WhiteColor>(*this), std::make_unique<BlackColor>(*this) };
+	colors_type colors_  { std::make_unique<WhiteColor>(this), std::make_unique<BlackColor>(this) };
 	int8_t turn_ = 0;
 };
 
