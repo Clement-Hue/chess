@@ -17,28 +17,19 @@ BoardGame::BoardGame(): squares_(create_squares())
 {
 }
 
-void BoardGame::set_default_pieces() const noexcept
+
+BoardGame::BoardGame(colors_type colors  ): squares_(create_squares()), colors_{std::move(colors)}
 {
-	for (const auto& color: this->colors_)
-	{
-		color->set_default_pieces();
-	}
 }
-
-
-BoardGame::BoardGame(BoardGame&& other) noexcept : squares_(std::move(other.squares_)), turn_(other.turn_) 
-{
-	for (const auto& color: other.colors_)
-	{
-		color->set_board(*this);
-	}
-	this->colors_ = std::move(other.colors_);
-}
-
 
 
 void BoardGame::init_game() const noexcept
 {
+	for (const auto& color: this->colors_)
+	{
+		color->init_pawns();
+		color->init_valuable_pieces();
+	}
 	this->compute_legal_squares();
 }
 

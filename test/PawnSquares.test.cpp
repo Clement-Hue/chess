@@ -14,20 +14,15 @@ TEST(PawnSquareAvailableTest, white_pawn_in_middle_of_board)
 	EXPECT_THAT(pawn_eligible_squares, IsSupersetOf({ &board[16]}));
 }
 
-TEST(PawnSquareAvailableTest, black_pawn_has_moved)
+TEST(PawnSquareAvailableTest, black_pawn_in_middle_of_board)
 {
 	BoardGame board;
-	board.set_turn(1);
 	auto& pawn = board.get_color(1).create_piece<Pawn>(&board[24]);
-	pawn.compute_pseudo_legal_squares();
-	pawn.compute_legal_squares();
-	pawn.move(board[32]);
-	EXPECT_EQ(pawn.get_square(), &board[32]);
 	pawn.compute_pseudo_legal_squares();
 	pawn.compute_legal_squares();
 	const auto& pawn_eligible_squares = pawn.get_legal_squares();
 	EXPECT_EQ(std::count(pawn_eligible_squares.begin(), pawn_eligible_squares.end(), nullptr), 63);
-	EXPECT_THAT(pawn_eligible_squares, IsSupersetOf({ &board[40]}));
+	EXPECT_THAT(pawn_eligible_squares, IsSupersetOf({ &board[32]}));
 }
 
 
