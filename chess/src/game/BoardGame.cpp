@@ -1,6 +1,7 @@
 #include "BoardGame.h"
 #include "Constants.h"
 #include "BoardIterator.h"
+#include "PieceColor.h"
 
 static std::vector<Square> create_squares()
 {
@@ -17,22 +18,19 @@ BoardGame::BoardGame(): squares_(create_squares())
 {
 }
 
-
-BoardGame::BoardGame(colors_type colors  ): squares_(create_squares()), colors_{std::move(colors)}
-{
-}
-
-
-void BoardGame::init_game() const noexcept
+void BoardGame::set_default_pieces() const noexcept
 {
 	for (const auto& color: this->colors_)
 	{
-		color->init_pawns();
-		color->init_valuable_pieces();
+		color->set_default_pieces();
 	}
-	this->compute_legal_squares();
 }
 
+void BoardGame::init_game(const int8_t turn) noexcept
+{
+	this->turn_ = turn;
+	this->compute_legal_squares();
+}
 
 void BoardGame::next_turn() noexcept
 {

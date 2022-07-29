@@ -44,6 +44,7 @@ public:
 	}
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;
 	SDL_Rect get_rect_of_square(const Square& square) const noexcept;
+	BoardGame& get_board() noexcept { return this->board_; }
 private:
 	Asset* current_asset_{nullptr};
 	const WindowSize window_size_;

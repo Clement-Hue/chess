@@ -7,7 +7,7 @@
 TEST(QueenSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	auto& queen = board.get_color(0).create_piece<Queen>(&board[11]);
+	auto& queen = board.get_color(0).add_piece<Queen>(board[11]);
 	queen.compute_pseudo_legal_squares();
 	const auto& queen_eligible_squares = queen.get_legal_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 41);
@@ -23,11 +23,11 @@ TEST(QueenSquareAvailableTest, all_squares_free)
 TEST(QueenSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
-	board.get_color(0).create_piece<MockPiece>(&board[25]);
-	board.get_color(0).create_piece<MockPiece>(&board[38]);
-	board.get_color(1).create_piece<MockPiece>(&board[2]);
-	board.get_color(1).create_piece<MockPiece>(&board[27]);
-	auto& queen = board.get_color(0).create_piece<Queen>(&board[11]);
+	board.get_color(0).add_piece<MockPiece>(board[25]);
+	board.get_color(0).add_piece<MockPiece>(board[38]);
+	board.get_color(1).add_piece<MockPiece>(board[2]);
+	board.get_color(1).add_piece<MockPiece>(board[27]);
+	auto& queen = board.get_color(0).add_piece<Queen>(board[11]);
 	queen.compute_pseudo_legal_squares();
 	const auto& queen_eligible_squares = queen.get_legal_squares();
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 49);

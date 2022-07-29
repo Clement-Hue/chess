@@ -39,6 +39,7 @@ void Piece::move(Square& square) noexcept
 	this->square_->remove_piece();
 	this->square_ = &square;
 	this->square_->set_piece(*this);
+	this->has_moved_ = true;
 	this->color_.get_board().next_turn();
 }
 
@@ -139,7 +140,8 @@ void Pawn::compute_legal_squares() noexcept
 	this->get_color().accept(PawnLegalSquares(*this));
 }
 
+
 bool Pawn::has_moved() const noexcept
 {
-	return this->square_->get_rank() != this->color_.get_second_rank();
+	return this->square_->get_rank() != this->color_.get_rank().second;
 }
