@@ -40,6 +40,7 @@ void Piece::move(Square& square) noexcept
 	this->square_ = &square;
 	this->square_->set_piece(*this);
 	this->has_moved_ = true;
+	printf("piece has moved to %d\n", this->square_->get_value());
 	this->color_.get_board().next_turn();
 }
 

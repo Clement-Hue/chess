@@ -4,6 +4,7 @@
 
 class Application;
 class Asset;
+class Square;
 
 
 class CHESS_API EventHandler
@@ -36,4 +37,5 @@ public:
 	void operator()(const SDL_Event&) noexcept override;
 private:
 	Asset* get_selected_asset(const SDL_Event& e) const noexcept;
+	Square* get_square_of_position(int x, int y) const noexcept;
 };

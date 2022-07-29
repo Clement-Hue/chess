@@ -15,11 +15,11 @@ public:
 	bool is_same_rank(const Square& other) const noexcept { return this->get_rank() == other.get_rank(); }
 	bool is_same_file(const Square& other) const noexcept { return this->get_file() == other.get_file(); }
 	bool is_same_diagonal(const Square& square) const noexcept;
-	bool is_same_diagonal(const int8_t value) const noexcept;
+	bool is_same_diagonal(int8_t value) const noexcept;
 	bool is_same_anti_diagonal(const Square& square) const noexcept;
-	bool is_same_anti_diagonal(const int8_t value) const noexcept;
-	bool is_same_rank(const int8_t value) const noexcept;
-	bool is_same_file(const int8_t value) const noexcept;
+	bool is_same_anti_diagonal(int8_t value) const noexcept;
+	bool is_same_rank(int8_t value) const noexcept;
+	bool is_same_file(int8_t value) const noexcept;
 	bool is_free() const noexcept { return this->piece_ == nullptr; }
 	bool has_enemy_piece_of(const Piece& piece) const noexcept;
 	bool has_friend_piece_of(const Piece& piece) const noexcept;
