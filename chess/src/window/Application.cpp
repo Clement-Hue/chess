@@ -42,6 +42,7 @@ void Application::init()
 	this->init_window_and_renderer();
 	this->renderer_->render_board();
 	this->load_assets();
+	this->renderer_->render_assets();
 	this->renderer_->update_screen();
 	this->app_loop();
 }
@@ -52,14 +53,16 @@ Application::~Application()
 	SDL_Quit();
 }
 
-void Application::set_current_selection(Asset* asset) noexcept
+void Application::set_current_selection(Asset* asset)  noexcept
 {
 	if (this->current_selection_ == asset) return;
 	if (this->current_selection_)
 	{
 		this->renderer_->clear_selection(*this->current_selection_);
+		this->renderer_->clear_legal_squares(*this->current_selection_);
 	}
 	this->renderer_->render_selection(*asset);
+	this->renderer_->render_legal_squares(*asset);
 	this->renderer_->update_screen();
 	this->current_selection_ = asset;
 }

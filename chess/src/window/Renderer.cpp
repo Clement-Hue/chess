@@ -48,44 +48,59 @@ std::tuple<int, int> Renderer::get_case_dimensions() const noexcept
 	return { this->window_size_.width / NB_COLUMNS, this->window_size_.height / NB_COLUMNS };
 }
 
-void Renderer::render_square(const Square& square) const noexcept
+void Renderer::render_square(const Square& square) noexcept
 {
 	this->render_square(square, this->get_square_case_color(square));
 }
 
-void Renderer::render_square(const Square& square, const CaseColor color) const noexcept
+void Renderer::render_square(const Square& square, const CaseColor color)  noexcept
 {
 	SDL_SetRenderDrawColor(this->renderer_, color.r, color.g, color.b, color.a);
 	const SDL_Rect rect = this->get_rect_of_square(square);
 	SDL_RenderFillRect(this->renderer_, &rect);
+	if (const auto piece = square.get_piece())
+	{
+		if (const auto asset = this->get_asset_of_piece(*piece))
+		{
+			this->render_asset(*asset);
+		}
+	}
 }
 
 void Renderer::render_asset(const Asset& asset) const noexcept
 {
-	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &asset.rect);
+	const auto square = asset.piece.get_square();
+	if (!square) return;
+	const auto rect = this->get_rect_of_square(*square);
+	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &rect);
 }
 
-void Renderer::render_legal_squares(const Piece& piece) const noexcept
+void Renderer::render_legal_squares(const Asset& asset) noexcept
 {
-	for (const auto square : piece.get_legal_squares())
+	for (const auto square : asset.piece.get_legal_squares())
 	{
 		if (!square) continue;
-		auto rect = this->get_rect_of_square(*square);
-		SDL_SetRenderDrawColor(this->renderer_, 55, 205, 0, 255);
-		SDL_RenderFillRect(this->renderer_, &rect);
+		this->render_square(*square, {55,205,0,255});
 	}
 }
 
-void Renderer::render_selection(const Asset& asset) const noexcept
+void Renderer::render_selection(const Asset& asset)  noexcept
 {
 	this->render_square(*asset.piece.get_square(), {255, 205,0 ,255});
-	this->render_asset(asset);
 }
 
-void Renderer::clear_selection(const Asset& asset) const noexcept
+void Renderer::clear_selection(const Asset& asset)  noexcept
 {
 	this->render_square(*asset.piece.get_square());
-	this->render_asset(asset);
+}
+
+void Renderer::clear_legal_squares(const Asset& asset) noexcept
+{
+	for (const auto square : asset.piece.get_legal_squares())
+	{
+		if (!square) continue;
+		this->render_square(*square);
+	}
 }
 
 void Renderer::update_screen() const noexcept
@@ -95,17 +110,49 @@ void Renderer::update_screen() const noexcept
 
 void Renderer::add_asset(Piece& piece,SDL_Surface& surface) noexcept
 {
-	if (!piece.get_square()) return;
-	const SDL_Rect dest = this->get_rect_of_square(*piece.get_square());
-	SDL_Texture* const texture = SDL_CreateTextureFromSurface(this->renderer_, &surface);
-	this->assets_.emplace_back(Asset{ piece, texture, dest });
-	SDL_RenderCopy(this->renderer_, texture, nullptr, &dest);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(this->renderer_, &surface);
+	this->assets_.emplace_back(Asset{ piece, texture });
+}
+
+Asset* Renderer::get_asset_of_coordinates(const int x, const int y)  noexcept
+{
+	for (auto& asset : this->assets_)
+	{
+		const auto square = asset.piece.get_square();
+		if (!square) continue;
+		const auto rect = this->get_rect_of_square(*square);
+		if (x > rect.x && x < rect.x + rect.w && y > rect.y && y < rect.y + rect.h)
+		{
+			return &asset;
+		}
+	}
+	return nullptr;
+}
+
+void Renderer::render_assets() const noexcept
+{
+	for (const auto& asset: this->assets_)
+	{
+		this->render_asset(asset);
+	}
 }
 
 SDL_Rect Renderer::get_rect_of_square(const Square& square) const noexcept
 {
 	const auto [case_width, case_height] = this->get_case_dimensions();
 	return {  square.get_file() * case_width, square.get_rank() * case_height, case_width, case_height  };
+}
+
+Asset* Renderer::get_asset_of_piece(const Piece& piece) noexcept
+{
+	for (auto& asset: this->assets_)
+	{
+		if (&asset.piece == &piece)
+		{
+			return &asset;
+		}
+	}
+	return nullptr;
 }
 
 const CaseColor& Renderer::get_square_case_color(const Square& square) const noexcept

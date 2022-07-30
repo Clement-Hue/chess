@@ -4,12 +4,6 @@
 #include "../game/Piece.h"
 #include "Types.h"
 
-struct Asset
-{
-	Piece& piece;
-	SDL_Texture* texture;
-	SDL_Rect rect;
-};
 
 class Renderer
 {
@@ -26,15 +20,18 @@ public:
 
 	void render_board() const noexcept;
 	std::tuple<int, int> get_case_dimensions() const noexcept;
-	void render_legal_squares(const Piece& piece) const noexcept;
-	void render_selection(const Asset& asset) const noexcept;
-	void render_square(const Square& square) const noexcept;
-	void render_square(const Square& square, CaseColor color) const noexcept;
+	void render_selection(const Asset& asset)  noexcept;
+	void render_legal_squares(const Asset& asset)  noexcept;
+	void clear_selection(const Asset& asset)  noexcept;
+	void clear_legal_squares(const Asset& asset) noexcept;
+	void render_square(const Square& square) noexcept;
+	void render_square(const Square& square, CaseColor color) noexcept;
 	void render_asset(const Asset& asset) const noexcept;
-	void clear_selection(const Asset& asset) const noexcept;
 	void update_screen() const noexcept;
 	void add_asset(Piece& piece, SDL_Surface& surface)  noexcept;
 	std::vector<Asset>& get_assets() noexcept { return this->assets_; }
+	Asset* get_asset_of_coordinates(int x, int y) noexcept;
+	void render_assets() const noexcept;
 private:
 	SDL_Renderer* renderer_;
 	CaseColor primary_color_;
@@ -42,6 +39,7 @@ private:
 	WindowSize window_size_;
 	std::vector<Asset> assets_;
 
+	Asset* get_asset_of_piece(const Piece& piece)  noexcept;
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;
 	SDL_Rect get_rect_of_square(const Square& square) const noexcept;
 };

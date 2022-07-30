@@ -21,17 +21,35 @@ bool Piece::is_friend_of(const Piece& piece) const noexcept
 	return !this->is_enemy_of(piece);
 }
 
+void Piece::compute_pseudo_legal_squares() noexcept
+{
+	for (auto& square: this->legal_squares_)
+	{
+		square = nullptr;
+	}
+}
+
+void Piece::filter_legal_squares_if_pinned() noexcept
+{
+	if (this->pinning_filter_)
+	{
+		this->pinning_filter_(*this);
+	};
+	this->pinning_filter_ = nullptr;
+}
+
+
 void Piece::compute_legal_squares() noexcept
 {
 	this->filter_legal_squares_if_pinned();
 }
 
-void Piece::move(Square& square) noexcept
+bool Piece::move(Square& square) noexcept
 {
-	if (!this->get_color().is_turn()) return;
-	if (!this->legal_squares_[square.get_value()]) return;
+	if (!this->get_color().is_turn()) return false;
+	if (!this->legal_squares_[square.get_value()]) return false;
 	const auto piece_on_square = square.get_piece();
-	if (piece_on_square && piece_on_square->is_friend_of(*this)) return;
+	if (piece_on_square && piece_on_square->is_friend_of(*this)) return false;
 	if (piece_on_square && piece_on_square->is_enemy_of(*this))
 	{
 		piece_on_square->remove_square();
@@ -40,24 +58,27 @@ void Piece::move(Square& square) noexcept
 	this->square_ = &square;
 	this->square_->set_piece(*this);
 	this->has_moved_ = true;
-	printf("piece has moved to %d\n", this->square_->get_value());
 	this->color_.get_board().next_turn();
+	return true;
 }
 
 void Rock::compute_pseudo_legal_squares() noexcept
 {
+	Piece::compute_pseudo_legal_squares();
 	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
 	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
 }
 
 void Bishop::compute_pseudo_legal_squares() noexcept
 {
+	Piece::compute_pseudo_legal_squares();
 	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
 	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
 }
 
 void Queen::compute_pseudo_legal_squares() noexcept
 {
+	Piece::compute_pseudo_legal_squares();
 	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
 	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
 	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
@@ -66,6 +87,7 @@ void Queen::compute_pseudo_legal_squares() noexcept
 
 void King::compute_pseudo_legal_squares() noexcept
 {
+	Piece::compute_pseudo_legal_squares();
 	BoardIterator iterators[8] = {
 		++RankIterator(this->color_.get_board()).begin(*this->square_), --RankIterator(this->color_.get_board()).begin(*this->square_),
 		++FileIterator(this->color_.get_board()).begin(*this->square_), --FileIterator(this->color_.get_board()).begin(*this->square_),
@@ -126,12 +148,14 @@ void Knight::add_eligible_squares() noexcept
 
 void Knight::compute_pseudo_legal_squares() noexcept
 {
+	Piece::compute_pseudo_legal_squares();
 	this->add_eligible_squares<FileIterator, RankIterator>();
 	this->add_eligible_squares<RankIterator, FileIterator>();
 }
 
 void Pawn::compute_pseudo_legal_squares() noexcept
 {
+	Piece::compute_pseudo_legal_squares();
 	this->get_color().accept(PawnPseudoLegalSquares(*this));
 }
 
@@ -142,7 +166,7 @@ void Pawn::compute_legal_squares() noexcept
 }
 
 
-bool Pawn::has_moved() const noexcept
+bool Pawn::is_on_start() const noexcept
 {
 	return this->square_->get_rank() != this->color_.get_rank().second;
 }

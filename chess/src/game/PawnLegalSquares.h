@@ -45,7 +45,7 @@ template <typename Color>
 void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 {
 	auto& square_it = FileIterator(color.get_board()).begin(*this->pawn_.get_square());
-	const int8_t nb_squares = !this->pawn_.has_moved() ? 2 : 1;
+	const int8_t nb_squares = !this->pawn_.is_on_start() ? 2 : 1;
 	this->increment_fn<Color>(square_it);
 	for (int8_t i = 0;  i<nb_squares && square_it && square_it->is_free() ; ++i, this->increment_fn<Color>(square_it))
 	{

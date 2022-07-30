@@ -42,8 +42,9 @@ public:
 	Piece& operator=(const Piece&) = delete;
 	Piece& operator=(Piece&&) = delete;
 	virtual ~Piece() = default;
-	virtual void compute_pseudo_legal_squares() noexcept = 0;
-	void move(Square& square) noexcept;
+	virtual void compute_pseudo_legal_squares() noexcept;
+	virtual void compute_legal_squares() noexcept;
+	bool move(Square& square) noexcept;
 	void remove_square() noexcept { this->square_ = nullptr; }
 	const Square* get_square() const noexcept { return this->square_; }
 	PieceColor& get_color() const noexcept { return this->color_; }
@@ -52,11 +53,11 @@ public:
 	const e_squares_type& get_legal_squares() const noexcept { return this->legal_squares_; }
 	Square*& get_legal_square(const int8_t i) noexcept { return this->legal_squares_[i]; }
 	void set_pinning_filter(const pinning_filter_type func) { this->pinning_filter_ = func; }
-	virtual void compute_legal_squares() noexcept;
 	virtual void accept(const PieceVisitor& visitor) = 0;
-	virtual bool has_moved() const noexcept { return this->has_moved_; };
+	bool has_moved() const noexcept { return this->has_moved_; };
+	bool is_in_board() const noexcept { return this->square_; }
 protected:
-	void filter_legal_squares_if_pinned() noexcept { if (this->pinning_filter_) this->pinning_filter_(*this); }
+	void filter_legal_squares_if_pinned() noexcept;
 	pinning_filter_type pinning_filter_{nullptr};
 	Square* square_{nullptr};
 	PieceColor& color_;
@@ -118,7 +119,7 @@ public:
 	void compute_pseudo_legal_squares() noexcept override;	
 	void compute_legal_squares() noexcept override;
 	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
-	bool has_moved() const noexcept override;
+	bool is_on_start() const noexcept;
 };
 
 

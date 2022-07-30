@@ -36,6 +36,5 @@ public:
 	explicit MouseButtonHandler(Application& app): EventHandler(app) {}
 	void operator()(const SDL_Event&) noexcept override;
 private:
-	Asset* get_selected_asset(const SDL_Event& e) const noexcept;
-	Square* get_square_of_position(int x, int y) const noexcept;
+	Square* get_square_of_coordinates(int x, int y) const noexcept;
 };

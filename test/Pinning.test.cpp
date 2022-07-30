@@ -86,3 +86,18 @@ TEST(PinTest, not_pinned_if_enemy_piece_between)
 	EXPECT_EQ(std::count(queen_eligible_squares.begin(), queen_eligible_squares.end(), nullptr), 40);
 }
 
+
+TEST(PinTest, should_unpinned_if_king_move)
+{
+	BoardGame board;
+	auto& king = board.get_color(0).add_piece<King>(board[9]);
+	auto& bishop = board.get_color(1).add_piece<Bishop>(board[54]);
+	const auto& queen = board.get_color(0).add_piece<Queen>(board[27]);
+	board.init_game();
+	auto* queen_legal_squares = &queen.get_legal_squares();
+	EXPECT_EQ(std::count(queen_legal_squares->begin(), queen_legal_squares->end(), nullptr), 60);
+	king.move(board[8]);
+	queen_legal_squares = &queen.get_legal_squares();
+	bishop.move(board[63]);
+	EXPECT_EQ(std::count(queen_legal_squares->begin(), queen_legal_squares->end(), nullptr), 37);
+}
