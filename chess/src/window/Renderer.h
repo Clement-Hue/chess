@@ -21,9 +21,9 @@ public:
 	void render_board() const noexcept;
 	std::tuple<int, int> get_case_dimensions() const noexcept;
 	void render_selection(const Asset& asset) const noexcept;
-	void render_legal_squares(const Asset& asset) const noexcept;
+	void render_squares(const std::array<Square*, NB_SQUARES>& squares, CaseColor color) const noexcept;
+	void render_squares(const std::array<Square*, NB_SQUARES>& squares) const noexcept;
 	void clear_selection(const Asset& asset) const noexcept;
-	void clear_legal_squares(const Asset& asset) const noexcept;
 	void render_square(const Square& square) const noexcept;
 	void render_square(const Square& square, CaseColor color) const noexcept;
 	void render_asset(const Asset& asset) const noexcept;

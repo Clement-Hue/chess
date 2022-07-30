@@ -17,15 +17,15 @@ void MouseButtonHandler::operator()(const SDL_Event& e) noexcept
 	{
 		const auto next_square = this->get_square_of_coordinates(e.button.x, e.button.y);
 		const auto prev_square = asset->piece.get_square();
-		this->app_.get_renderer().clear_legal_squares(*asset);
+		const std::array<Square*, NB_SQUARES> prev_legal_squares = asset->piece.get_legal_squares();
 		if (asset->piece.move(*next_square))
 		{
 			this->app_.get_renderer().render_square(*prev_square);
 			this->app_.get_renderer().render_square(*next_square);
+			this->app_.get_renderer().render_squares(prev_legal_squares);
 		}
 		this->app_.get_renderer().update_screen();
 	}
-
 }
 
 Square* MouseButtonHandler::get_square_of_coordinates(const int x, const int y) const noexcept

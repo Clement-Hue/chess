@@ -1,6 +1,5 @@
 #pragma once
 #include "Piece.h"
-#include "BoardGame.h"
 
 
 namespace linear_pseudo_legal_squares

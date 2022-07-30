@@ -55,6 +55,7 @@ void Renderer::render_square(const Square& square) const noexcept
 
 void Renderer::render_square(const Square& square, const CaseColor color) const noexcept
 {
+	SDL_SetRenderDrawBlendMode(this->renderer_, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(this->renderer_, color.r, color.g, color.b, color.a);
 	const SDL_Rect rect = this->get_rect_of_square(square);
 	SDL_RenderFillRect(this->renderer_, &rect);
@@ -75,12 +76,22 @@ void Renderer::render_asset(const Asset& asset) const noexcept
 	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &rect);
 }
 
-void Renderer::render_legal_squares(const Asset& asset) const noexcept
+void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares) const noexcept
 {
-	for (const auto square : asset.piece.get_legal_squares())
+	for (const auto square : squares)
 	{
 		if (!square) continue;
-		this->render_square(*square, {55,205,0,255});
+		this->render_square(*square);
+	}
+}
+
+
+void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares, const CaseColor color) const noexcept
+{
+	for (const auto square : squares)
+	{
+		if (!square) continue;
+		this->render_square(*square, color) ;
 	}
 }
 
@@ -94,14 +105,6 @@ void Renderer::clear_selection(const Asset& asset) const noexcept
 	this->render_square(*asset.piece.get_square());
 }
 
-void Renderer::clear_legal_squares(const Asset& asset) const noexcept
-{
-	for (const auto square : asset.piece.get_legal_squares())
-	{
-		if (!square) continue;
-		this->render_square(*square);
-	}
-}
 
 void Renderer::update_screen() const noexcept
 {
