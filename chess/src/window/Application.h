@@ -22,13 +22,13 @@ public:
 	Application& operator=(Application&&) = delete;
 
 	void init();
-	Asset* get_current_selection() const noexcept { return this->current_selection_; }
-	void set_current_selection(Asset* asset) noexcept;
+	const Asset* get_current_selection() const noexcept { return this->current_selection_; }
+	void set_current_selection(const Asset* asset) noexcept;
 	BoardGame& get_board() noexcept { return this->board_; }
 	Renderer& get_renderer() const noexcept;
 private:
 	std::unique_ptr<Renderer> renderer_{nullptr};
-	Asset* current_selection_{nullptr};
+	const Asset* current_selection_{nullptr};
 	const WindowSize window_size_;
 	const CaseColor primary_color_;
 	const CaseColor secondary_color_;

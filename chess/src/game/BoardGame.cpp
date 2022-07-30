@@ -51,6 +51,10 @@ void BoardGame::compute_legal_squares() const noexcept
 {
 	for (const auto& color: this->colors_)
 	{
+		color->clear_legal_squares_states();
+	}
+	for (const auto& color: this->colors_)
+	{
 		color->compute_pseudo_legal_squares();
 	}
 	this->colors_[this->turn_]->compute_legal_squares();

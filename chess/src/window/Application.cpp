@@ -53,7 +53,7 @@ Application::~Application()
 	SDL_Quit();
 }
 
-void Application::set_current_selection(Asset* asset)  noexcept
+void Application::set_current_selection(const Asset* asset)  noexcept
 {
 	if (this->current_selection_ == asset) return;
 	if (this->current_selection_)

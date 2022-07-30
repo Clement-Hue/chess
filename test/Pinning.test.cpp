@@ -101,3 +101,15 @@ TEST(PinTest, should_unpinned_if_king_move)
 	bishop.move(board[63]);
 	EXPECT_EQ(std::count(queen_legal_squares->begin(), queen_legal_squares->end(), nullptr), 37);
 }
+
+
+TEST(PinTest, pin_black_piece)
+{
+	BoardGame board;
+	auto& king = board.get_color(1).add_piece<King>(board[9]);
+	auto& bishop_w = board.get_color(0).add_piece<Bishop>(board[54]);
+	const auto& queen = board.get_color(1).add_piece<Queen>(board[27]);
+	board.init_game(1);
+	auto* queen_legal_squares = &queen.get_legal_squares();
+	EXPECT_EQ(std::count(queen_legal_squares->begin(), queen_legal_squares->end(), nullptr), 60);
+}

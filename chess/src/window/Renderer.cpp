@@ -48,12 +48,12 @@ std::tuple<int, int> Renderer::get_case_dimensions() const noexcept
 	return { this->window_size_.width / NB_COLUMNS, this->window_size_.height / NB_COLUMNS };
 }
 
-void Renderer::render_square(const Square& square) noexcept
+void Renderer::render_square(const Square& square) const noexcept
 {
 	this->render_square(square, this->get_square_case_color(square));
 }
 
-void Renderer::render_square(const Square& square, const CaseColor color)  noexcept
+void Renderer::render_square(const Square& square, const CaseColor color) const noexcept
 {
 	SDL_SetRenderDrawColor(this->renderer_, color.r, color.g, color.b, color.a);
 	const SDL_Rect rect = this->get_rect_of_square(square);
@@ -75,7 +75,7 @@ void Renderer::render_asset(const Asset& asset) const noexcept
 	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &rect);
 }
 
-void Renderer::render_legal_squares(const Asset& asset) noexcept
+void Renderer::render_legal_squares(const Asset& asset) const noexcept
 {
 	for (const auto square : asset.piece.get_legal_squares())
 	{
@@ -84,17 +84,17 @@ void Renderer::render_legal_squares(const Asset& asset) noexcept
 	}
 }
 
-void Renderer::render_selection(const Asset& asset)  noexcept
+void Renderer::render_selection(const Asset& asset) const noexcept
 {
 	this->render_square(*asset.piece.get_square(), {255, 205,0 ,255});
 }
 
-void Renderer::clear_selection(const Asset& asset)  noexcept
+void Renderer::clear_selection(const Asset& asset) const noexcept
 {
 	this->render_square(*asset.piece.get_square());
 }
 
-void Renderer::clear_legal_squares(const Asset& asset) noexcept
+void Renderer::clear_legal_squares(const Asset& asset) const noexcept
 {
 	for (const auto square : asset.piece.get_legal_squares())
 	{
@@ -114,7 +114,7 @@ void Renderer::add_asset(Piece& piece,SDL_Surface& surface) noexcept
 	this->assets_.emplace_back(Asset{ piece, texture });
 }
 
-Asset* Renderer::get_asset_of_coordinates(const int x, const int y)  noexcept
+const Asset* Renderer::get_asset_of_coordinates(const int x, const int y)  const noexcept
 {
 	for (auto& asset : this->assets_)
 	{
@@ -143,7 +143,7 @@ SDL_Rect Renderer::get_rect_of_square(const Square& square) const noexcept
 	return {  square.get_file() * case_width, square.get_rank() * case_height, case_width, case_height  };
 }
 
-Asset* Renderer::get_asset_of_piece(const Piece& piece) noexcept
+const Asset* Renderer::get_asset_of_piece(const Piece& piece) const noexcept
 {
 	for (auto& asset: this->assets_)
 	{

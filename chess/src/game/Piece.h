@@ -42,8 +42,9 @@ public:
 	Piece& operator=(const Piece&) = delete;
 	Piece& operator=(Piece&&) = delete;
 	virtual ~Piece() = default;
-	virtual void compute_pseudo_legal_squares() noexcept;
+	virtual void compute_pseudo_legal_squares() noexcept = 0;
 	virtual void compute_legal_squares() noexcept;
+	void clear_legal_squares_states() noexcept;
 	bool move(Square& square) noexcept;
 	void remove_square() noexcept { this->square_ = nullptr; }
 	const Square* get_square() const noexcept { return this->square_; }
@@ -57,7 +58,7 @@ public:
 	bool has_moved() const noexcept { return this->has_moved_; };
 	bool is_in_board() const noexcept { return this->square_; }
 protected:
-	void filter_legal_squares_if_pinned() noexcept;
+	void filter_legal_squares_if_pinned() noexcept { if (this->pinning_filter_) this->pinning_filter_(*this); }
 	pinning_filter_type pinning_filter_{nullptr};
 	Square* square_{nullptr};
 	PieceColor& color_;

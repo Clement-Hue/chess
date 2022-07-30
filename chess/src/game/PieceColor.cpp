@@ -35,6 +35,15 @@ void PieceColor::compute_legal_squares() const noexcept
 	}
 }
 
+void PieceColor::clear_legal_squares_states() const noexcept
+{
+	for (const auto& piece: this->pieces_)
+	{
+		piece->clear_legal_squares_states();
+	}
+}
+
+
 void PieceColor::compute_pseudo_legal_squares() const noexcept
 {
 	for (const auto& piece: this->pieces_)

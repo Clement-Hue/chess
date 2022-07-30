@@ -45,6 +45,7 @@ public:
 	virtual void accept(const ColorVisitor& visitor) = 0;
 	BoardGame& get_board() const noexcept { return this->board_; }
 	const pieces_type& get_pieces() noexcept { return this->pieces_; }
+	void clear_legal_squares_states() const noexcept;
 	Piece& get_piece(const int8_t i) const noexcept { return *this->pieces_[i]; }
 	template <typename P>
 	P& add_piece(Square& square) noexcept;
