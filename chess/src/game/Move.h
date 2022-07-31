@@ -2,6 +2,7 @@
 #include "../Common.h"
 
 class Piece;
+class Rock;
 class Square;
 class Pawn;
 
@@ -26,11 +27,12 @@ public:
 class CHESS_API CastleMove final: public Move
 {
 public:
-	CastleMove(Square& king_square, Square& rock_square): king_square_(king_square), rock_square_(rock_square)  {}
-	bool operator()(Piece&, Square&) override { return true; }
+	CastleMove(Piece& rock,Square& king_square, Square& rock_square): king_square_(king_square), rock_square_(rock_square), rock_(rock)  {}
+	bool operator()(Piece&, Square&) override;
 private:
 	Square& king_square_;
 	Square& rock_square_;
+	Piece& rock_;
 };
 
 class CHESS_API PromoteMove final: public Move

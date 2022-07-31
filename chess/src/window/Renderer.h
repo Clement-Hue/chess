@@ -2,16 +2,17 @@
 #include <SDL2/SDL.h>
 #include <tuple>
 #include "../game/Piece.h"
+#include "../game/BoardGame.h"
 #include "Types.h"
 
 
 class Renderer
 {
 public:
-	Renderer(SDL_Window& window, const WindowSize window_size,
+	Renderer(BoardGame& board,SDL_Window& window, const WindowSize window_size,
 		const CaseColor primary_color, const CaseColor secondary_color): renderer_( SDL_CreateRenderer(&window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) ),
 		primary_color_(primary_color), secondary_color_(secondary_color),
-		window_size_(window_size) {}
+		window_size_(window_size), board_(board) {}
 	~Renderer();
 	Renderer(const Renderer&) = delete;
 	Renderer(Renderer&&) = delete;
@@ -38,6 +39,7 @@ private:
 	CaseColor secondary_color_;
 	WindowSize window_size_;
 	std::vector<Asset> assets_;
+	BoardGame& board_;
 
 	const Asset* get_asset_of_piece(const Piece& piece) const  noexcept;
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;

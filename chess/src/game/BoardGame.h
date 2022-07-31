@@ -16,6 +16,7 @@ public:
 	BoardGame& operator=(const BoardGame&) = delete;
 	BoardGame& operator=(BoardGame&&) = delete;
 	Square& operator[](const int8_t i) noexcept { return this->squares_[i]; }
+	const std::vector<Square>& get_squares() const noexcept { return this->squares_; }
 	~BoardGame() = default;
 	void init_game(int8_t turn = 0)  noexcept ;
 	bool has_square_value(const int8_t value) const noexcept { return value >= 0 && value < squares_.size(); }

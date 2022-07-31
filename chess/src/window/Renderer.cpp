@@ -10,37 +10,12 @@ Renderer::~Renderer()
 	SDL_DestroyRenderer(this->renderer_);
 }
 
-template <uint8_t NbRect>
-static std::array<SDL_Rect, NbRect> create_white_squares(const int case_width, const int case_height) noexcept
-{
-	std::array<SDL_Rect, NbRect> white_squares{ { {0 ,0,case_width, case_height} } };
-	for (uint8_t i = 1; i < NbRect; ++i)
-	{
-		white_squares[i].x = white_squares[i - 1].x + 2 * case_width;
-		white_squares[i].y = white_squares[i - 1].y;
-
-		if (i % 4 == 0) // line break
-		{
-			white_squares[i].x = (i % NB_COLUMNS == 0) ? 0 : case_width;
-			white_squares[i].y = white_squares[i - 1].y + case_height;
-		}
-		white_squares[i].w = case_width;
-		white_squares[i].h = case_height;
-	}
-	return white_squares;
-}
-
 void Renderer::render_board() const noexcept
 {
-	constexpr uint8_t nb_rect = NB_SQUARES / 2;
-	SDL_SetRenderDrawColor(this->renderer_, this->primary_color_.r, this->primary_color_.g,
-		this->primary_color_.b, this->primary_color_.a);
-	SDL_RenderClear(this->renderer_);
-	SDL_SetRenderDrawColor(this->renderer_, this->secondary_color_.r, this->secondary_color_.g, 
-		this->secondary_color_.b, this->secondary_color_.a);
-	const auto [case_width, case_height] = this->get_case_dimensions();
-	const auto white_squares = create_white_squares<nb_rect>(case_width, case_height);
-	SDL_RenderFillRects(this->renderer_, white_squares.data(), nb_rect);
+	for (const auto& square: this->board_.get_squares())
+	{
+		this->render_square(square);
+	}
 }
 
 std::tuple<int, int> Renderer::get_case_dimensions() const noexcept
@@ -166,5 +141,4 @@ const CaseColor& Renderer::get_square_case_color(const Square& square) const noe
 	}
 	return this->secondary_color_;
 }
-
 

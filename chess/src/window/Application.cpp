@@ -40,9 +40,8 @@ void Application::init()
 {
 	this->board_.init_game();
 	this->init_window_and_renderer();
-	this->renderer_->render_board();
 	this->load_assets();
-	this->renderer_->render_assets();
+	this->renderer_->render_board();
 	this->renderer_->update_screen();
 	this->app_loop();
 }
@@ -82,7 +81,7 @@ void Application::init_window_and_renderer()
 	{
 		throw std::runtime_error("Unable to create the window");
 	}
-	this->renderer_ = std::make_unique<Renderer>(*this->window_, this->window_size_, this->primary_color_, this->secondary_color_);
+	this->renderer_ = std::make_unique<Renderer>(this->board_,*this->window_, this->window_size_, this->primary_color_, this->secondary_color_);
 }
 
 void Application::load_assets()  const noexcept

@@ -138,3 +138,20 @@ TEST(CastlingTest, castle_if_rock_is_under_attacked)
 	const auto& king_legal_moves = king.get_legal_moves();
 	EXPECT_TRUE(king_legal_moves[56]);
 }
+
+TEST(CastlingTest, move_the_king_and_rock_when_castling)
+{
+	BoardGame board;
+	auto& king = board.get_color(0).add_piece<King>(board[60]);
+	const auto& rock = board.get_color(0).add_piece<Rock>(board[63]);
+	board.init_game();
+	king.move(board[63]);
+	EXPECT_EQ(king.get_square(), &board[62]);
+	EXPECT_EQ(board[62].get_piece(), &king);
+	EXPECT_EQ(rock.get_square(), &board[61]);
+	EXPECT_EQ(board[61].get_piece(), &rock);
+	EXPECT_EQ(board[60].get_piece(), nullptr);
+	EXPECT_EQ(board[63].get_piece(), nullptr);
+	EXPECT_TRUE(king.has_moved());
+	EXPECT_TRUE(rock.has_moved());
+}

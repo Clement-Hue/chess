@@ -165,9 +165,10 @@ void King::add_castling_move(const increment_fn_type increment_fn) noexcept
 		if (i == 2) king_square = &*it;
 		if (Piece* const piece = it->get_piece(); piece && piece != this)
 		{
-			if (dynamic_cast<Rock*>(piece) && piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start())
+			if (dynamic_cast<Rock*>(piece) && piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start()
+				&& king_square && rock_square)
 			{
-				this->legal_moves_[it->get_value()] = std::make_unique<CastleMove>(*king_square, *rock_square);
+				this->legal_moves_[it->get_value()] = std::make_unique<CastleMove>(*piece, *king_square, *rock_square);
 			}
 			return;
 		}
