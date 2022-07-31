@@ -15,16 +15,7 @@ void MouseButtonHandler::operator()(const SDL_Event& e) noexcept
 	}
 	if (const auto asset = this->app_.get_current_selection())
 	{
-		const auto next_square = this->get_square_of_coordinates(e.button.x, e.button.y);
-		const auto prev_square = asset->piece.get_square();
-		const std::array<Square*, NB_SQUARES> prev_legal_squares = asset->piece.get_legal_squares();
-		if (asset->piece.move(*next_square))
-		{
-			this->app_.get_renderer().render_square(*prev_square);
-			this->app_.get_renderer().render_square(*next_square);
-			this->app_.get_renderer().render_squares(prev_legal_squares);
-		}
-		this->app_.get_renderer().update_screen();
+		this->move_asset(*asset, e.button.x, e.button.y);
 	}
 }
 
@@ -35,5 +26,19 @@ Square* MouseButtonHandler::get_square_of_coordinates(const int x, const int y) 
 	const int8_t file = x / case_width;
 	const int8_t square_value = rank * 8 + file;
 	return &this->app_.get_board()[square_value];
+}
+
+void MouseButtonHandler::move_asset(const Asset& asset, int x, int y) const noexcept
+{
+	const auto next_square = this->get_square_of_coordinates(x, y);
+	const auto prev_square = asset.piece.get_square();
+	const std::array<Square*, NB_SQUARES> prev_legal_squares = asset.piece.get_legal_squares();
+	if (asset.piece.move(*next_square))
+	{
+		this->app_.get_renderer().render_square(*prev_square);
+		this->app_.get_renderer().render_square(*next_square);
+		this->app_.get_renderer().render_squares(prev_legal_squares);
+	}
+	this->app_.get_renderer().update_screen();
 }
 

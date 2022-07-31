@@ -37,4 +37,5 @@ public:
 	void operator()(const SDL_Event&) noexcept override;
 private:
 	Square* get_square_of_coordinates(int x, int y) const noexcept;
+	void move_asset(const Asset&, int x, int y) const noexcept;
 };

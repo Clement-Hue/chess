@@ -78,7 +78,7 @@ void Renderer::render_asset(const Asset& asset) const noexcept
 
 void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares) const noexcept
 {
-	for (const auto square : squares)
+	for (const Square* square : squares)
 	{
 		if (!square) continue;
 		this->render_square(*square);
@@ -88,7 +88,7 @@ void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares) co
 
 void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares, const CaseColor color) const noexcept
 {
-	for (const auto square : squares)
+	for (const Square* square : squares)
 	{
 		if (!square) continue;
 		this->render_square(*square, color) ;
@@ -119,11 +119,11 @@ void Renderer::add_asset(Piece& piece,SDL_Surface& surface) noexcept
 
 const Asset* Renderer::get_asset_of_coordinates(const int x, const int y)  const noexcept
 {
-	for (auto& asset : this->assets_)
+	for (const auto& asset : this->assets_)
 	{
 		const auto square = asset.piece.get_square();
 		if (!square) continue;
-		const auto rect = this->get_rect_of_square(*square);
+		const SDL_Rect rect = this->get_rect_of_square(*square);
 		if (x > rect.x && x < rect.x + rect.w && y > rect.y && y < rect.y + rect.h)
 		{
 			return &asset;
