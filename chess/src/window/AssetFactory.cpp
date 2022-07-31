@@ -2,15 +2,27 @@
 #include "AssetFactory.h"
 #include <string>
 
-static PieceAssetFactory::surfaces_type create_surfaces(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names)
+class Surface
 {
-	PieceAssetFactory::surfaces_type surfaces{nullptr};
-	for (int8_t i = 0; i < surfaces.size(); ++i)
+public:
+	Surface( const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names)
 	{
-		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+		for (int8_t i = 0; i < this->surfaces_.size(); ++i)
+		{
+			this->surfaces_[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+		}
 	}
-	return surfaces;
-}
+	~Surface()
+	{
+		for (const auto& surface: this->surfaces_)
+		{
+			SDL_FreeSurface(surface);
+		}
+	}
+	PieceAssetFactory::surfaces_type& get() noexcept { return this->surfaces_; }
+private:
+	PieceAssetFactory::surfaces_type surfaces_{nullptr};
+};
 
 
 void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const noexcept
@@ -18,14 +30,6 @@ void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const n
 	this->renderer_.add_asset(piece, *surface);
 }
 
-
-static void clear_surfaces(const PieceAssetFactory::surfaces_type& surfaces)
-{
-	for (const auto& surface: surfaces)
-	{
-		SDL_FreeSurface(surface);
-	}
-}
 
 void AssetFactory::create_piece_assets(PieceAssetFactory::surfaces_type& surfaces, PieceColor& color ) const noexcept
 {
@@ -37,22 +41,20 @@ void AssetFactory::create_piece_assets(PieceAssetFactory::surfaces_type& surface
 
 void AssetFactory::visit(BlackColor& color) const
 {
-	auto surfaces = create_surfaces({
+	Surface surface  ({
 		"king_b.png", "queen_b.png",
 		"bishop_b.png",  "knight_b.png", "pawn_b.png",
 		 "rock_b.png"
 		});
-	this->create_piece_assets(surfaces , color);
-	clear_surfaces(surfaces);
+	this->create_piece_assets(surface.get() , color);
 }
 
 void AssetFactory::visit(WhiteColor& color) const
 {
-	auto surfaces = create_surfaces({
+	Surface surface  ({
 		"king_w.png", "queen_w.png",
 		"bishop_w.png",  "knight_w.png", "pawn_w.png",
 		 "rock_w.png"
 		});
-	this->create_piece_assets(surfaces , color);
-	clear_surfaces(surfaces);
+	this->create_piece_assets(surface.get(), color);
 }
