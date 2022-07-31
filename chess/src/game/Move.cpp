@@ -4,7 +4,7 @@
 
 bool SimpleMove::operator()(Piece& piece, Square& square)
 {
-	const auto piece_on_square = square.get_piece();
+	Piece* const piece_on_square = square.get_piece();
 	if (piece_on_square && piece_on_square->is_friend_of(piece)) return false;
 	if (piece_on_square && piece_on_square->is_enemy_of(piece))
 	{
@@ -13,6 +13,6 @@ bool SimpleMove::operator()(Piece& piece, Square& square)
 	piece.get_square()->remove_piece();
 	piece.set_square(square);
 	square.set_piece(piece);
-	piece.moved();
+	piece.mark_as_moved();
 	return true;
 }

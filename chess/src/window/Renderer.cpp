@@ -76,7 +76,7 @@ void Renderer::render_asset(const Asset& asset) const noexcept
 	SDL_RenderCopy(this->renderer_, asset.texture, nullptr, &rect);
 }
 
-void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares) const noexcept
+void Renderer::render_squares(const std::vector<Square*>& squares) const noexcept
 {
 	for (const Square* square : squares)
 	{
@@ -86,7 +86,7 @@ void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares) co
 }
 
 
-void Renderer::render_squares(const std::array<Square*, NB_SQUARES>& squares, const CaseColor color) const noexcept
+void Renderer::render_squares(const std::vector<Square* >& squares, const CaseColor color) const noexcept
 {
 	for (const Square* square : squares)
 	{

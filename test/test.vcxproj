@@ -39,6 +39,7 @@
     <ClCompile Include="BoardGame.test.cpp" />
     <ClCompile Include="BishopSquare.test.cpp" />
     <ClCompile Include="BoardIterator.test.cpp" />
+    <ClCompile Include="Castling.test.cpp" />
     <ClCompile Include="KingSquare.test.cpp" />
     <ClCompile Include="KnightSquares.test.cpp" />
     <ClCompile Include="Matchers.h" />

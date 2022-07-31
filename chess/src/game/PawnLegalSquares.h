@@ -1,5 +1,6 @@
 #pragma once
 #include "PieceColor.h"
+#include "Move.h"
 #include "Piece.h"
 
 class PawnColorVisitor: public  ColorVisitor
@@ -45,11 +46,11 @@ template <typename Color>
 void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 {
 	auto& square_it = FileIterator(color.get_board()).begin(*this->pawn_.get_square());
-	const int8_t nb_squares = !this->pawn_.is_on_start() ? 2 : 1;
+	const int8_t nb_squares = this->pawn_.is_on_start() ? 2 : 1;
 	this->increment_fn<Color>(square_it);
 	for (int8_t i = 0;  i<nb_squares && square_it && square_it->is_free() ; ++i, this->increment_fn<Color>(square_it))
 	{
-		this->pawn_.get_legal_square(square_it->get_value()) = &*square_it;
+		this->pawn_.get_legal_move(square_it->get_value()) = std::make_unique<SimpleMove>();
 	}
 }
 
@@ -61,7 +62,7 @@ void PawnPseudoLegalSquares::add_takeable_squares(PieceColor& color) const noexc
 		{
 			if ( square_it )
 			{
-				pawn.get_legal_square(square_it->get_value()) = &*square_it;
+				pawn.get_legal_move(square_it->get_value()) = std::make_unique<SimpleMove>();
 			}
 		});
 }
@@ -73,7 +74,7 @@ void PawnLegalSquares::remove_not_legal_takeable_squares(PieceColor& color) cons
 		{
 			if ( square_it && !square_it->has_enemy_piece_of(pawn) )
 			{
-				pawn.get_legal_square(square_it->get_value()) = nullptr;
+				pawn.get_legal_move(square_it->get_value()) = nullptr;
 			}
 		});
 }

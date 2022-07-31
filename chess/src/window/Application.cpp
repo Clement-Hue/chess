@@ -59,10 +59,10 @@ void Application::set_current_selection(const Asset* asset)  noexcept
 	if (this->current_selection_)
 	{
 		this->renderer_->clear_selection(*this->current_selection_);
-		this->renderer_->render_squares(this->current_selection_->piece.get_legal_squares());
+		this->renderer_->render_squares(this->current_selection_->piece.get_squares_of_legal_moves());
 	}
 	this->renderer_->render_selection(*asset);
-	this->renderer_->render_squares(asset->piece.get_legal_squares(), {55,205,0,100} );
+	this->renderer_->render_squares(asset->piece.get_squares_of_legal_moves(), {55,205,0,100} );
 	this->renderer_->update_screen();
 	this->current_selection_ = asset;
 }

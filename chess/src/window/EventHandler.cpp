@@ -32,7 +32,7 @@ void MouseButtonHandler::move_asset(const Asset& asset, int x, int y) const noex
 {
 	const auto next_square = this->get_square_of_coordinates(x, y);
 	const auto prev_square = asset.piece.get_square();
-	const std::array<Square*, NB_SQUARES> prev_legal_squares = asset.piece.get_legal_squares();
+	const std::vector<Square*> prev_legal_squares = asset.piece.get_squares_of_legal_moves();
 	if (asset.piece.move(*next_square))
 	{
 		this->app_.get_renderer().render_square(*prev_square);

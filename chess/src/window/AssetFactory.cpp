@@ -19,7 +19,7 @@ void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const n
 }
 
 
-void clear_surfaces(const PieceAssetFactory::surfaces_type& surfaces)
+static void clear_surfaces(const PieceAssetFactory::surfaces_type& surfaces)
 {
 	for (const auto& surface: surfaces)
 	{

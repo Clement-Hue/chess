@@ -26,7 +26,7 @@ public:
 	void next_turn() noexcept;
 	void set_default_pieces() const noexcept;
 private:
-	void compute_legal_squares() const noexcept;
+	void compute_legal_moves() const noexcept;
 	std::vector<Square> squares_;
 	colors_type colors_  { std::make_unique<WhiteColor>(*this), std::make_unique<BlackColor>(*this) };
 	int8_t turn_ = 0;

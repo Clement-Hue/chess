@@ -45,15 +45,16 @@ public:
 	virtual void accept(const ColorVisitor& visitor) = 0;
 	BoardGame& get_board() const noexcept { return this->board_; }
 	const pieces_type& get_pieces() noexcept { return this->pieces_; }
-	void clear_legal_squares_states() const noexcept;
+	void clear_legal_moves_states() const noexcept;
 	Piece& get_piece(const int8_t i) const noexcept { return *this->pieces_[i]; }
 	template <typename P>
 	P& add_piece(Square& square) noexcept;
 	bool is_turn() const noexcept;
 	Rank get_rank() const noexcept { return this->rank_; }
-	void compute_legal_squares() const noexcept;
-	void compute_pseudo_legal_squares() const noexcept;
+	void compute_legal_moves() const noexcept;
+	void compute_pseudo_legal_moves() const noexcept;
 	void set_default_pieces() noexcept;
+	bool is_square_attacked(const Square&) const noexcept;
 protected:
 	pieces_type pieces_;
 	BoardGame& board_;

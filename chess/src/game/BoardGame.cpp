@@ -29,7 +29,7 @@ void BoardGame::set_default_pieces() const noexcept
 void BoardGame::init_game(const int8_t turn) noexcept
 {
 	this->turn_ = turn;
-	this->compute_legal_squares();
+	this->compute_legal_moves();
 }
 
 void BoardGame::next_turn() noexcept
@@ -39,7 +39,7 @@ void BoardGame::next_turn() noexcept
 	{
 		this->turn_ = 0;
 	}
-	this->compute_legal_squares();
+	this->compute_legal_moves();
 }
 
 PieceColor& BoardGame::get_turn() const noexcept
@@ -47,16 +47,16 @@ PieceColor& BoardGame::get_turn() const noexcept
 	return *this->colors_[this->turn_]; 
 }
 
-void BoardGame::compute_legal_squares() const noexcept
+void BoardGame::compute_legal_moves() const noexcept
 {
 	for (const auto& color: this->colors_)
 	{
-		color->clear_legal_squares_states();
+		color->clear_legal_moves_states();
 	}
 	for (const auto& color: this->colors_)
 	{
-		color->compute_pseudo_legal_squares();
+		color->compute_pseudo_legal_moves();
 	}
-	this->colors_[this->turn_]->compute_legal_squares();
+	this->colors_[this->turn_]->compute_legal_moves();
 }
 

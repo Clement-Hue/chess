@@ -1,10 +1,11 @@
 #pragma once
+#include "../Common.h"
 
 class Piece;
 class Square;
 class Pawn;
 
-class Move
+class CHESS_API Move
 {
 public:
 	Move() = default;
@@ -16,13 +17,13 @@ public:
 	virtual bool operator()(Piece&, Square&) = 0;
 };
 
-class SimpleMove final: public Move
+class CHESS_API SimpleMove final: public Move
 {
 public:
 	bool operator()(Piece&, Square&) override;
 };
 
-class CastleMove final: public Move
+class CHESS_API CastleMove final: public Move
 {
 public:
 	CastleMove(Square& king_square, Square& rock_square): king_square_(king_square), rock_square_(rock_square)  {}
@@ -32,13 +33,13 @@ private:
 	Square& rock_square_;
 };
 
-class PromoteMove final: public Move
+class CHESS_API PromoteMove final: public Move
 {
 public:
 	bool operator()(Piece&, Square&) override { return true; }
 };
 
-class InPassingMove final: public Move
+class CHESS_API InPassingMove final: public Move
 {
 public:
 	InPassingMove(Pawn& taken_pawn): taken_pawn_(taken_pawn) {}
