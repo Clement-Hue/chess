@@ -3,6 +3,7 @@
 #include "game/Piece.h"
 #include "Piece.mock.h"
 #include <typeinfo>
+#include "Matchers.h"
 
 
 TEST(BoardGameTest, construct_board_squares)
@@ -54,13 +55,6 @@ TEST(PieceTest, cannot_move_to_friend_square)
 	EXPECT_EQ(board[5].get_piece(), &p2);
 	EXPECT_EQ(board[2].get_piece(), &p1);
 	EXPECT_TRUE(board[2].get_piece()->get_color() == WhiteColor(board));;
-}
-
-template <typename T, typename Color>
-void is_in_board(const Square& square )
-{
-	EXPECT_EQ(typeid(square.get_piece()->get_color()), typeid(Color)) << "Invalid piece color";
-	EXPECT_TRUE( dynamic_cast<T*>(square.get_piece()) ) << "Invalid type of piece";
 }
 
 

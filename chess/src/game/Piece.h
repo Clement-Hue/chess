@@ -47,7 +47,8 @@ public:
 	void clear_legal_squares_states() noexcept;
 	bool move(Square& square) noexcept;
 	void remove_square() noexcept { this->square_ = nullptr; }
-	const Square* get_square() const noexcept { return this->square_; }
+	Square* get_square() const noexcept { return this->square_; }
+	void set_square(Square& square) noexcept { this->square_ = &square; }
 	PieceColor& get_color() const noexcept { return this->color_; }
 	bool is_enemy_of(const Piece& piece) const noexcept;
 	bool is_friend_of(const Piece& piece) const noexcept;
@@ -57,6 +58,7 @@ public:
 	virtual void accept(const PieceVisitor& visitor) = 0;
 	bool has_moved() const noexcept { return this->has_moved_; };
 	bool is_in_board() const noexcept { return this->square_; }
+	void moved() noexcept { this->has_moved_ = true; }
 protected:
 	void filter_legal_squares_if_pinned() noexcept { if (this->pinning_filter_) this->pinning_filter_(*this); }
 	pinning_filter_type pinning_filter_{nullptr};

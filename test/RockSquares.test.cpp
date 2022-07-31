@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Matchers.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
 #include "Piece.mock.h"
@@ -10,12 +11,7 @@ TEST(RockSquareAvailableTest, all_squares_free)
 	Rock& rock = board.get_color(0).add_piece<Rock>(board[11]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);
-	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
-		&board[3], &board[8], &board[9], &board[10], &board[12], &board[13],
-		&board[14], &board[15], &board[19], &board[27], &board[35], &board[43],
-		&board[51], &board[59]
-		}));
+	has_squares(rock_eligible_squares, {3, 8,9,10,12,13,14,15,19,27,35,43,51,59 });
 }
 
 TEST(RockSquareAvailableTest, rock_on_first_line)
@@ -24,12 +20,7 @@ TEST(RockSquareAvailableTest, rock_on_first_line)
 	Rock& rock = board.get_color(0).add_piece<Rock>(board[3]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);
-	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
-		&board[0], &board[1], &board[2], &board[4], &board[5], &board[6],
-		&board[7], &board[11], &board[19], &board[27], &board[35], &board[43],
-		&board[51], &board[59]
-	}));
+	has_squares(rock_eligible_squares, { 0,1,2,4,5,6,7,11,19,27,35,43,51,59 });
 }
 
 
@@ -39,24 +30,19 @@ TEST(RockSquareAvailableTest, rock_on_edge)
 	Rock& rock = board.get_color(0).add_piece<Rock>(board[63]);
 	rock.compute_pseudo_legal_squares();
 	const auto &rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_EQ(std::count(rock_eligible_squares.begin(), rock_eligible_squares.end(), nullptr), 50);
-	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
-		&board[7], &board[15], &board[23], &board[31], &board[39], &board[47],
-		&board[55], &board[56], &board[57], &board[58], &board[59], &board[60],
-		&board[61], &board[62]
-	}));
+	has_squares(rock_eligible_squares, { 7,15,23,31,39,47,55,56,57,58,59,60,61,62 });
 }
 
 TEST(RockSquareAvailableTest, left_square_taken)
 {
 	BoardGame board;
-	const auto& piece = board.get_color(0).add_piece<MockPiece>(board[10]);
+	board.get_color(0).add_piece<MockPiece>(board[10]);
 	auto& rock = board.get_color(0).add_piece<Rock>(board[11]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[8])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[9])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[10])));
+	EXPECT_FALSE(rock_eligible_squares[8]);
+	EXPECT_FALSE(rock_eligible_squares[9]);
+	EXPECT_FALSE(rock_eligible_squares[10]);
 }
 
 TEST(RockSquareAvailableTest, right_square_taken)
@@ -66,10 +52,10 @@ TEST(RockSquareAvailableTest, right_square_taken)
 	auto& rock = board.get_color(0).add_piece<Rock>(board[11]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[12])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[13])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[14])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[15])));
+	EXPECT_FALSE(rock_eligible_squares[12]);
+	EXPECT_FALSE(rock_eligible_squares[13]);
+	EXPECT_FALSE(rock_eligible_squares[14]);
+	EXPECT_FALSE(rock_eligible_squares[15]);
 }
 
 TEST(RockSquareAvailableTest, upper_square_taken)
@@ -79,10 +65,10 @@ TEST(RockSquareAvailableTest, upper_square_taken)
 	auto& rock = board.get_color(0).add_piece<Rock>(board[25]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_THAT(rock_eligible_squares ,Contains(&board[33]));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[41])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[49])));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[58])));
+	EXPECT_TRUE(rock_eligible_squares[33]);
+	EXPECT_FALSE(rock_eligible_squares[41]);
+	EXPECT_FALSE(rock_eligible_squares[49]);
+	EXPECT_FALSE(rock_eligible_squares[58]);
 }
 
 TEST(RockSquareAvailableTest, lower_square_taken)
@@ -92,8 +78,8 @@ TEST(RockSquareAvailableTest, lower_square_taken)
 	auto& rock = board.get_color(0).add_piece<Rock>(board[19]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_THAT(rock_eligible_squares ,Contains(&board[11]));
-	EXPECT_THAT(rock_eligible_squares ,Not(Contains(&board[3])));
+	EXPECT_TRUE(rock_eligible_squares[11]);
+	EXPECT_FALSE(rock_eligible_squares[3]);
 }
 
 TEST(RockSquareAvailableTest, enemy_squares_are_available_squares)
@@ -106,7 +92,8 @@ TEST(RockSquareAvailableTest, enemy_squares_are_available_squares)
 	auto& rock = board.get_color(0).add_piece<Rock>(board[19]);
 	rock.compute_pseudo_legal_squares();
 	const auto& rock_eligible_squares = rock.get_legal_squares();
-	EXPECT_THAT(rock_eligible_squares, IsSupersetOf({
-		p1.get_square(), p2.get_square(), p3.get_square(), p4.get_square()
-	}));
+	EXPECT_TRUE(rock_eligible_squares[p1.get_square()->get_value()]);
+	EXPECT_TRUE(rock_eligible_squares[p2.get_square()->get_value()]);
+	EXPECT_TRUE(rock_eligible_squares[p3.get_square()->get_value()]);
+	EXPECT_TRUE(rock_eligible_squares[p4.get_square()->get_value()]);
 }
