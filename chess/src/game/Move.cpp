@@ -30,3 +30,14 @@ bool CastleMove::operator()(Piece& king, Square&)
 	return true;
 }
 
+bool PromoteMove::operator()(Piece& pawn, Square& square)
+{
+	this->color_.add_piece<Queen>(square);
+	pawn.get_square()->remove_piece();
+	auto& pieces = this->color_.get_pieces();
+	const auto pawn_it = std::find_if(pieces.begin(), pieces.end(),
+		[&pawn](const std::unique_ptr<Piece>& ptr) { return &*ptr == &pawn; }
+	);
+	pieces.erase(pawn_it);
+	return true;
+}

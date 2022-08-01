@@ -34,6 +34,7 @@ bool PieceColor::is_square_attacked(const Square& square) const noexcept
 }
 
 
+
 bool PieceColor::is_turn() const noexcept
 {
 	return this->board_.get_turn() == *this;
@@ -64,5 +65,10 @@ void PieceColor::compute_pseudo_legal_moves() const noexcept
 		if (!piece->is_in_board()) continue;
 		piece->compute_pseudo_legal_moves();
 	}
+}
+
+void PieceColor::add_piece_observer(std::unique_ptr<PieceObserver> obs) noexcept
+{
+	this->piece_observers_.emplace_back(std::move(obs));
 }
 

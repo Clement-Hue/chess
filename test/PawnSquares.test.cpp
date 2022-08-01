@@ -2,7 +2,6 @@
 #include "Matchers.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 
 TEST(PawnSquareAvailableTest, white_pawn_in_middle_of_board)
 {
@@ -50,7 +49,7 @@ TEST(PawnSquareAvailableTest, pawn_blocked_by_enemy)
 {
 	BoardGame board;
 	auto& pawn = board.get_color(0).add_piece<Pawn>(board[50]);
-	board.get_color(1).add_piece<MockPiece>(board[42]);
+	board.get_color(1).add_piece<Pawn>(board[42]);
 	pawn.compute_pseudo_legal_moves();
 	pawn.compute_legal_moves();
 	const auto& pawn_eligible_squares = pawn.get_legal_moves();
@@ -62,7 +61,7 @@ TEST(PawnSquareAvailableTest, pawn_blocked_by_friend)
 {
 	BoardGame board;
 	auto& pawn = board.get_color(0).add_piece<Pawn>(board[50]);
-	board.get_color(0).add_piece<MockPiece>(board[34]);
+	board.get_color(0).add_piece<Pawn>(board[34]);
 	pawn.compute_pseudo_legal_moves();
 	pawn.compute_legal_moves();
 	const auto& pawn_eligible_squares = pawn.get_legal_moves();
@@ -83,8 +82,8 @@ TEST(PawnSquareAvailableTest, takeable_black_enemy_pieces)
 {
 	BoardGame board;
 	auto& pawn = board.get_color(0).add_piece<Pawn>(board[50]);
-	board.get_color(1).add_piece<MockPiece>(board[41]);
-	board.get_color(1).add_piece<MockPiece>(board[43]);
+	board.get_color(1).add_piece<Pawn>(board[41]);
+	board.get_color(1).add_piece<Pawn>(board[43]);
 	pawn.compute_pseudo_legal_moves();
 	pawn.compute_legal_moves();
 	const auto& pawn_eligible_squares = pawn.get_legal_moves();
@@ -96,7 +95,7 @@ TEST(PawnSquareAvailableTest, takeable_white_enemy_pieces)
 {
 	BoardGame board;
 	auto& pawn = board.get_color(1).add_piece<Pawn>(board[34]);
-	board.get_color(0).add_piece<MockPiece>(board[43]);
+	board.get_color(0).add_piece<Pawn>(board[43]);
 	pawn.compute_pseudo_legal_moves();
 	pawn.compute_legal_moves();
 	const auto& pawn_eligible_squares = pawn.get_legal_moves();

@@ -137,6 +137,7 @@ public:
 	void compute_legal_moves() noexcept override;
 	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
+	void add_move(const Square&) noexcept;
 };
 
 

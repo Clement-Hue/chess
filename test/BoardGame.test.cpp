@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "game/BoardGame.h"
-#include "Piece.mock.h"
 
 TEST(BoardGameTest, should_alternate_turn)
 {

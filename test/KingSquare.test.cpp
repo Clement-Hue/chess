@@ -2,7 +2,6 @@
 #include "Matchers.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 
 TEST(KingSquareAvailableTest, all_squares_free)
 {
@@ -26,9 +25,9 @@ TEST(KingSquareAvailableTest, positionned_on_edge)
 TEST(KingSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
-	board.get_color(0).add_piece<MockPiece>(board[18]);
-	board.get_color(0).add_piece<MockPiece>(board[3]);
-	board.get_color(1).add_piece<MockPiece>(board[2]);
+	board.get_color(0).add_piece<Pawn>(board[18]);
+	board.get_color(0).add_piece<Pawn>(board[3]);
+	board.get_color(1).add_piece<Pawn>(board[2]);
 	auto& king = board.get_color(0).add_piece<King>(board[11]);
 	king.compute_pseudo_legal_moves();
 	const auto& king_eligible_squares = king.get_legal_moves();

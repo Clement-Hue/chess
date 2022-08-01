@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 
 TEST(CastlingTest, castle_if_no_pieces_between_rock_and_king)
 {

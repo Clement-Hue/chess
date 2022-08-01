@@ -21,3 +21,4 @@ void PawnLegalSquares::visit(WhiteColor& color) const
 	this->add_file_legal_squares<WhiteColor>(color);
 	this->remove_not_legal_takeable_squares<WhiteColor>(color);
 }
+

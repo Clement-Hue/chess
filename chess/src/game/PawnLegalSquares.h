@@ -50,7 +50,7 @@ void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 	this->increment_fn<Color>(square_it);
 	for (int8_t i = 0;  i<nb_squares && square_it && square_it->is_free() ; ++i, this->increment_fn<Color>(square_it))
 	{
-		this->pawn_.get_legal_move(square_it->get_value()) = std::make_unique<SimpleMove>();
+		this->pawn_.add_move(*square_it);
 	}
 }
 
@@ -62,7 +62,7 @@ void PawnPseudoLegalSquares::add_takeable_squares(PieceColor& color) const noexc
 		{
 			if ( square_it )
 			{
-				pawn.get_legal_move(square_it->get_value()) = std::make_unique<SimpleMove>();
+				pawn.add_move(*square_it);
 			}
 		});
 }

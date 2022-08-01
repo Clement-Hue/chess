@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 #include <typeinfo>
 #include "Matchers.h"
 
@@ -18,14 +17,14 @@ TEST(BoardGameTest, construct_board_squares)
 TEST(PieceTest, link_piece_and_square_on_construct)
 {
 	BoardGame board;
-	auto& piece = board.get_color(0).add_piece<MockPiece>(board[2]);
+	auto& piece = board.get_color(0).add_piece<Pawn>(board[2]);
 	EXPECT_EQ(board[2].get_piece(), &piece) << "Pieces are not the same";
 }
 
 TEST(PieceTest, link_piece_and_square_when_moving_piece)
 {
 	BoardGame board;
-	auto& piece = board.get_color(0).add_piece<MockPiece>(board[2]);
+	auto& piece = board.get_color(0).add_piece<Pawn>(board[2]);
 	piece.get_legal_move(4) = std::make_unique<SimpleMove>();
 	piece.move(board[4]);
 	EXPECT_EQ(board[4].get_piece(), &piece) << "Piece hasn't moved";
@@ -36,8 +35,8 @@ TEST(PieceTest, piece_catch_an_enemy)
 {
 	BoardGame board;
 	board.set_turn(1);
-	auto& black_p = board.get_color(1).add_piece<MockPiece>(board[2]);
-	const auto& white_p = board.get_color(0).add_piece<MockPiece>(board[5]);
+	auto& black_p = board.get_color(1).add_piece<Pawn>(board[2]);
+	const auto& white_p = board.get_color(0).add_piece<Pawn>(board[5]);
 	black_p.get_legal_move(5) = std::make_unique<SimpleMove>();
 	black_p.move(board[5]);
 	EXPECT_EQ(board[5].get_piece(), &black_p) << "Black piece hasn't moved";
@@ -49,8 +48,8 @@ TEST(PieceTest, piece_catch_an_enemy)
 TEST(PieceTest, cannot_move_to_friend_square)
 {
 	BoardGame board;
-	auto& p1 = board.get_color(0).add_piece<MockPiece>(board[2]);
-	const auto& p2 = board.get_color(0).add_piece<MockPiece>(board[5]);
+	auto& p1 = board.get_color(0).add_piece<Pawn>(board[2]);
+	const auto& p2 = board.get_color(0).add_piece<Pawn>(board[5]);
 	p1.move(board[5]);
 	EXPECT_EQ(board[5].get_piece(), &p2);
 	EXPECT_EQ(board[2].get_piece(), &p1);

@@ -230,3 +230,14 @@ bool Pawn::is_on_start() const noexcept
 {
 	return this->square_->get_rank() == this->color_.get_rank().second;
 }
+
+void Pawn::add_move(const Square& square) noexcept
+{
+	if (square.get_rank() == 0 || square.get_rank() == NB_ROWS -1)
+	{
+		this->legal_moves_[square.get_value()] = std::make_unique<PromoteMove>(this->color_);
+		return;
+	}
+	this->legal_moves_[square.get_value()] = std::make_unique<SimpleMove>();
+}
+

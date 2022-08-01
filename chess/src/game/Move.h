@@ -5,6 +5,7 @@ class Piece;
 class Rock;
 class Square;
 class Pawn;
+class PieceColor;
 
 class CHESS_API Move
 {
@@ -38,7 +39,11 @@ private:
 class CHESS_API PromoteMove final: public Move
 {
 public:
-	bool operator()(Piece&, Square&) override { return true; }
+	PromoteMove(PieceColor& color) : color_(color) {}
+	bool operator()(Piece&, Square&) override;
+private:
+	PieceColor& color_;
+
 };
 
 class CHESS_API InPassingMove final: public Move

@@ -2,7 +2,6 @@
 #include "Matchers.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 #include "game/PieceColor.h"
 
 TEST(RockSquareAvailableTest, all_squares_free)
@@ -36,7 +35,7 @@ TEST(RockSquareAvailableTest, rock_on_edge)
 TEST(RockSquareAvailableTest, left_square_taken)
 {
 	BoardGame board;
-	board.get_color(0).add_piece<MockPiece>(board[10]);
+	board.get_color(0).add_piece<Pawn>(board[10]);
 	auto& rock = board.get_color(0).add_piece<Rock>(board[11]);
 	rock.compute_pseudo_legal_moves();
 	const auto& rock_eligible_squares = rock.get_legal_moves();
@@ -48,7 +47,7 @@ TEST(RockSquareAvailableTest, left_square_taken)
 TEST(RockSquareAvailableTest, right_square_taken)
 {
 	BoardGame board;
-	const auto& piece = board.get_color(0).add_piece<MockPiece>(board[12]);
+	const auto& piece = board.get_color(0).add_piece<Pawn>(board[12]);
 	auto& rock = board.get_color(0).add_piece<Rock>(board[11]);
 	rock.compute_pseudo_legal_moves();
 	const auto& rock_eligible_squares = rock.get_legal_moves();
@@ -61,7 +60,7 @@ TEST(RockSquareAvailableTest, right_square_taken)
 TEST(RockSquareAvailableTest, upper_square_taken)
 {
 	BoardGame board;
-	board.get_color(0).add_piece<MockPiece>(board[41]);
+	board.get_color(0).add_piece<Pawn>(board[41]);
 	auto& rock = board.get_color(0).add_piece<Rock>(board[25]);
 	rock.compute_pseudo_legal_moves();
 	const auto& rock_eligible_squares = rock.get_legal_moves();
@@ -74,7 +73,7 @@ TEST(RockSquareAvailableTest, upper_square_taken)
 TEST(RockSquareAvailableTest, lower_square_taken)
 {
 	BoardGame board;
-	board.get_color(0).add_piece<MockPiece>(board[3]);
+	board.get_color(0).add_piece<Pawn>(board[3]);
 	auto& rock = board.get_color(0).add_piece<Rock>(board[19]);
 	rock.compute_pseudo_legal_moves();
 	const auto& rock_eligible_squares = rock.get_legal_moves();
@@ -85,10 +84,10 @@ TEST(RockSquareAvailableTest, lower_square_taken)
 TEST(RockSquareAvailableTest, enemy_squares_are_available_squares)
 {
 	BoardGame board;
-	const auto& p1 = board.get_color(1).add_piece<MockPiece>(board[3]);
-	const auto& p2 = board.get_color(1).add_piece<MockPiece>(board[27]);
-	const auto& p3 = board.get_color(1).add_piece<MockPiece>(board[18]);
-	const auto& p4 = board.get_color(1).add_piece<MockPiece>(board[20]);
+	const auto& p1 = board.get_color(1).add_piece<Pawn>(board[3]);
+	const auto& p2 = board.get_color(1).add_piece<Pawn>(board[27]);
+	const auto& p3 = board.get_color(1).add_piece<Pawn>(board[18]);
+	const auto& p4 = board.get_color(1).add_piece<Pawn>(board[20]);
 	auto& rock = board.get_color(0).add_piece<Rock>(board[19]);
 	rock.compute_pseudo_legal_moves();
 	const auto& rock_eligible_squares = rock.get_legal_moves();
