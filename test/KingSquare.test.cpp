@@ -1,76 +1,59 @@
 #include "pch.h"
+#include "Matchers.h"
 #include "game/BoardGame.h"
 #include "game/Piece.h"
-#include "Piece.mock.h"
 
 TEST(KingSquareAvailableTest, all_squares_free)
 {
 	BoardGame board;
-	auto& knight = board.get_color(0).create_piece<King>(&board[11]);
-	knight.compute_pseudo_legal_squares();
-	const auto& king_eligible_squares = knight.get_legal_squares();
-	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 56);
-	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
-		&board[2], &board[3], &board[4],
-		&board[10], &board[12], &board[18] ,&board[19],  &board[20]}));
+	auto& knight = board.get_color(0).add_piece<King>(board[11]);
+	knight.compute_pseudo_legal_moves();
+	const auto& king_eligible_squares = knight.get_legal_moves();
+	has_squares(king_eligible_squares, { 2,3,4,10,12,18,19,20 });
 }
 
 TEST(KingSquareAvailableTest, positionned_on_edge)
 {
 	BoardGame board;
-	auto& king = board.get_color(0).create_piece<King>(&board[63]);
-	king.compute_pseudo_legal_squares();
-	const auto& king_eligible_squares = king.get_legal_squares();
-	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 61);
-	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
-		&board[54], &board[55], &board[62] }));
+	auto& king = board.get_color(0).add_piece<King>(board[63]);
+	king.compute_pseudo_legal_moves();
+	const auto& king_eligible_squares = king.get_legal_moves();
+	has_squares(king_eligible_squares,{ 54,55,62 });
 }
 
 
 TEST(KingSquareAvailableTest, squares_taken)
 {
 	BoardGame board;
-	board.get_color(0).create_piece<MockPiece>(&board[18]);
-	board.get_color(0).create_piece<MockPiece>(&board[3]);
-	board.get_color(1).create_piece<MockPiece>(&board[2]);
-	auto& king = board.get_color(0).create_piece<King>(&board[11]);
-	king.compute_pseudo_legal_squares();
-	const auto& king_eligible_squares = king.get_legal_squares();
-	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 58);
-	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
-		&board[2],  &board[4], &board[10], &board[12], &board[19],  &board[20]})
-		);
+	board.get_color(0).add_piece<Pawn>(board[18]);
+	board.get_color(0).add_piece<Pawn>(board[3]);
+	board.get_color(1).add_piece<Pawn>(board[2]);
+	auto& king = board.get_color(0).add_piece<King>(board[11]);
+	king.compute_pseudo_legal_moves();
+	const auto& king_eligible_squares = king.get_legal_moves();
+	has_squares(king_eligible_squares, { 2,4,10,12,19,20 });
 }
 
 
 TEST(KingSquareAvailableTest, squares_attacked)
 {
 	BoardGame board;
-	auto& rock = board.get_color(1).create_piece<Rock>(&board[7]);
-	auto& king = board.get_color(0).create_piece<King>(&board[11]);
-	auto& friend_rock = board.get_color(0).create_piece<Rock>(&board[21]);
-	rock.compute_pseudo_legal_squares();
-	king.compute_pseudo_legal_squares();
-	friend_rock.compute_pseudo_legal_squares();
-	king.compute_legal_squares();
-	const auto& king_eligible_squares = king.get_legal_squares();
-	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 59);
-	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
-		&board[10], &board[12], &board[18] ,&board[19],  &board[20]}));
+	board.get_color(1).add_piece<Rock>(board[7]);
+	const auto& king = board.get_color(0).add_piece<King>(board[11]);
+	board.get_color(0).add_piece<Rock>(board[21]);
+	board.init_game();
+	const auto& king_eligible_squares = king.get_legal_moves();
+	has_squares(king_eligible_squares, { 10,12,18,19,20 });
 }
 
 
 TEST(KingSquareAvailableTest, pawn_attack_squares)
 {
 	BoardGame board;
-	auto& pawn = board.get_color(1).create_piece<Pawn>(&board[3]);
-	auto& king = board.get_color(0).create_piece<King>(&board[19]);
-	pawn.compute_pseudo_legal_squares();
-	king.compute_pseudo_legal_squares();
-	king.compute_legal_squares();
-	const auto& king_eligible_squares = king.get_legal_squares();
-	EXPECT_EQ(std::count(king_eligible_squares.begin(), king_eligible_squares.end(), nullptr), 58);
-	EXPECT_THAT(king_eligible_squares, IsSupersetOf({
-		&board[11], &board[18], &board[20], &board[26] ,&board[27],  &board[28]}));
+	board.get_color(1).add_piece<Pawn>(board[3]);
+	const auto& king = board.get_color(0).add_piece<King>(board[19]);
+	board.init_game();
+	const auto& king_eligible_squares = king.get_legal_moves();
+	has_squares(king_eligible_squares, { 11,18,20,26,27,28 });
 }
 

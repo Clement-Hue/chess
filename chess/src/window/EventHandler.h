@@ -4,6 +4,7 @@
 
 class Application;
 class Asset;
+class Square;
 
 
 class CHESS_API EventHandler
@@ -35,5 +36,6 @@ public:
 	explicit MouseButtonHandler(Application& app): EventHandler(app) {}
 	void operator()(const SDL_Event&) noexcept override;
 private:
-	Asset* get_selected_asset(const SDL_Event& e) const noexcept;
+	Square* get_square_of_coordinates(int x, int y) const noexcept;
+	void move_asset(const Asset&, int x, int y) const noexcept;
 };

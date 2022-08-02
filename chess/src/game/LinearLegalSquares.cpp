@@ -1,5 +1,6 @@
 #include "LinearLegalSquares.h"
 #include "BoardGame.h"
+#include "Move.h"
 
 class LinearPseudoLegalSquares
 {
@@ -26,12 +27,12 @@ void LinearPseudoLegalSquares::add_pseudo_legal_squares(const increment_fn_type 
 		{
 			if (square_it->has_enemy_piece_of(this->piece_))
 			{
-				this->piece_.get_legal_square(square_it->get_value()) = &*square_it;
+				this->piece_.get_legal_move(square_it->get_value()) = std::make_unique<SimpleMove>();
 				this->check_pinning(*square_it->get_piece(), increment_fn);
 			}
 			return;
 		}
-		this->piece_.get_legal_square(square_it->get_value()) = &*square_it;
+		this->piece_.get_legal_move(square_it->get_value()) = std::make_unique<SimpleMove>();
 	}
 }
 
@@ -59,14 +60,14 @@ void LinearPseudoLegalSquares::operator()() noexcept
 	this->add_pseudo_legal_squares([](BoardIterator& it) {--it; });
 }
 
-using square_fn_type = bool (Square::*) (const Square&) const ;
+using square_fn_type = bool (Square::*) (int8_t) const ;
 static void base_filter(Piece& piece,  const square_fn_type predicate )
 {
-	auto& legal_squares = piece.get_legal_squares();
-	for (int8_t i =0 ; i < legal_squares.size(); ++i)
+	auto& moves = piece.get_legal_moves();
+	for (int8_t i =0 ; i < moves.size(); ++i)
 	{
-		if (!legal_squares[i] || (piece.get_square()->*predicate)(*legal_squares[i])) continue;
-		piece.get_legal_square(i) = nullptr;
+		if (!moves[i] || (piece.get_square()->*predicate)(i)) continue;
+		piece.get_legal_move(i) = nullptr;
 	}
 }
 

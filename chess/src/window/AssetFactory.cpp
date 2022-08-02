@@ -1,64 +1,54 @@
 #include "SDL2/SDL_image.h"
 #include "AssetFactory.h"
 #include <string>
+#include "Renderer.h"
 
-static PieceAssetFactory::surfaces_type create_surfaces(const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names)
+static PieceAssetFactory::surfaces_type create_surfaces(const PieceAssetFactory::sprites_names_type& sprites_names)
 {
-	PieceAssetFactory::surfaces_type surfaces{nullptr};
+	PieceAssetFactory::surfaces_type surfaces;
 	for (int8_t i = 0; i < surfaces.size(); ++i)
 	{
-		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
+		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprites_names[i]}.c_str());
 	}
 	return surfaces;
 }
 
+PieceAssetFactory::PieceAssetFactory(Renderer& renderer, const sprites_names_type& sprites_names):
+	renderer_(renderer), surfaces_(create_surfaces(sprites_names))
+{
+}
 
 void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const noexcept
 {
-	if (!piece.get_square()) return;
-	const SDL_Rect dest = this->app_.get_rect_of_square(*piece.get_square());
-	SDL_Texture* const texture = SDL_CreateTextureFromSurface(this->app_.get_renderer(), surface);
-	this->app_.get_assets().emplace_back(Asset{
-		piece, texture, dest
-		});
-	SDL_RenderCopy(this->app_.get_renderer(), texture, nullptr, &dest);
+	this->renderer_.add_asset(piece, *surface);
 }
 
-
-void clear_surfaces(const PieceAssetFactory::surfaces_type& surfaces)
+PieceAssetFactory::~PieceAssetFactory()
 {
-	for (const auto& surface: surfaces)
+	for (const auto& surface: this->surfaces_)
 	{
 		SDL_FreeSurface(surface);
 	}
 }
 
-void AssetFactory::create_piece_assets(PieceAssetFactory::surfaces_type& surfaces, PieceColor& color ) const noexcept
-{
-	for (const auto& piece: color.get_pieces())
-	{
-		piece->accept(PieceAssetFactory(this->app_, surfaces));
-	}
-}
-
 void AssetFactory::visit(BlackColor& color) const
 {
-	auto surfaces = create_surfaces({
-		"king_b.png", "queen_b.png",
-		"bishop_b.png",  "knight_b.png", "pawn_b.png",
-		 "rock_b.png"
-		});
-	this->create_piece_assets(surfaces , color);
-	clear_surfaces(surfaces);
+	color.add_piece_observer(
+		std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
+				"king_b.png", "queen_b.png",
+				"bishop_b.png",  "knight_b.png", "pawn_b.png",
+				 "rock_b.png"
+			})
+	);
 }
 
 void AssetFactory::visit(WhiteColor& color) const
 {
-	auto surfaces = create_surfaces({
-		"king_w.png", "queen_w.png",
-		"bishop_w.png",  "knight_w.png", "pawn_w.png",
-		 "rock_w.png"
-		});
-	this->create_piece_assets(surfaces , color);
-	clear_surfaces(surfaces);
+	color.add_piece_observer(
+		std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
+			"king_w.png", "queen_w.png",
+			"bishop_w.png", "knight_w.png", "pawn_w.png",
+			"rock_w.png"
+		})
+	);
 }

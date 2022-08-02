@@ -184,6 +184,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game\Move.cpp" />
+    <ClCompile Include="src\window\Renderer.cpp" />
     <ClCompile Include="src\window\AssetFactory.cpp" />
     <ClCompile Include="src\game\PawnLegalSquares.cpp" />
     <ClCompile Include="src\game\PieceColor.cpp" />
@@ -196,6 +198,9 @@
     <ClCompile Include="src\window\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\game\PieceObserver.h" />
+    <ClInclude Include="src\game\Move.h" />
+    <ClInclude Include="src\window\Renderer.h" />
     <ClInclude Include="src\window\AssetFactory.h" />
     <ClInclude Include="src\game\PawnLegalSquares.h" />
     <ClInclude Include="src\game\PieceColor.h" />
@@ -209,6 +214,7 @@
     <ClInclude Include="src\game\Piece.h" />
     <ClInclude Include="src\game\Square.h" />
     <ClInclude Include="src\window\Application.h" />
+    <ClInclude Include="src\window\Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
