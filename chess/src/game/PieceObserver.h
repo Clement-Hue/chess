@@ -15,12 +15,12 @@ public:
 	PieceObserver(PieceObserver&&) = default;
 	PieceObserver& operator=(PieceObserver&&) = default;
 	PieceObserver& operator=(const PieceObserver&) = default;
-	virtual void on_add(const Pawn&) noexcept = 0;
-	virtual void on_add(const King&) noexcept = 0;
-	virtual void on_add(const Queen&) noexcept = 0;
-	virtual void on_add(const Rock&) noexcept = 0;
-	virtual void on_add(const Bishop&) noexcept = 0;
-	virtual void on_add(const Knight&) noexcept = 0;
+	virtual void on_add(Pawn&) const noexcept = 0;
+	virtual void on_add(King&) const noexcept = 0;
+	virtual void on_add(Queen&) const noexcept = 0;
+	virtual void on_add(Rock&) const noexcept = 0;
+	virtual void on_add(Bishop&) const noexcept = 0;
+	virtual void on_add(Knight&) const noexcept = 0;
 	virtual ~PieceObserver() = default;
 };
 

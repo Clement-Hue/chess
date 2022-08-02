@@ -11,10 +11,9 @@
 class CHESS_API Application
 {
 public:
-	explicit Application(const WindowSize window_size = { 800,800 },
-		const CaseColor primary_color = { 180, 255, 255,255 }
-		, const CaseColor secondary_color = { 255, 255, 255, 255 }) :
-	window_size_(window_size),primary_color_(primary_color), secondary_color_(secondary_color) {}
+	explicit Application(WindowSize window_size = { 800,800 },
+		CaseColor primary_color = { 180, 255, 255,255 }
+	, CaseColor secondary_color = { 255, 255, 255, 255 });
 	~Application();
 	Application(const Application&) = delete;
 	Application(Application&&) = delete;
@@ -36,7 +35,6 @@ private:
 	BoardGame board_;
 
 	void init_window_and_renderer();
-	void load_assets() const noexcept;
 	void app_loop();
 	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
 };

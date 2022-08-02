@@ -67,8 +67,8 @@ void PieceColor::compute_pseudo_legal_moves() const noexcept
 	}
 }
 
-void PieceColor::add_piece_observer(std::unique_ptr<PieceObserver> obs) noexcept
+void PieceColor::add_piece_observer(PieceObserver& obs) noexcept
 {
-	this->piece_observers_.emplace_back(std::move(obs));
+	this->piece_observers_.emplace_back(&obs);
 }
 

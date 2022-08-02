@@ -1,60 +1,54 @@
 #include "SDL2/SDL_image.h"
 #include "AssetFactory.h"
 #include <string>
+#include "Renderer.h"
 
-class Surface
+static PieceAssetFactory::surfaces_type create_surfaces(const PieceAssetFactory::sprites_names_type& sprites_names)
 {
-public:
-	Surface( const std::array<std::string, PieceAssetFactory::NB_SURFACES>& sprite_names)
+	PieceAssetFactory::surfaces_type surfaces;
+	for (int8_t i = 0; i < surfaces.size(); ++i)
 	{
-		for (int8_t i = 0; i < this->surfaces_.size(); ++i)
-		{
-			this->surfaces_[i] =  IMG_Load(std::string{ "assets/" + sprite_names[i]}.c_str());
-		}
+		surfaces[i] =  IMG_Load(std::string{ "assets/" + sprites_names[i]}.c_str());
 	}
-	~Surface()
-	{
-		for (const auto& surface: this->surfaces_)
-		{
-			SDL_FreeSurface(surface);
-		}
-	}
-	PieceAssetFactory::surfaces_type& get() noexcept { return this->surfaces_; }
-private:
-	PieceAssetFactory::surfaces_type surfaces_{nullptr};
-};
+	return surfaces;
+}
 
+PieceAssetFactory::PieceAssetFactory(Renderer& renderer, const sprites_names_type& sprites_names):
+	renderer_(renderer), surfaces_(create_surfaces(sprites_names))
+{
+}
 
 void PieceAssetFactory::create_asset(Piece& piece, SDL_Surface* surface) const noexcept
 {
 	this->renderer_.add_asset(piece, *surface);
 }
 
-
-void AssetFactory::create_piece_assets(PieceAssetFactory::surfaces_type& surfaces, PieceColor& color ) const noexcept
+PieceAssetFactory::~PieceAssetFactory()
 {
-	for (const auto& piece: color.get_pieces())
+	for (const auto& surface: this->surfaces_)
 	{
-		piece->accept(PieceAssetFactory(this->renderer_, surfaces));
+		SDL_FreeSurface(surface);
 	}
 }
 
 void AssetFactory::visit(BlackColor& color) const
 {
-	Surface surface  ({
-		"king_b.png", "queen_b.png",
-		"bishop_b.png",  "knight_b.png", "pawn_b.png",
-		 "rock_b.png"
-		});
-	this->create_piece_assets(surface.get() , color);
+	this->renderer_.add_asset_factory(
+		std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
+				"king_b.png", "queen_b.png",
+				"bishop_b.png",  "knight_b.png", "pawn_b.png",
+				 "rock_b.png"
+			}), color
+	);
 }
 
 void AssetFactory::visit(WhiteColor& color) const
 {
-	Surface surface  ({
+	this->renderer_.add_asset_factory(
+	std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
 		"king_w.png", "queen_w.png",
 		"bishop_w.png",  "knight_w.png", "pawn_w.png",
 		 "rock_w.png"
-		});
-	this->create_piece_assets(surface.get(), color);
+			}), color
+	);
 }

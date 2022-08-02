@@ -3,16 +3,15 @@
 #include <tuple>
 #include "../game/Piece.h"
 #include "../game/BoardGame.h"
+#include "AssetFactory.h"
 #include "Types.h"
 
 
 class Renderer
 {
 public:
-	Renderer(BoardGame& board,SDL_Window& window, const WindowSize window_size,
-		const CaseColor primary_color, const CaseColor secondary_color): renderer_( SDL_CreateRenderer(&window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) ),
-		primary_color_(primary_color), secondary_color_(secondary_color),
-		window_size_(window_size), board_(board) {}
+	Renderer(BoardGame& board, SDL_Window& window, WindowSize window_size,
+		CaseColor primary_color,  CaseColor secondary_color);
 	~Renderer();
 	Renderer(const Renderer&) = delete;
 	Renderer(Renderer&&) = delete;
@@ -33,6 +32,7 @@ public:
 	std::vector<Asset>& get_assets() noexcept { return this->assets_; }
 	const Asset* get_asset_of_coordinates(int x, int y) const noexcept;
 	void render_assets() const noexcept;
+	void add_asset_factory(std::unique_ptr<PieceAssetFactory> factory, PieceColor& color) noexcept;
 private:
 	SDL_Renderer* renderer_;
 	CaseColor primary_color_;
@@ -40,6 +40,7 @@ private:
 	WindowSize window_size_;
 	std::vector<Asset> assets_;
 	BoardGame& board_;
+	std::vector<std::unique_ptr<PieceAssetFactory>> asset_factories_;
 
 	const Asset* get_asset_of_piece(const Piece& piece) const  noexcept;
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;

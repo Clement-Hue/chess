@@ -1,11 +1,17 @@
 #include "Application.h"
 #include <SDL2/SDL.h>
 #include <stdexcept>
-#include <array>
 #include <memory>
 #include "AssetFactory.h"
 #include "EventHandler.h"
 #include "../game/BoardGame.h"
+
+Application::Application(const WindowSize window_size, const CaseColor primary_color, const CaseColor secondary_color):
+	window_size_(window_size),primary_color_(primary_color), secondary_color_(secondary_color) 
+{
+	this->init_window_and_renderer();
+}
+
 
 std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event& e, bool& quit)
 {
@@ -39,8 +45,6 @@ void Application::app_loop()
 void Application::init()
 {
 	this->board_.init_game();
-	this->init_window_and_renderer();
-	this->load_assets();
 	this->renderer_->render_board();
 	this->renderer_->update_screen();
 	this->app_loop();
@@ -83,12 +87,3 @@ void Application::init_window_and_renderer()
 	}
 	this->renderer_ = std::make_unique<Renderer>(this->board_,*this->window_, this->window_size_, this->primary_color_, this->secondary_color_);
 }
-
-void Application::load_assets()  const noexcept
-{
-	for (const auto& color: this->board_.get_colors())
-	{
-		color->accept(AssetFactory(*this->renderer_));
-	}
-}
-

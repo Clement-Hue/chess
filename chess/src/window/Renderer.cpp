@@ -1,6 +1,18 @@
 #include "Renderer.h"
 #include "../game/Constants.h"
 
+
+Renderer::Renderer(BoardGame& board, SDL_Window& window, const WindowSize window_size, const CaseColor primary_color, const CaseColor secondary_color):
+ renderer_( SDL_CreateRenderer(&window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) ),
+		primary_color_(primary_color), secondary_color_(secondary_color),
+		window_size_(window_size), board_(board) 
+{
+	for (const auto& color: this->board_.get_colors())
+	{
+		color->accept(AssetFactory(*this));
+	}
+}
+
 Renderer::~Renderer()
 {
 	for (const auto& asset : this->assets_)
@@ -113,6 +125,13 @@ void Renderer::render_assets() const noexcept
 	{
 		this->render_asset(asset);
 	}
+}
+
+void Renderer::add_asset_factory(std::unique_ptr<PieceAssetFactory> factory, PieceColor& color) noexcept
+{
+	color.add_piece_observer(
+	*this->asset_factories_.emplace_back(std::move(factory))
+	);
 }
 
 SDL_Rect Renderer::get_rect_of_square(const Square& square) const noexcept

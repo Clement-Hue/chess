@@ -8,29 +8,6 @@
 
 class Square;
 class PieceColor;
-class Rock;
-class Bishop;
-class Knight;
-class Pawn;
-class King;
-class Queen;
-
-class CHESS_API PieceVisitor
-{
-public:
-	PieceVisitor() = default;
-	PieceVisitor(const PieceVisitor&) = delete;
-	PieceVisitor(PieceVisitor&&) = delete;
-	PieceVisitor& operator=(const PieceVisitor&) = delete;
-	PieceVisitor& operator=(PieceVisitor&&) = delete;
-	virtual void visit(Queen& piece) const = 0;
-	virtual void visit(King& piece) const = 0;
-	virtual void visit(Rock& piece) const = 0;
-	virtual void visit(Bishop& piece) const = 0;
-	virtual void visit(Knight& piece) const = 0;
-	virtual void visit(Pawn& piece) const = 0;
-	virtual ~PieceVisitor() = default;
-};
 
 class CHESS_API Piece
 {
@@ -57,7 +34,6 @@ public:
 	std::vector<Square*> get_squares_of_legal_moves() const noexcept;
 	std::unique_ptr<Move> & get_legal_move(const int8_t i) noexcept { return this->legal_moves_[i]; }
 	void set_pinning_filter(const pinning_filter_type func) { this->pinning_filter_ = func; }
-	virtual void accept(const PieceVisitor& visitor) = 0;
 	bool has_moved() const noexcept { return this->has_moved_; };
 	bool is_in_board() const noexcept { return this->square_; }
 	void mark_as_moved() noexcept { this->has_moved_ = true; }
@@ -76,7 +52,6 @@ class CHESS_API Rock final: public Piece
 public:
 	Rock(Square* square, PieceColor& color) : Piece(square, color) {}
 	void compute_pseudo_legal_moves() noexcept override;	
-	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
 };
 
@@ -86,7 +61,6 @@ class CHESS_API Bishop final: public Piece
 public:
 	Bishop(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_moves() noexcept override;	
-	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
 };
 
@@ -95,7 +69,6 @@ class CHESS_API Queen final: public Piece
 public:
 	Queen(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_moves() noexcept override;	
-	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
 };
 
@@ -105,7 +78,6 @@ public:
 	King(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_moves() noexcept override;	
 	void compute_legal_moves() noexcept override;
-	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
 private:
 	using increment_fn_type = void (*)(BoardIterator&);
@@ -121,7 +93,6 @@ class CHESS_API Knight final: public Piece
 public:
 	Knight(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_moves() noexcept override;	
-	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
 private:
 	template <typename It1, typename It2>
@@ -135,7 +106,6 @@ public:
 	Pawn(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_pseudo_legal_moves() noexcept override;	
 	void compute_legal_moves() noexcept override;
-	void accept(const PieceVisitor& visitor) override { visitor.visit(*this); }
 	bool is_on_start() const noexcept override;
 	void add_move(const Square&) noexcept;
 };

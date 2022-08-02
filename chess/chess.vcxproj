@@ -184,7 +184,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\game\PieceObserver.cpp" />
     <ClCompile Include="src\game\Move.cpp" />
     <ClCompile Include="src\window\Renderer.cpp" />
     <ClCompile Include="src\window\AssetFactory.cpp" />
