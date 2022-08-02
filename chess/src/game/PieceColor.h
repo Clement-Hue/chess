@@ -60,7 +60,7 @@ public:
 	template <typename P>
 	P& add_piece(Square& square) noexcept;
 	template <typename P>
-	void add_piece_notify(P&)  const noexcept;
+	void added_piece_notify(P&)  const noexcept;
 	void remove_piece(Piece& piece) noexcept;
 protected:
 	pieces_type pieces_;
@@ -84,7 +84,7 @@ public:
 };
 
 template <typename P>
-void PieceColor::add_piece_notify(P& piece) const noexcept
+void PieceColor::added_piece_notify(P& piece) const noexcept
 {
 	for (auto& obs: this->piece_observers_)
 	{
@@ -99,7 +99,7 @@ P& PieceColor::add_piece(Square& square) noexcept
 	auto piece_pt = std::make_unique<P>(&square, *this);
 	P& piece  = *piece_pt;
 	this->pieces_.emplace_back(std::move(piece_pt));
-	this->add_piece_notify(piece);
+	this->added_piece_notify(piece);
 	return piece;
 }
 

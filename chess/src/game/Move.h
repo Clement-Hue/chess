@@ -46,11 +46,16 @@ private:
 
 };
 
+class CHESS_API PawnDoubleMove final: public Move
+{
+	bool operator()(Piece&, Square&) override;
+};
+
 class CHESS_API InPassingMove final: public Move
 {
 public:
 	InPassingMove(Pawn& taken_pawn): taken_pawn_(taken_pawn) {}
-	bool operator()(Piece&, Square&) override { return true; }
+	bool operator()(Piece&, Square&) override;
 private:
 	Pawn& taken_pawn_;
 };

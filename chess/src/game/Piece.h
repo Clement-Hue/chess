@@ -22,7 +22,7 @@ public:
 	virtual ~Piece() = default;
 	virtual void compute_pseudo_legal_moves() noexcept = 0;
 	virtual void compute_legal_moves() noexcept;
-	void clear_legal_moves_states() noexcept;
+	virtual void clear_legal_moves_states() noexcept;
 	bool move(Square& square) noexcept;
 	void remove_square() noexcept { this->square_ = nullptr; }
 	Square* get_square() const noexcept { return this->square_; }
@@ -83,8 +83,8 @@ private:
 	using increment_fn_type = void (*)(BoardIterator&);
 	void remove_attacked_squares() noexcept;
 	void add_castling_move(increment_fn_type) noexcept;
-	void add_long_castle() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }); }
-	void add_short_castle() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }); }
+	void add_long_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }); }
+	void add_short_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }); }
 };
 
 
@@ -96,7 +96,7 @@ public:
 	bool is_on_start() const noexcept override;
 private:
 	template <typename It1, typename It2>
-	void add_eligible_squares() noexcept;
+	void add_legal_moves() noexcept;
 };
 
 
@@ -108,6 +108,11 @@ public:
 	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 	void add_move(const Square&) noexcept;
+	void mark_as_double_moved() noexcept { this->has_double_moved_ = true; }
+	bool has_double_moved() const noexcept { return this->has_double_moved_; }
+	void clear_legal_moves_states() noexcept override;
+private:
+	bool has_double_moved_{ false };
 };
 
 

@@ -2,11 +2,16 @@
 #include "Square.h"
 #include "Piece.h"
 
+/**
+ * @param piece: the piece which moves.
+ * @param square: the square that should be emptied
+ */
 static void remove_enemy_piece_if_exist(const Piece& piece,const Square& square) 
 {
 	if ( Piece* const piece_on_square = square.get_piece();
 		piece_on_square && piece_on_square->is_enemy_of(piece))
 	{
+		piece_on_square->get_square()->remove_piece();
 		piece_on_square->remove_square();
 	}
 }
@@ -44,3 +49,21 @@ bool PromoteMove::operator()(Piece& pawn, Square& square)
 	return true;
 }
 
+bool PawnDoubleMove::operator()(Piece& piece, Square& square)
+{
+	const auto pawn = dynamic_cast<Pawn*>(&piece);
+	if (!pawn) return false;
+	remove_enemy_piece_if_exist(*pawn, square);
+	move_piece_to_square(*pawn, square);
+	pawn->mark_as_moved();
+	pawn->mark_as_double_moved();
+	return true;
+}
+
+bool InPassingMove::operator()(Piece& piece, Square& square)
+{
+	move_piece_to_square(piece, square);
+	remove_enemy_piece_if_exist(piece, *taken_pawn_.get_square());
+	piece.mark_as_moved();
+	return true;
+}

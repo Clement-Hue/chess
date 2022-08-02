@@ -1,6 +1,5 @@
 #pragma once
 #include "PieceColor.h"
-#include "Move.h"
 #include "Piece.h"
 
 class PawnColorVisitor: public  ColorVisitor
@@ -40,6 +39,8 @@ private:
 	void remove_not_legal_takeable_squares(PieceColor& color) const noexcept;
 	template <typename Color>
 	void add_file_legal_squares(PieceColor& color) const noexcept;
+	template <typename Color>
+	void add_in_passing_move_if_possible(const PieceColor&) const noexcept;
 };
 
 template <typename Color>
@@ -90,6 +91,27 @@ void PawnColorVisitor::takeable_squares(PieceColor& color,const takeable_squares
 		takeable_square_fn(this->pawn_, square_it);
 	}
 }
+
+template <typename Color>
+void PawnLegalSquares::add_in_passing_move_if_possible(const PieceColor& color) const noexcept
+{
+	BoardIterator iterators[] = {
+		++RankIterator(color.get_board()).begin(*this->pawn_.get_square()),
+		--RankIterator(color.get_board()).begin(*this->pawn_.get_square()),
+	};
+	for (const auto& rank_it : iterators)
+	{
+		if (const auto enemy_pawn = dynamic_cast<Pawn*>(rank_it->get_piece())
+			;enemy_pawn && enemy_pawn->is_enemy_of(this->pawn_) && enemy_pawn->has_double_moved())
+		{
+			auto& file_it = FileIterator(color.get_board()).begin(*rank_it);
+			this->increment_fn<Color>(file_it);
+			this->pawn_.get_legal_move(file_it->get_value()) = std::make_unique<InPassingMove>(*enemy_pawn);
+		}
+	}
+}
+
+
 
 template <>
 inline void PawnColorVisitor::increment_fn<WhiteColor>(BoardIterator& it) const noexcept

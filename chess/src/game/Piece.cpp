@@ -122,8 +122,8 @@ void King::compute_legal_moves() noexcept
 {
 	Piece::compute_legal_moves();
 	this->remove_attacked_squares();
-	this->add_long_castle();
-	this->add_short_castle();
+	this->add_long_castle_if_possible();
+	this->add_short_castle_if_possible();
 }
 
 bool King::is_on_start() const noexcept
@@ -179,7 +179,7 @@ void King::add_castling_move(const increment_fn_type increment_fn) noexcept
 
 
 template<typename It1, typename It2>
-void Knight::add_eligible_squares() noexcept
+void Knight::add_legal_moves() noexcept
 {
 	BoardIterator first_it[2] = {
 		It1(this->color_.get_board()).begin(*this->get_square())+=2,
@@ -203,8 +203,8 @@ void Knight::add_eligible_squares() noexcept
 
 void Knight::compute_pseudo_legal_moves() noexcept
 {
-	this->add_eligible_squares<FileIterator, RankIterator>();
-	this->add_eligible_squares<RankIterator, FileIterator>();
+	this->add_legal_moves<FileIterator, RankIterator>();
+	this->add_legal_moves<RankIterator, FileIterator>();
 }
 
 bool Knight::is_on_start() const noexcept
@@ -238,6 +238,19 @@ void Pawn::add_move(const Square& square) noexcept
 		this->legal_moves_[square.get_value()] = std::make_unique<PromoteMove>(this->color_);
 		return;
 	}
+	if (abs(square.get_rank() - this->square_->get_rank()) == 2)
+	{
+		this->legal_moves_[square.get_value()] = std::make_unique<PawnDoubleMove>();
+		return;
+	}
 	this->legal_moves_[square.get_value()] = std::make_unique<SimpleMove>();
 }
 
+void Pawn::clear_legal_moves_states() noexcept
+{
+	Piece::clear_legal_moves_states();
+	if (this->color_.is_turn())
+	{
+		this->has_double_moved_ = false;
+	}
+}
