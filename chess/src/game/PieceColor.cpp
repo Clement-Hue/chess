@@ -33,6 +33,16 @@ bool PieceColor::is_square_attacked(const Square& square) const noexcept
 	return false;
 }
 
+void PieceColor::remove_piece(Piece& piece) noexcept
+{
+	if (const auto pawn_it = std::find_if(this->pieces_.begin(), this->pieces_.end(),
+		[&piece](const std::unique_ptr<Piece>& ptr) { return &*ptr == &piece; }
+		); pawn_it  != this->pieces_.end())
+	{
+		this->pieces_.erase(pawn_it);
+	}
+}
+
 
 
 bool PieceColor::is_turn() const noexcept
@@ -67,8 +77,8 @@ void PieceColor::compute_pseudo_legal_moves() const noexcept
 	}
 }
 
-void PieceColor::add_piece_observer(PieceObserver& obs) noexcept
+void PieceColor::add_piece_observer(std::unique_ptr<PieceObserver> obs) noexcept
 {
-	this->piece_observers_.emplace_back(&obs);
+	this->piece_observers_.emplace_back(std::move(obs));
 }
 

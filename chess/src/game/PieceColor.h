@@ -33,7 +33,7 @@ public:
 class CHESS_API PieceColor
 {
 protected:
-	using piece_obs_type = std::vector<PieceObserver*>;
+	using piece_obs_type = std::vector<std::unique_ptr<PieceObserver>>;
 	using pieces_type = std::vector<std::unique_ptr<Piece>>;
 	PieceColor(BoardGame& board, const Rank rank, piece_obs_type piece_observers): board_(board),
 	rank_(rank), piece_observers_(std::move(piece_observers)) {}
@@ -46,13 +46,11 @@ public:
 	virtual bool operator!=(const PieceColor& other) const noexcept { return !(*this == other); }
 	virtual ~PieceColor() = default;
 	virtual void accept(const ColorVisitor& visitor) = 0;
-	void add_piece_observer(PieceObserver&) noexcept;
+	void add_piece_observer(std::unique_ptr<PieceObserver>) noexcept;
 	BoardGame& get_board() const noexcept { return this->board_; }
 	pieces_type& get_pieces() noexcept { return this->pieces_; }
 	void clear_legal_moves_states() const noexcept;
 	Piece& get_piece(const int8_t i) const noexcept { return *this->pieces_[i]; }
-	template <typename P>
-	P& add_piece(Square& square) noexcept;
 	bool is_turn() const noexcept;
 	Rank get_rank() const noexcept { return this->rank_; }
 	void compute_legal_moves() const noexcept;
@@ -60,7 +58,10 @@ public:
 	void set_default_pieces() noexcept;
 	bool is_square_attacked(const Square&) const noexcept;
 	template <typename P>
+	P& add_piece(Square& square) noexcept;
+	template <typename P>
 	void add_piece_notify(P&)  const noexcept;
+	void remove_piece(Piece& piece) noexcept;
 protected:
 	pieces_type pieces_;
 	BoardGame& board_;

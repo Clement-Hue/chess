@@ -33,22 +33,22 @@ PieceAssetFactory::~PieceAssetFactory()
 
 void AssetFactory::visit(BlackColor& color) const
 {
-	this->renderer_.add_asset_factory(
+	color.add_piece_observer(
 		std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
 				"king_b.png", "queen_b.png",
 				"bishop_b.png",  "knight_b.png", "pawn_b.png",
 				 "rock_b.png"
-			}), color
+			})
 	);
 }
 
 void AssetFactory::visit(WhiteColor& color) const
 {
-	this->renderer_.add_asset_factory(
-	std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
-		"king_w.png", "queen_w.png",
-		"bishop_w.png",  "knight_w.png", "pawn_w.png",
-		 "rock_w.png"
-			}), color
+	color.add_piece_observer(
+		std::make_unique<PieceAssetFactory>(this->renderer_, PieceAssetFactory::sprites_names_type{
+			"king_w.png", "queen_w.png",
+			"bishop_w.png", "knight_w.png", "pawn_w.png",
+			"rock_w.png"
+		})
 	);
 }

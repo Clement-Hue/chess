@@ -127,13 +127,6 @@ void Renderer::render_assets() const noexcept
 	}
 }
 
-void Renderer::add_asset_factory(std::unique_ptr<PieceAssetFactory> factory, PieceColor& color) noexcept
-{
-	color.add_piece_observer(
-	*this->asset_factories_.emplace_back(std::move(factory))
-	);
-}
-
 SDL_Rect Renderer::get_rect_of_square(const Square& square) const noexcept
 {
 	const auto [case_width, case_height] = this->get_case_dimensions();

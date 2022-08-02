@@ -32,7 +32,6 @@ public:
 	std::vector<Asset>& get_assets() noexcept { return this->assets_; }
 	const Asset* get_asset_of_coordinates(int x, int y) const noexcept;
 	void render_assets() const noexcept;
-	void add_asset_factory(std::unique_ptr<PieceAssetFactory> factory, PieceColor& color) noexcept;
 private:
 	SDL_Renderer* renderer_;
 	CaseColor primary_color_;
@@ -40,7 +39,6 @@ private:
 	WindowSize window_size_;
 	std::vector<Asset> assets_;
 	BoardGame& board_;
-	std::vector<std::unique_ptr<PieceAssetFactory>> asset_factories_;
 
 	const Asset* get_asset_of_piece(const Piece& piece) const  noexcept;
 	const CaseColor& get_square_case_color(const Square& square) const noexcept;
