@@ -21,15 +21,6 @@ protected:
 	Application& app_;
 };
 
-class CHESS_API QuitHandler final: public EventHandler
-{
-public:
-	explicit QuitHandler(Application& app,bool& quit): EventHandler(app), quit_(quit){}
-	void operator()(const SDL_Event&) noexcept override { this->quit_ = true; }
-private:
-	bool& quit_;
-};
-
 class CHESS_API MouseButtonHandler final: public EventHandler
 {
 public:

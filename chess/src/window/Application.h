@@ -24,7 +24,7 @@ public:
 	const Asset* get_current_selection() const noexcept { return this->current_selection_; }
 	void set_current_selection(const Asset* asset) noexcept;
 	BoardGame& get_board() noexcept { return this->board_; }
-	Renderer& get_renderer() const noexcept;
+	Renderer& get_renderer() const noexcept { return *this->renderer_; };
 private:
 	std::unique_ptr<Renderer> renderer_{nullptr};
 	const Asset* current_selection_{nullptr};
@@ -34,8 +34,10 @@ private:
 	SDL_Window* window_{ nullptr };
 	BoardGame board_;
 
+	MouseButtonHandler mouse_button_handler_{*this};
+
 	void init_window_and_renderer();
 	void app_loop();
-	std::unique_ptr<EventHandler> event_handler_factory(const SDL_Event&, bool&);
+	EventHandler* get_event_handler(const SDL_Event&);
 };
 
