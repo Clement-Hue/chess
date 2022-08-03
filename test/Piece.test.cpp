@@ -131,8 +131,7 @@ TEST(PieceTest, not_allowed_to_move_to_not_legal_square)
 	auto& rock = board.get_color(0).add_piece<Rock>(board[40]);
 	rock.move(board[48]);
 	EXPECT_EQ(rock.get_square(), &board[40]);
-	rock.compute_pseudo_legal_moves();
-	rock.compute_legal_moves();
+	board.init_game();
 	rock.move(board[48]);
 	EXPECT_EQ(rock.get_square(), &board[48]);
 }

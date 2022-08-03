@@ -2,7 +2,7 @@
 #include "Piece.h"
 
 
-namespace linear_pseudo_legal_squares
+namespace linear_moves
 {
 	void add_rank_squares(Piece& piece, BoardGame& board);
 	void add_file_squares(Piece& piece, BoardGame& board);

@@ -54,7 +54,6 @@ public:
 	bool is_turn() const noexcept;
 	Rank get_rank() const noexcept { return this->rank_; }
 	void compute_legal_moves() const noexcept;
-	void compute_pseudo_legal_moves() const noexcept;
 	void set_default_pieces() noexcept;
 	bool is_square_attacked(const Square&) const noexcept;
 	template <typename P>

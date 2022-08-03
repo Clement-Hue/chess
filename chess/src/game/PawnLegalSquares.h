@@ -17,17 +17,6 @@ protected:
 };
 
 
-class PawnPseudoLegalSquares final: public PawnColorVisitor
-{
-public:
-	PawnPseudoLegalSquares(Pawn& pawn): PawnColorVisitor(pawn) {}
-	void visit(BlackColor&) const override;
-	void visit(WhiteColor&) const override;
-private:
-	template <typename Color>
-	void add_takeable_squares(PieceColor& color) const noexcept;
-};
-
 class PawnLegalSquares final: public PawnColorVisitor
 {
 public:
@@ -36,7 +25,7 @@ public:
 	void visit(WhiteColor& color) const override;
 private:
 	template <typename Color>
-	void remove_not_legal_takeable_squares(PieceColor& color) const noexcept;
+	void add_takeable_squares(PieceColor& color) const noexcept;
 	template <typename Color>
 	void add_file_legal_squares(PieceColor& color) const noexcept;
 	template <typename Color>
@@ -57,28 +46,17 @@ void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 
 
 template <typename Color>
-void PawnPseudoLegalSquares::add_takeable_squares(PieceColor& color) const noexcept
+void PawnLegalSquares::add_takeable_squares(PieceColor& color) const noexcept
 {
 	this->takeable_squares<Color>(color, [](Pawn& pawn, const BoardIterator& square_it)
 		{
-			if ( square_it )
+			if ( square_it && square_it->has_enemy_piece_of(pawn) )
 			{
 				pawn.add_move(*square_it);
 			}
 		});
 }
 
-template <typename Color>
-void PawnLegalSquares::remove_not_legal_takeable_squares(PieceColor& color) const noexcept
-{
-	this->takeable_squares<Color>(color, [](Pawn& pawn, const BoardIterator& square_it)
-		{
-			if ( square_it && !square_it->has_enemy_piece_of(pawn) )
-			{
-				pawn.get_legal_move(square_it->get_value()) = nullptr;
-			}
-		});
-}
 
 template<typename Color>
 void PawnColorVisitor::takeable_squares(PieceColor& color,const takeable_squares_fn_type takeable_square_fn) const noexcept

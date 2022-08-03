@@ -68,15 +68,6 @@ void PieceColor::clear_legal_moves_states() const noexcept
 }
 
 
-void PieceColor::compute_pseudo_legal_moves() const noexcept
-{
-	for (const auto& piece: this->pieces_)
-	{
-		if (!piece->is_in_board()) continue;
-		piece->compute_pseudo_legal_moves();
-	}
-}
-
 void PieceColor::add_piece_observer(std::unique_ptr<PieceObserver> obs) noexcept
 {
 	this->piece_observers_.emplace_back(std::move(obs));

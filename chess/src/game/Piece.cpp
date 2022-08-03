@@ -61,10 +61,10 @@ bool Piece::move(Square& square) noexcept
 	return false;
 }
 
-void Rock::compute_pseudo_legal_moves() noexcept
+void Rock::compute_legal_moves() noexcept
 {
-	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
+	linear_moves::add_rank_squares(*this, this->color_.get_board());
+	linear_moves::add_file_squares(*this, this->color_.get_board());
 }
 
 bool Rock::is_on_start() const noexcept
@@ -74,10 +74,10 @@ bool Rock::is_on_start() const noexcept
 		);
 }
 
-void Bishop::compute_pseudo_legal_moves() noexcept
+void Bishop::compute_legal_moves() noexcept
 {
-	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_anti_diagonal_squares(*this, this->color_.get_board());
 }
 
 bool Bishop::is_on_start() const noexcept
@@ -87,12 +87,12 @@ bool Bishop::is_on_start() const noexcept
 		);
 }
 
-void Queen::compute_pseudo_legal_moves() noexcept
+void Queen::compute_legal_moves() noexcept
 {
-	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_rank_squares(*this, this->color_.get_board());
+	linear_moves::add_file_squares(*this, this->color_.get_board());
+	linear_moves::add_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_anti_diagonal_squares(*this, this->color_.get_board());
 }
 
 bool Queen::is_on_start() const noexcept
@@ -101,7 +101,7 @@ bool Queen::is_on_start() const noexcept
 		this->square_->get_file() == 3 ;
 }
 
-void King::compute_pseudo_legal_moves() noexcept
+void King::add_natural_moves() noexcept
 {
 	BoardIterator iterators[8] = {
 		++RankIterator(this->color_.get_board()).begin(*this->square_), --RankIterator(this->color_.get_board()).begin(*this->square_),
@@ -120,8 +120,7 @@ void King::compute_pseudo_legal_moves() noexcept
 
 void King::compute_legal_moves() noexcept
 {
-	Piece::compute_legal_moves();
-	this->remove_attacked_squares();
+	this->add_natural_moves();
 	this->add_long_castle_if_possible();
 	this->add_short_castle_if_possible();
 }
@@ -130,25 +129,6 @@ bool King::is_on_start() const noexcept
 {
 	return this->color_.get_rank().first == this->square_->get_rank() && 
 		this->square_->get_file() == 4 ;
-}
-
-/**
- * Remove from legal moves list the squares that are attacked by enemy pieces
- */
-void King::remove_attacked_squares() noexcept
-{
-	for (const auto& color: this->color_.get_board().get_colors())
-	{
-		if (*color == this->get_color()) continue;
-		for (const auto& piece: color->get_pieces())
-		{
-			for (int8_t i = 0 ;i < piece->get_legal_moves().size(); ++i)
-			{
-				if (!piece->get_legal_move(i)) continue;
-				this->legal_moves_[i] = nullptr;
-			}
-		}
-	}
 }
 
 void King::add_castling_move(const increment_fn_type increment_fn) noexcept
@@ -201,7 +181,7 @@ void Knight::add_legal_moves() noexcept
 }
 
 
-void Knight::compute_pseudo_legal_moves() noexcept
+void Knight::compute_legal_moves() noexcept
 {
 	this->add_legal_moves<FileIterator, RankIterator>();
 	this->add_legal_moves<RankIterator, FileIterator>();
@@ -214,14 +194,9 @@ bool Knight::is_on_start() const noexcept
 		);
 }
 
-void Pawn::compute_pseudo_legal_moves() noexcept
-{
-	this->get_color().accept(PawnPseudoLegalSquares(*this));
-}
 
 void Pawn::compute_legal_moves() noexcept 
 {
-	Piece::compute_legal_moves();
 	this->get_color().accept(PawnLegalSquares(*this));
 }
 

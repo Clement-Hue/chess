@@ -20,7 +20,6 @@ public:
 	Piece& operator=(const Piece&) = delete;
 	Piece& operator=(Piece&&) = delete;
 	virtual ~Piece() = default;
-	virtual void compute_pseudo_legal_moves() noexcept = 0;
 	virtual void compute_legal_moves() noexcept;
 	virtual void clear_legal_moves_states() noexcept;
 	bool move(Square& square) noexcept;
@@ -51,7 +50,7 @@ class CHESS_API Rock final: public Piece
 {
 public:
 	Rock(Square* square, PieceColor& color) : Piece(square, color) {}
-	void compute_pseudo_legal_moves() noexcept override;	
+	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 };
 
@@ -60,7 +59,7 @@ class CHESS_API Bishop final: public Piece
 {
 public:
 	Bishop(Square* square, PieceColor& color): Piece(square, color) {}
-	void compute_pseudo_legal_moves() noexcept override;	
+	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 };
 
@@ -68,7 +67,7 @@ class CHESS_API Queen final: public Piece
 {
 public:
 	Queen(Square* square, PieceColor& color): Piece(square, color) {}
-	void compute_pseudo_legal_moves() noexcept override;	
+	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 };
 
@@ -76,12 +75,11 @@ class CHESS_API King final: public Piece
 {
 public:
 	King(Square* square, PieceColor& color): Piece(square, color) {}
-	void compute_pseudo_legal_moves() noexcept override;	
 	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 private:
 	using increment_fn_type = void (*)(BoardIterator&);
-	void remove_attacked_squares() noexcept;
+	void add_natural_moves() noexcept;
 	void add_castling_move(increment_fn_type) noexcept;
 	void add_long_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }); }
 	void add_short_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }); }
@@ -92,7 +90,7 @@ class CHESS_API Knight final: public Piece
 {
 public:
 	Knight(Square* square, PieceColor& color): Piece(square, color) {}
-	void compute_pseudo_legal_moves() noexcept override;	
+	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 private:
 	template <typename It1, typename It2>
@@ -104,7 +102,6 @@ class CHESS_API Pawn final: public Piece
 {
 public:
 	Pawn(Square* square, PieceColor& color): Piece(square, color) {}
-	void compute_pseudo_legal_moves() noexcept override;	
 	void compute_legal_moves() noexcept override;
 	bool is_on_start() const noexcept override;
 	void add_move(const Square&) noexcept;
@@ -114,6 +111,4 @@ public:
 private:
 	bool has_double_moved_{ false };
 };
-
-
 
