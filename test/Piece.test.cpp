@@ -155,3 +155,12 @@ TEST(PieceTest, should_have_moved)
 	EXPECT_EQ(rock.get_square(), &board[42]);
 	EXPECT_TRUE(rock.has_moved());
 }
+
+TEST(PieceTest, edge_case_piece_not_in_board)
+{
+	BoardGame board;
+	board.get_color(0).add_piece<Rock>(board[40]);
+	auto& rock_b = board.get_color(1).add_piece<Rock>(board[40]);
+	rock_b.remove_square();
+	board.init_game();
+}

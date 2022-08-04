@@ -46,6 +46,7 @@ public:
 	virtual bool operator!=(const PieceColor& other) const noexcept { return !(*this == other); }
 	virtual ~PieceColor() = default;
 	virtual void accept(const ColorVisitor& visitor) = 0;
+	void remove_illegal_moves_of_enemy(PieceColor&) const noexcept;
 	void add_piece_observer(std::unique_ptr<PieceObserver>) noexcept;
 	BoardGame& get_board() const noexcept { return this->board_; }
 	pieces_type& get_pieces() noexcept { return this->pieces_; }
@@ -60,6 +61,7 @@ public:
 	P& add_piece(Square& square) noexcept;
 	template <typename P>
 	void added_piece_notify(P&)  const noexcept;
+	King* get_king() const noexcept;
 	void remove_piece(Piece& piece) noexcept;
 protected:
 	pieces_type pieces_;
@@ -101,9 +103,5 @@ P& PieceColor::add_piece(Square& square) noexcept
 	this->added_piece_notify(piece);
 	return piece;
 }
-
-
-
-
 
 

@@ -2,9 +2,9 @@
 #include "Move.h"
 #include "BoardGame.h"
 #include "BoardIterator.h"
-#include "LinearLegalSquares.h"
+#include "LinearMoves.h"
 #include "PieceColor.h"
-#include "PawnLegalSquares.h"
+#include "PawnMoves.h"
 
 
 Piece::Piece(Square* square, PieceColor& color): square_(square), color_(color)
@@ -41,13 +41,8 @@ void Piece::clear_legal_moves_states() noexcept
 	{
 		square = nullptr;
 	}
-	this->pinning_filter_ = nullptr;
 }
 
-void Piece::compute_legal_moves() noexcept
-{
-	this->filter_legal_moves_if_pinned();
-}
 
 bool Piece::move(Square& square) noexcept
 {
@@ -63,8 +58,14 @@ bool Piece::move(Square& square) noexcept
 
 void Rock::compute_legal_moves() noexcept
 {
-	linear_moves::add_rank_squares(*this, this->color_.get_board());
-	linear_moves::add_file_squares(*this, this->color_.get_board());
+	linear_moves::add_rank_moves(*this, this->color_.get_board());
+	linear_moves::add_file_moves(*this, this->color_.get_board());
+}
+
+void Rock::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	linear_moves::remove_illegal_rank_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_file_moves(*this, this->color_.get_board(), enemy_color);
 }
 
 bool Rock::is_on_start() const noexcept
@@ -76,8 +77,14 @@ bool Rock::is_on_start() const noexcept
 
 void Bishop::compute_legal_moves() noexcept
 {
-	linear_moves::add_diagonal_squares(*this, this->color_.get_board());
-	linear_moves::add_anti_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_diagonal_moves(*this, this->color_.get_board());
+	linear_moves::add_anti_diagonal_moves(*this, this->color_.get_board());
+}
+
+void Bishop::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	linear_moves::remove_illegal_diagonal_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_anti_diagonal_moves(*this, this->color_.get_board(), enemy_color);
 }
 
 bool Bishop::is_on_start() const noexcept
@@ -89,10 +96,18 @@ bool Bishop::is_on_start() const noexcept
 
 void Queen::compute_legal_moves() noexcept
 {
-	linear_moves::add_rank_squares(*this, this->color_.get_board());
-	linear_moves::add_file_squares(*this, this->color_.get_board());
-	linear_moves::add_diagonal_squares(*this, this->color_.get_board());
-	linear_moves::add_anti_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_rank_moves(*this, this->color_.get_board());
+	linear_moves::add_file_moves(*this, this->color_.get_board());
+	linear_moves::add_diagonal_moves(*this, this->color_.get_board());
+	linear_moves::add_anti_diagonal_moves(*this, this->color_.get_board());
+}
+
+void Queen::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	linear_moves::remove_illegal_rank_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_file_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_diagonal_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_anti_diagonal_moves(*this, this->color_.get_board(), enemy_color);
 }
 
 bool Queen::is_on_start() const noexcept
@@ -197,7 +212,7 @@ bool Knight::is_on_start() const noexcept
 
 void Pawn::compute_legal_moves() noexcept 
 {
-	this->get_color().accept(PawnLegalSquares(*this));
+	this->get_color().accept(PawnLegalMoves(*this));
 }
 
 
@@ -228,4 +243,9 @@ void Pawn::clear_legal_moves_states() noexcept
 	{
 		this->has_double_moved_ = false;
 	}
+}
+
+void Pawn::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	this->get_color().accept(RemoveIllegalMoves(*this, enemy_color));
 }

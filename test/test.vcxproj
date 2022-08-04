@@ -41,6 +41,7 @@
     <ClCompile Include="BoardIterator.test.cpp" />
     <ClCompile Include="Castling.test.cpp" />
     <ClCompile Include="InPassing.test.cpp" />
+    <ClCompile Include="KingIllegalMoves.test.cpp" />
     <ClCompile Include="KingSquare.test.cpp" />
     <ClCompile Include="KnightSquares.test.cpp" />
     <ClCompile Include="Matchers.h" />

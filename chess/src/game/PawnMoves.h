@@ -9,31 +9,43 @@ public:
 	using increment_fn_type = void(*)(BoardIterator&);
 protected:
 	using takeable_squares_fn_type = void(*)(Pawn&, const BoardIterator&);
+	Pawn& pawn_;
 	template <typename Color>
 	void increment_fn(BoardIterator&) const noexcept = delete;
-	template <typename Color>
-	void takeable_squares(PieceColor&,takeable_squares_fn_type) const noexcept;
-	Pawn& pawn_;
+	template <typename Color, typename Fn>
+	void takeable_squares(PieceColor&,const Fn&) const noexcept;
 };
 
 
-class PawnLegalSquares final: public PawnColorVisitor
+class PawnLegalMoves final: public PawnColorVisitor
 {
 public:
-	PawnLegalSquares(Pawn& pawn): PawnColorVisitor(pawn) {}
+	PawnLegalMoves(Pawn& pawn): PawnColorVisitor(pawn) {}
 	void visit(BlackColor& color) const override;
 	void visit(WhiteColor& color) const override;
 private:
 	template <typename Color>
 	void add_takeable_squares(PieceColor& color) const noexcept;
 	template <typename Color>
-	void add_file_legal_squares(PieceColor& color) const noexcept;
+	void add_legal_file_squares(PieceColor& color) const noexcept;
 	template <typename Color>
 	void add_in_passing_move_if_possible(const PieceColor&) const noexcept;
 };
 
+class RemoveIllegalMoves final: public PawnColorVisitor
+{
+public:
+	RemoveIllegalMoves(Pawn& pawn, PieceColor& enemy_color): PawnColorVisitor(pawn), enemy_color_(enemy_color) {}
+	void visit(BlackColor& color) const override;
+	void visit(WhiteColor& color) const override;
+private:
+	PieceColor& enemy_color_;
+	template <typename Color>
+	void remove_attacked_squares_of_king_moves(PieceColor&) const noexcept;
+};
+
 template <typename Color>
-void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
+void PawnLegalMoves::add_legal_file_squares(PieceColor& color) const noexcept
 {
 	auto& square_it = FileIterator(color.get_board()).begin(*this->pawn_.get_square());
 	const int8_t nb_squares = this->pawn_.is_on_start() ? 2 : 1;
@@ -46,11 +58,11 @@ void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 
 
 template <typename Color>
-void PawnLegalSquares::add_takeable_squares(PieceColor& color) const noexcept
+void PawnLegalMoves::add_takeable_squares(PieceColor& color) const noexcept
 {
 	this->takeable_squares<Color>(color, [](Pawn& pawn, const BoardIterator& square_it)
 		{
-			if ( square_it && square_it->has_enemy_piece_of(pawn) )
+			if ( square_it->has_enemy_piece_of(pawn) )
 			{
 				pawn.add_move(*square_it);
 			}
@@ -58,20 +70,23 @@ void PawnLegalSquares::add_takeable_squares(PieceColor& color) const noexcept
 }
 
 
-template<typename Color>
-void PawnColorVisitor::takeable_squares(PieceColor& color,const takeable_squares_fn_type takeable_square_fn) const noexcept
+template<typename Color, typename Fn>
+void PawnColorVisitor::takeable_squares(PieceColor& color,const Fn& takeable_square_fn) const noexcept
 {
 	BoardIterator iterators[2] = { DiagonalIterator(color.get_board()),  AntiDiagonalIterator(color.get_board()) };
 	for (auto& square_it : iterators)
 	{
 		square_it.begin(*this->pawn_.get_square());
 		this->increment_fn<Color>(square_it);
-		takeable_square_fn(this->pawn_, square_it);
+		if (square_it)
+		{
+			takeable_square_fn(this->pawn_, square_it);
+		}
 	}
 }
 
 template <typename Color>
-void PawnLegalSquares::add_in_passing_move_if_possible(const PieceColor& color) const noexcept
+void PawnLegalMoves::add_in_passing_move_if_possible(const PieceColor& color) const noexcept
 {
 	BoardIterator iterators[] = {
 		++RankIterator(color.get_board()).begin(*this->pawn_.get_square()),
@@ -90,7 +105,6 @@ void PawnLegalSquares::add_in_passing_move_if_possible(const PieceColor& color) 
 }
 
 
-
 template <>
 inline void PawnColorVisitor::increment_fn<WhiteColor>(BoardIterator& it) const noexcept
 {
@@ -102,4 +116,17 @@ template <>
 inline void PawnColorVisitor::increment_fn<BlackColor>(BoardIterator& it) const noexcept
 {
 	++it;
+}
+
+template<typename Color>
+void RemoveIllegalMoves::remove_attacked_squares_of_king_moves(PieceColor& color) const noexcept
+{
+	const auto& enemy_king = this->enemy_color_.get_king();
+	this->takeable_squares<Color>(color, [&enemy_king](Pawn& pawn, const BoardIterator& square_it)
+		{
+			if (enemy_king)
+			{
+				enemy_king->get_legal_move(square_it->get_value()) = nullptr;
+			}
+		});
 }

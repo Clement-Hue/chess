@@ -43,6 +43,18 @@ void PieceColor::remove_piece(Piece& piece) noexcept
 	}
 }
 
+King* PieceColor::get_king() const noexcept
+{
+	for (const auto& piece: this->pieces_)
+	{
+		if (const auto& king = dynamic_cast<King*>(&*piece))
+		{
+			return king;
+		}
+	}
+	return nullptr;
+}
+
 
 
 bool PieceColor::is_turn() const noexcept
@@ -67,6 +79,17 @@ void PieceColor::clear_legal_moves_states() const noexcept
 	}
 }
 
+
+void PieceColor::remove_illegal_moves_of_enemy(PieceColor& color) const noexcept
+{
+	for (const auto& piece: this->pieces_)
+	{
+		if (piece->is_in_board())
+		{
+			piece->remove_illegal_moves_of_enemy(color);
+		}
+	}
+}
 
 void PieceColor::add_piece_observer(std::unique_ptr<PieceObserver> obs) noexcept
 {
