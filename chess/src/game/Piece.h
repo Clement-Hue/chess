@@ -20,8 +20,9 @@ public:
 	Piece& operator=(Piece&&) = delete;
 	virtual ~Piece() = default;
 	virtual void compute_legal_moves() noexcept = 0;
-	virtual void clear_legal_moves_states() noexcept;
-	virtual void remove_illegal_moves_of_enemy(PieceColor&) noexcept = 0;
+	void clear_legal_moves_except(const std::vector<int8_t>& squares_values) noexcept;
+	virtual void clear_legal_moves() noexcept;
+	virtual void remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept = 0;
 	bool move(Square& square) noexcept;
 	void remove_square() noexcept { this->square_ = nullptr; }
 	Square* get_square() const noexcept { return this->square_; }
@@ -76,11 +77,12 @@ class CHESS_API King final: public Piece
 public:
 	King(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_legal_moves() noexcept override;
-	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override {};
+	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override;
 	bool is_on_start() const noexcept override;
 private:
 	using increment_fn_type = void (*)(BoardIterator&);
-	void add_natural_moves() noexcept;
+	template <typename Fn>
+	void legal_squares(const Fn&) noexcept;
 	void add_castling_move(increment_fn_type) noexcept;
 	void add_long_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }); }
 	void add_short_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }); }
@@ -92,11 +94,11 @@ class CHESS_API Knight final: public Piece
 public:
 	Knight(Square* square, PieceColor& color): Piece(square, color) {}
 	void compute_legal_moves() noexcept override;
-	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override {};
+	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override;
 	bool is_on_start() const noexcept override;
 private:
-	template <typename It1, typename It2>
-	void add_legal_moves() noexcept;
+	template <typename It1, typename It2, typename Fn>
+	void legal_squares(const Fn&) noexcept;
 };
 
 
@@ -109,7 +111,7 @@ public:
 	void add_move(const Square&) noexcept;
 	void mark_as_double_moved() noexcept { this->has_double_moved_ = true; }
 	bool has_double_moved() const noexcept { return this->has_double_moved_; }
-	void clear_legal_moves_states() noexcept override;
+	void clear_legal_moves() noexcept override;
 	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override;
 private:
 	bool has_double_moved_{ false };

@@ -50,7 +50,8 @@ public:
 	void add_piece_observer(std::unique_ptr<PieceObserver>) noexcept;
 	BoardGame& get_board() const noexcept { return this->board_; }
 	pieces_type& get_pieces() noexcept { return this->pieces_; }
-	void clear_legal_moves_states() const noexcept;
+	void clear_legal_moves() const noexcept;
+	void clear_legal_moves_except(const std::vector<int8_t>&) const noexcept;
 	Piece& get_piece(const int8_t i) const noexcept { return *this->pieces_[i]; }
 	bool is_turn() const noexcept;
 	Rank get_rank() const noexcept { return this->rank_; }

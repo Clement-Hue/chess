@@ -71,11 +71,26 @@ void PieceColor::compute_legal_moves() const noexcept
 	}
 }
 
-void PieceColor::clear_legal_moves_states() const noexcept
+void PieceColor::clear_legal_moves() const noexcept
 {
 	for (const auto& piece: this->pieces_)
 	{
-		piece->clear_legal_moves_states();
+		piece->clear_legal_moves();
+	}
+}
+
+/**
+ * Clear legal moves except the squares values pass as parameter for all pieces except the king
+ */
+void PieceColor::clear_legal_moves_except(const std::vector<int8_t>& squares_values) const noexcept
+{
+	const auto king = this->get_king();
+	for (const auto& piece: this->pieces_)
+	{
+		if (&*piece != king)
+		{
+			piece->clear_legal_moves_except(squares_values);
+		}
 	}
 }
 

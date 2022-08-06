@@ -48,6 +48,15 @@ public:
 	};
 	explicit operator bool() const noexcept;
 	Square& operator*() const noexcept;
+	bool operator==(const BoardIterator& other) const noexcept
+	{
+		if (!other.square_ || !this->square_) return false;
+		return other->get_value() == (*this)->get_value();
+	}
+	bool operator!=(const BoardIterator& other) const noexcept
+	{
+		return !(*this == other);
+	}
 	Square* operator->() const noexcept
 	{
 		return &**this;
