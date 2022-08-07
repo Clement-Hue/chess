@@ -16,12 +16,12 @@ void PawnLegalMoves::visit(WhiteColor& color) const
 
 void RemoveIllegalMoves::visit(BlackColor& color) const
 {
-	this->remove_attacked_squares_of_king_moves(color);
+	this->remove_illegal_moves(color);
 }
 
 void RemoveIllegalMoves::visit(WhiteColor& color) const
 {
-	this->remove_attacked_squares_of_king_moves(color);
+	this->remove_illegal_moves(color);
 }
 
 

@@ -52,7 +52,7 @@ public:
 private:
 	void remove_illegal_moves(increment_fn_type increment_fn)  noexcept;
 	void check_pinning(Piece&, increment_fn_type) const noexcept;
-	void clear_legal_moves(const Square& start, const Square& end, increment_fn_type increment_fn) const noexcept;
+	void clear_legal_moves_except(const Square& start, const Square& end, increment_fn_type increment_fn) const noexcept;
 	Piece& piece_;
 	pinning_filter_type pinning_filter_;
 	PieceColor& enemy_color_;
@@ -67,9 +67,9 @@ void RemoveIllegalMoves<Iterator>::remove_illegal_moves(const increment_fn_type 
 		square_it ; increment_fn(square_it))
 	{
 		if (&*square_it == this->piece_.get_square()) continue;
-		if (square_it->has_enemy_piece_of(this->piece_) && dynamic_cast<King*>(square_it->get_piece()))
+		if (square_it->has_enemy_piece_of(this->piece_) && square_it->get_piece() == king)
 		{
-			this->clear_legal_moves(*this->piece_.get_square(), *square_it, increment_fn);
+			this->clear_legal_moves_except(*this->piece_.get_square(), *square_it, increment_fn);
 			continue;
 		}
 		if (king && !square_it->has_friend_piece_of(*king)) // otherwise the rock is not selectable to castle
@@ -91,6 +91,7 @@ void RemoveIllegalMoves<Iterator>::remove_illegal_moves(const increment_fn_type 
 template <typename Iterator>
 void RemoveIllegalMoves<Iterator>::check_pinning(Piece& piece, const increment_fn_type increment_fn ) const noexcept
 {
+	const auto& king = this->enemy_color_.get_king();
 	for (auto& square_it= Iterator(this->board_).begin(*piece.get_square());
 		square_it && !square_it->has_friend_piece_of(this->piece_)
 		; increment_fn(square_it))
@@ -98,7 +99,7 @@ void RemoveIllegalMoves<Iterator>::check_pinning(Piece& piece, const increment_f
 		if (&*square_it == piece.get_square()) continue;
 		if (square_it->has_enemy_piece_of(this->piece_))
 		{
-			if (dynamic_cast<King*>(square_it->get_piece()))
+			if (square_it->get_piece() == king)
 			{
 				this->pinning_filter_(piece);
 			}
@@ -111,7 +112,7 @@ void RemoveIllegalMoves<Iterator>::check_pinning(Piece& piece, const increment_f
  * Clear all legal moves except the squares between the start include and the end exclude
  */
 template <typename Iterator>
-void RemoveIllegalMoves<Iterator>::clear_legal_moves(const Square& start, const Square& end, const increment_fn_type increment_fn) const noexcept
+void RemoveIllegalMoves<Iterator>::clear_legal_moves_except(const Square& start, const Square& end, const increment_fn_type increment_fn) const noexcept
 {
 	std::vector<int8_t> legal_moves;
 	for (auto& square_it = Iterator(this->board_).begin(start); square_it && *square_it != end; increment_fn(square_it))
@@ -132,7 +133,7 @@ void RemoveIllegalMoves<Iterator>::operator()() noexcept
 using square_fn_type = bool (Square::*) (int8_t) const ;
 static void base_filter(Piece& piece,  const square_fn_type predicate )
 {
-	auto& moves = piece.get_legal_moves();
+	const auto& moves = piece.get_legal_moves();
 	for (int8_t i =0 ; i < moves.size(); ++i)
 	{
 		if (!moves[i] || (piece.get_square()->*predicate)(i)) continue;

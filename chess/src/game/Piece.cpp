@@ -52,7 +52,7 @@ void Piece::clear_legal_moves_except(const std::vector<int8_t>& squares_values) 
 	for (int8_t i = 0; i< this->legal_moves_.size(); ++i)
 	{
 		if (std::find(squares_values.begin(), squares_values.end(), i 
-		) == squares_values.end())
+			) == squares_values.end())
 		{
 			this->legal_moves_[i] = nullptr;
 		} 
@@ -228,9 +228,9 @@ void Knight::legal_squares(const Fn& legal_square_fn) noexcept
 
 void Knight::compute_legal_moves() noexcept
 {
-	const auto& add_move = [this](const BoardIterator& it)
+	const auto& add_move = [this](const BoardIterator& square_it)
 	{
-		this->legal_moves_[it->get_value()] = std::make_unique<SimpleMove>();
+		this->legal_moves_[square_it->get_value()] = std::make_unique<SimpleMove>();
 	};
 	this->legal_squares<FileIterator, RankIterator>(add_move);
 	this->legal_squares<RankIterator, FileIterator>(add_move);
@@ -239,12 +239,14 @@ void Knight::compute_legal_moves() noexcept
 void Knight::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 {
 	const auto& king = enemy_color.get_king();
-	const auto& remove_illegal_king_moves = [&king](const BoardIterator& it)
+	const auto& remove_illegal_king_moves = [&king, this, &enemy_color](const BoardIterator& square_it)
 	{
-		if (king)
+		if (!king) return;
+		if (square_it->get_piece() == king)
 		{
-			king->get_legal_move(it->get_value()) = nullptr;
+			enemy_color.clear_legal_moves_except({this->square_->get_value()});
 		}
+		king->get_legal_move(square_it->get_value()) = nullptr;
 	};
 	this->legal_squares<FileIterator, RankIterator>(remove_illegal_king_moves);
 	this->legal_squares<RankIterator, FileIterator>(remove_illegal_king_moves);
