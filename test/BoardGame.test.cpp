@@ -21,13 +21,10 @@ TEST(BoardGameTest, should_simulate_a_game)
 	board.init_game();
 	auto& pawn_b = board.get_color(1).get_piece(12);
 	auto& pawn_w = board.get_color(0).get_piece(11);
-	EXPECT_TRUE(pawn_b.get_legal_move(21)) << "black pseudo legal square invalid";
 	EXPECT_FALSE(pawn_w.get_legal_move(44)) << "white legal square invalid";
 	pawn_w.move(board[35]);
-	EXPECT_EQ(*pawn_w.get_square(), board[35]) << "white hasn't moved";
 	EXPECT_FALSE(pawn_b.get_legal_move(21)) << "black legal square hasn't been computed";
 	pawn_b.move( board[28]);
-	EXPECT_EQ(*pawn_b.get_square(), board[28]) << "black hasn't moved";
 	pawn_w.move(board[28]);
 	EXPECT_EQ(*pawn_w.get_square(), board[28]) << "white hasn't taken black";
 	EXPECT_EQ(pawn_b.get_square(), nullptr) << "black pawn still on the game";
