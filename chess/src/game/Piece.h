@@ -79,10 +79,13 @@ public:
 	void compute_legal_moves() noexcept override;
 	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override;
 	bool is_on_start() const noexcept override;
+	void clear_move(const Square& square) noexcept;
+	int8_t get_start_position() const noexcept;
 private:
 	using increment_fn_type = void (*)(BoardIterator&);
 	template <typename Fn>
 	void legal_squares(const Fn&) noexcept;
+	bool can_castle() const noexcept { return !this->has_moved_ && this->is_on_start(); }
 	void add_castling_move(increment_fn_type) noexcept;
 	void add_long_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }); }
 	void add_short_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }); }

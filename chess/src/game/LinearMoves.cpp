@@ -62,25 +62,22 @@ private:
 template <typename Iterator>
 void RemoveIllegalMoves<Iterator>::remove_illegal_moves(const increment_fn_type increment_fn) noexcept
 {
-	const auto& king = this->enemy_color_.get_king();
+	const auto& enemy_king = this->enemy_color_.get_king();
+	if (!enemy_king) return;
 	for (auto& square_it = Iterator(this->board_).begin(*this->piece_.get_square());
 		square_it ; increment_fn(square_it))
 	{
 		if (&*square_it == this->piece_.get_square()) continue;
-		if (square_it->has_enemy_piece_of(this->piece_) && square_it->get_piece() == king)
+		enemy_king->clear_move(*square_it);
+		if (square_it->get_piece() == enemy_king) // check
 		{
 			this->clear_legal_moves_except(*this->piece_.get_square(), *square_it, increment_fn);
-			continue;
-		}
-		if (king && !square_it->has_friend_piece_of(*king)) // otherwise the rock is not selectable to castle
-		{
-			king->get_legal_move(square_it->get_value()) = nullptr;
 		}
 		if (square_it->has_enemy_piece_of(this->piece_))
 		{
 			this->check_pinning(*square_it->get_piece(), increment_fn);
 		}
-		if (!square_it->is_free())
+		if (!square_it->is_free() && square_it->get_piece() != enemy_king)
 		{
 			return;
 		}

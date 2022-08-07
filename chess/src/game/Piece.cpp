@@ -85,7 +85,7 @@ void Rock::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 
 bool Rock::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && (
+	return this->color_.get_ranks().first == this->square_->get_rank() && (
 		this->square_->get_file() == 0 || this->square_->get_file() == NB_COLUMNS - 1
 		);
 }
@@ -104,7 +104,7 @@ void Bishop::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 
 bool Bishop::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && (
+	return this->color_.get_ranks().first == this->square_->get_rank() && (
 		this->square_->get_file() == 2 || this->square_->get_file() == NB_COLUMNS - 3
 		);
 }
@@ -127,7 +127,7 @@ void Queen::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 
 bool Queen::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && 
+	return this->color_.get_ranks().first == this->square_->get_rank() && 
 		this->square_->get_file() == 3 ;
 }
 
@@ -162,37 +162,61 @@ void King::compute_legal_moves() noexcept
 void King::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 {
 	const auto& king = enemy_color.get_king();
-	this->legal_squares([&king](const BoardIterator& it)
+	this->legal_squares([&king](const BoardIterator& square_it)
 	{
 		if (king)
 		{
-			king->get_legal_move(it->get_value()) = nullptr;
+			king->clear_move(*square_it);
 		}
 	});
 }
 
 bool King::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && 
-		this->square_->get_file() == 4 ;
+	return this->square_->get_value() == this->get_start_position();
+}
+
+void King::clear_move(const Square& square) noexcept
+{
+	if (!square.has_friend_piece_of(*this) ) // to not remove castle moves
+	{
+		this->legal_moves_[square.get_value()] = nullptr;
+	}
+	if ( const auto start_position = this->get_start_position();
+		this->can_castle() && square.get_value() >= start_position && square.get_value() <= start_position + 2 ||
+		square.get_value() <= start_position && square.get_value() >= start_position - 2
+		)
+	{
+		for (auto& move: this->legal_moves_)
+		{
+			if (dynamic_cast<CastleMove*>(&*move))
+			{
+				move = nullptr;
+			}
+		}
+	}
+}
+
+int8_t King::get_start_position() const noexcept
+{
+	return this->color_.get_ranks().first * NB_COLUMNS + 4;
 }
 
 void King::add_castling_move(const increment_fn_type increment_fn) noexcept
 {
-	if (this->has_moved_ || !this->is_on_start()) return;
+	if (!this->can_castle()) return;
 	int8_t i = 0;
 	Square* rock_square{ nullptr };
 	Square* king_square{ nullptr };
 	for ( auto& it = RankIterator(this->color_.get_board()).begin(*this->square_)
 		;it; increment_fn(it))
 	{
-		if (i <= 2 && this->color_.is_square_attacked(*it)) return;
 		if (i == 1) rock_square = &*it;
 		if (i == 2) king_square = &*it;
 		if (Piece* const piece = it->get_piece(); piece && piece != this)
 		{
-			if (dynamic_cast<Rock*>(piece) && piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start()
-				&& king_square && rock_square)
+			if (piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start() &&
+				dynamic_cast<Rock*>(piece) &&  king_square && rock_square)
 			{
 				this->legal_moves_[it->get_value()] = std::make_unique<CastleMove>(*piece, *king_square, *rock_square);
 			}
@@ -238,15 +262,15 @@ void Knight::compute_legal_moves() noexcept
 
 void Knight::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 {
-	const auto& king = enemy_color.get_king();
-	const auto& remove_illegal_king_moves = [&king, this, &enemy_color](const BoardIterator& square_it)
+	const auto& remove_illegal_king_moves = [this, &enemy_color](const BoardIterator& square_it)
 	{
+		const auto& king = enemy_color.get_king();
 		if (!king) return;
 		if (square_it->get_piece() == king)
 		{
 			enemy_color.clear_legal_moves_except({this->square_->get_value()});
 		}
-		king->get_legal_move(square_it->get_value()) = nullptr;
+		king->clear_move(*square_it);
 	};
 	this->legal_squares<FileIterator, RankIterator>(remove_illegal_king_moves);
 	this->legal_squares<RankIterator, FileIterator>(remove_illegal_king_moves);
@@ -254,7 +278,7 @@ void Knight::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 
 bool Knight::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && (
+	return this->color_.get_ranks().first == this->square_->get_rank() && (
 		this->square_->get_file() == 1 || this->square_->get_file() == NB_COLUMNS - 2
 		);
 }
@@ -268,7 +292,7 @@ void Pawn::compute_legal_moves() noexcept
 
 bool Pawn::is_on_start() const noexcept
 {
-	return this->square_->get_rank() == this->color_.get_rank().second;
+	return this->square_->get_rank() == this->color_.get_ranks().second;
 }
 
 void Pawn::add_move(const Square& square) noexcept

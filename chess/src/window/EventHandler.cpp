@@ -23,7 +23,7 @@ Square* MouseButtonHandler::get_square_of_coordinates(const int x, const int y) 
 	const auto [case_width, case_height] = this->app_.get_renderer().get_case_dimensions();
 	const int8_t rank = y / case_height;
 	const int8_t file = x / case_width;
-	const int8_t square_value = rank * 8 + file;
+	const int8_t square_value = rank * NB_COLUMNS + file;
 	return &this->app_.get_board()[square_value];
 }
 

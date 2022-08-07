@@ -121,14 +121,14 @@ inline void PawnColorVisitor::increment_fn<BlackColor>(BoardIterator& it) const 
 template<typename Color>
 void RemoveIllegalMoves::remove_illegal_moves(const Color& color) const noexcept
 {
-	const auto& enemy_king = this->enemy_color_.get_king();
-	this->takeable_squares(color, [&enemy_king, this](const BoardIterator& square_it)
+	this->takeable_squares(color, [this](const BoardIterator& square_it)
 		{
+			const auto& enemy_king = this->enemy_color_.get_king();
 			if (!enemy_king) return;
 			if (square_it->get_piece() == enemy_king)
 			{
 				this->enemy_color_.clear_legal_moves_except({ this->pawn_.get_square()->get_value() });
 			}
-			enemy_king->get_legal_move(square_it->get_value()) = nullptr;
+			enemy_king->clear_move(*square_it);
 		});
 }
