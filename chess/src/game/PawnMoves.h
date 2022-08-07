@@ -9,42 +9,43 @@ public:
 	using increment_fn_type = void(*)(BoardIterator&);
 protected:
 	using takeable_squares_fn_type = void(*)(Pawn&, const BoardIterator&);
+	Pawn& pawn_;
 	template <typename Color>
 	void increment_fn(BoardIterator&) const noexcept = delete;
-	template <typename Color>
-	void takeable_squares(PieceColor&,takeable_squares_fn_type) const noexcept;
-	Pawn& pawn_;
+	template <typename Color, typename Fn>
+	void takeable_squares(const Color&,const Fn&) const noexcept;
 };
 
 
-class PawnPseudoLegalSquares final: public PawnColorVisitor
+class PawnLegalMoves final: public PawnColorVisitor
 {
 public:
-	PawnPseudoLegalSquares(Pawn& pawn): PawnColorVisitor(pawn) {}
-	void visit(BlackColor&) const override;
-	void visit(WhiteColor&) const override;
-private:
-	template <typename Color>
-	void add_takeable_squares(PieceColor& color) const noexcept;
-};
-
-class PawnLegalSquares final: public PawnColorVisitor
-{
-public:
-	PawnLegalSquares(Pawn& pawn): PawnColorVisitor(pawn) {}
+	PawnLegalMoves(Pawn& pawn): PawnColorVisitor(pawn) {}
 	void visit(BlackColor& color) const override;
 	void visit(WhiteColor& color) const override;
 private:
 	template <typename Color>
-	void remove_not_legal_takeable_squares(PieceColor& color) const noexcept;
+	void add_takeable_squares(const Color& color) const noexcept;
 	template <typename Color>
-	void add_file_legal_squares(PieceColor& color) const noexcept;
+	void add_legal_file_squares(const Color& color) const noexcept;
 	template <typename Color>
-	void add_in_passing_move_if_possible(const PieceColor&) const noexcept;
+	void add_in_passing_move_if_possible(const Color&) const noexcept;
+};
+
+class RemoveIllegalMoves final: public PawnColorVisitor
+{
+public:
+	RemoveIllegalMoves(Pawn& pawn, PieceColor& enemy_color): PawnColorVisitor(pawn), enemy_color_(enemy_color) {}
+	void visit(BlackColor& color) const override;
+	void visit(WhiteColor& color) const override;
+private:
+	PieceColor& enemy_color_;
+	template <typename Color>
+	void remove_illegal_moves(const Color&) const noexcept;
 };
 
 template <typename Color>
-void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
+void PawnLegalMoves::add_legal_file_squares(const Color& color) const noexcept
 {
 	auto& square_it = FileIterator(color.get_board()).begin(*this->pawn_.get_square());
 	const int8_t nb_squares = this->pawn_.is_on_start() ? 2 : 1;
@@ -57,43 +58,35 @@ void PawnLegalSquares::add_file_legal_squares(PieceColor& color) const noexcept
 
 
 template <typename Color>
-void PawnPseudoLegalSquares::add_takeable_squares(PieceColor& color) const noexcept
+void PawnLegalMoves::add_takeable_squares(const Color& color) const noexcept
 {
-	this->takeable_squares<Color>(color, [](Pawn& pawn, const BoardIterator& square_it)
+	this->takeable_squares(color, [this](const BoardIterator& square_it)
 		{
-			if ( square_it )
+			if ( square_it->has_enemy_piece_of(this->pawn_) )
 			{
-				pawn.add_move(*square_it);
+				this->pawn_.add_move(*square_it);
 			}
 		});
 }
 
-template <typename Color>
-void PawnLegalSquares::remove_not_legal_takeable_squares(PieceColor& color) const noexcept
-{
-	this->takeable_squares<Color>(color, [](Pawn& pawn, const BoardIterator& square_it)
-		{
-			if ( square_it && !square_it->has_enemy_piece_of(pawn) )
-			{
-				pawn.get_legal_move(square_it->get_value()) = nullptr;
-			}
-		});
-}
 
-template<typename Color>
-void PawnColorVisitor::takeable_squares(PieceColor& color,const takeable_squares_fn_type takeable_square_fn) const noexcept
+template<typename Color, typename Fn>
+void PawnColorVisitor::takeable_squares(const Color& color,const Fn& takeable_square_fn) const noexcept
 {
 	BoardIterator iterators[2] = { DiagonalIterator(color.get_board()),  AntiDiagonalIterator(color.get_board()) };
 	for (auto& square_it : iterators)
 	{
 		square_it.begin(*this->pawn_.get_square());
 		this->increment_fn<Color>(square_it);
-		takeable_square_fn(this->pawn_, square_it);
+		if (square_it)
+		{
+			takeable_square_fn(square_it);
+		}
 	}
 }
 
 template <typename Color>
-void PawnLegalSquares::add_in_passing_move_if_possible(const PieceColor& color) const noexcept
+void PawnLegalMoves::add_in_passing_move_if_possible(const Color& color) const noexcept
 {
 	BoardIterator iterators[] = {
 		++RankIterator(color.get_board()).begin(*this->pawn_.get_square()),
@@ -112,7 +105,6 @@ void PawnLegalSquares::add_in_passing_move_if_possible(const PieceColor& color) 
 }
 
 
-
 template <>
 inline void PawnColorVisitor::increment_fn<WhiteColor>(BoardIterator& it) const noexcept
 {
@@ -124,4 +116,19 @@ template <>
 inline void PawnColorVisitor::increment_fn<BlackColor>(BoardIterator& it) const noexcept
 {
 	++it;
+}
+
+template<typename Color>
+void RemoveIllegalMoves::remove_illegal_moves(const Color& color) const noexcept
+{
+	this->takeable_squares(color, [this](const BoardIterator& square_it)
+		{
+			const auto& enemy_king = this->enemy_color_.get_king();
+			if (!enemy_king) return;
+			if (square_it->get_piece() == enemy_king)
+			{
+				this->enemy_color_.clear_legal_moves_except({ this->pawn_.get_square()->get_value() });
+			}
+			enemy_king->clear_move(*square_it);
+		});
 }

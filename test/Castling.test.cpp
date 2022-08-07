@@ -93,15 +93,26 @@ TEST(CastlingTest, no_castle_if_rock_is_not_on_start_position)
 }
 
 
-TEST(CastlingTest, no_castle_if_king_pass_through_attacked_squares)
+TEST(CastlingTest, no_long_castle_if_king_pass_through_attacked_squares)
 {
 	BoardGame board;
 	const auto& king = board.get_color(0).add_piece<King>(board[60]);
-	board.get_color(1).add_piece<Rock>(board[2]);
 	board.get_color(0).add_piece<Rock>(board[56]);
+	board.get_color(1).add_piece<Rock>(board[2]);
 	board.init_game();
 	const auto& king_legal_moves = king.get_legal_moves();
 	EXPECT_FALSE(king_legal_moves[56]);
+}
+
+TEST(CastlingTest, no_short_castle_if_king_pass_through_attacked_squares)
+{
+	BoardGame board;
+	const auto& king = board.get_color(0).add_piece<King>(board[60]);
+	board.get_color(0).add_piece<Rock>(board[63]);
+	board.get_color(1).add_piece<Pawn>(board[52]);
+	board.init_game();
+	const auto& king_legal_moves = king.get_legal_moves();
+	EXPECT_FALSE(king_legal_moves[63]);
 }
 
 TEST(CastlingTest, castle_if_king_dont_pass_through_attacked_squares)

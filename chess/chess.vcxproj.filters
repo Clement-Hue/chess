@@ -30,7 +30,7 @@
     <ClCompile Include="src\window\EventHandler.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\LinearLegalSquares.cpp">
+    <ClCompile Include="src\game\LinearMoves.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\game\BoardIterator.cpp">
@@ -39,7 +39,7 @@
     <ClCompile Include="src\game\PieceColor.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\game\PawnLegalSquares.cpp">
+    <ClCompile Include="src\game\PawnMoves.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\window\AssetFactory.cpp">
@@ -77,7 +77,7 @@
     <ClInclude Include="src\Chess.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\LinearLegalSquares.h">
+    <ClInclude Include="src\game\LinearMoves.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\game\BoardIterator.h">
@@ -86,7 +86,7 @@
     <ClInclude Include="src\game\PieceColor.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\game\PawnLegalSquares.h">
+    <ClInclude Include="src\game\PawnMoves.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="src\window\AssetFactory.h">

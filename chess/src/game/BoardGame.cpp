@@ -51,12 +51,15 @@ void BoardGame::compute_legal_moves() const noexcept
 {
 	for (const auto& color: this->colors_)
 	{
-		color->clear_legal_moves_states();
+		color->clear_legal_moves();
 	}
+	this->get_turn().compute_legal_moves();
 	for (const auto& color: this->colors_)
 	{
-		color->compute_pseudo_legal_moves();
+		if (!color->is_turn())
+		{
+			color->remove_illegal_moves_of_enemy(this->get_turn());
+		}
 	}
-	this->colors_[this->turn_]->compute_legal_moves();
 }
 

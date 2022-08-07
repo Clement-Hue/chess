@@ -85,3 +85,16 @@ TEST(BoardIteratorTest, change_begin_square)
 	++it_2;
 	EXPECT_EQ(it_2->get_value(), 11);
 }
+
+
+TEST(BoardIteratorTest, equality_operator)
+{
+	BoardGame board;
+	RankIterator rank_iterator{ board };
+	auto& it_1 = rank_iterator.begin(board[0]);
+	++it_1;
+	EXPECT_TRUE(it_1 == FileIterator(board).begin(board[1]));
+	++it_1;
+	EXPECT_FALSE(it_1 == FileIterator(board).begin(board[1]));
+}
+

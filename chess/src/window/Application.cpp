@@ -12,16 +12,11 @@ Application::Application(const WindowSize window_size, const CaseColor primary_c
 	this->init_window_and_renderer();
 }
 
-
-std::unique_ptr<EventHandler> Application::event_handler_factory(const SDL_Event& e, bool& quit)
+EventHandler* Application::get_event_handler(const SDL_Event& e)
 {
-	if (e.type == SDL_QUIT)
-	{
-		return std::make_unique<QuitHandler>(*this ,quit);
-	}
 	if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		return std::make_unique<MouseButtonHandler>(*this);
+		return &this->mouse_button_handler_;
 	}
 	return nullptr;
 }
@@ -32,9 +27,14 @@ void Application::app_loop()
 	SDL_Event e;
 	while (!quit)
 	{
-		while (SDL_PollEvent(&e))
+		while (SDL_WaitEvent(&e))
 		{
-			if (const auto handler = this->event_handler_factory(e, quit))
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+				break;
+			} 
+			if (const auto handler = this->get_event_handler(e))
 			{
 				(*handler)(e);
 			}
@@ -68,11 +68,6 @@ void Application::set_current_selection(const Asset* asset)  noexcept
 	this->renderer_->render_squares(asset->piece.get_squares_of_legal_moves(), {55,205,0,100} );
 	this->renderer_->update_screen();
 	this->current_selection_ = asset;
-}
-
-Renderer& Application::get_renderer() const noexcept
-{
-	return *this->renderer_; 
 }
 
 void Application::init_window_and_renderer()

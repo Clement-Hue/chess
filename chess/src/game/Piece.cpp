@@ -2,9 +2,9 @@
 #include "Move.h"
 #include "BoardGame.h"
 #include "BoardIterator.h"
-#include "LinearLegalSquares.h"
+#include "LinearMoves.h"
 #include "PieceColor.h"
-#include "PawnLegalSquares.h"
+#include "PawnMoves.h"
 
 
 Piece::Piece(Square* square, PieceColor& color): square_(square), color_(color)
@@ -35,18 +35,28 @@ std::vector<Square*> Piece::get_squares_of_legal_moves() const noexcept
 	return square_list;
 }
 
-void Piece::clear_legal_moves_states() noexcept
+void Piece::clear_legal_moves() noexcept
 {
 	for (auto& square: this->legal_moves_)
 	{
 		square = nullptr;
 	}
-	this->pinning_filter_ = nullptr;
 }
 
-void Piece::compute_legal_moves() noexcept
+
+/*
+ * Clear all legal moves except the array of squares values pass as parameter
+ */
+void Piece::clear_legal_moves_except(const std::vector<int8_t>& squares_values) noexcept
 {
-	this->filter_legal_moves_if_pinned();
+	for (int8_t i = 0; i< this->legal_moves_.size(); ++i)
+	{
+		if (std::find(squares_values.begin(), squares_values.end(), i 
+			) == squares_values.end())
+		{
+			this->legal_moves_[i] = nullptr;
+		} 
+	}
 }
 
 bool Piece::move(Square& square) noexcept
@@ -61,47 +71,68 @@ bool Piece::move(Square& square) noexcept
 	return false;
 }
 
-void Rock::compute_pseudo_legal_moves() noexcept
+void Rock::compute_legal_moves() noexcept
 {
-	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
+	linear_moves::add_rank_moves(*this, this->color_.get_board());
+	linear_moves::add_file_moves(*this, this->color_.get_board());
+}
+
+void Rock::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	linear_moves::remove_illegal_rank_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_file_moves(*this, this->color_.get_board(), enemy_color);
 }
 
 bool Rock::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && (
+	return this->color_.get_ranks().first == this->square_->get_rank() && (
 		this->square_->get_file() == 0 || this->square_->get_file() == NB_COLUMNS - 1
 		);
 }
 
-void Bishop::compute_pseudo_legal_moves() noexcept
+void Bishop::compute_legal_moves() noexcept
 {
-	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_diagonal_moves(*this, this->color_.get_board());
+	linear_moves::add_anti_diagonal_moves(*this, this->color_.get_board());
+}
+
+void Bishop::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	linear_moves::remove_illegal_diagonal_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_anti_diagonal_moves(*this, this->color_.get_board(), enemy_color);
 }
 
 bool Bishop::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && (
+	return this->color_.get_ranks().first == this->square_->get_rank() && (
 		this->square_->get_file() == 2 || this->square_->get_file() == NB_COLUMNS - 3
 		);
 }
 
-void Queen::compute_pseudo_legal_moves() noexcept
+void Queen::compute_legal_moves() noexcept
 {
-	linear_pseudo_legal_squares::add_rank_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_file_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_diagonal_squares(*this, this->color_.get_board());
-	linear_pseudo_legal_squares::add_anti_diagonal_squares(*this, this->color_.get_board());
+	linear_moves::add_rank_moves(*this, this->color_.get_board());
+	linear_moves::add_file_moves(*this, this->color_.get_board());
+	linear_moves::add_diagonal_moves(*this, this->color_.get_board());
+	linear_moves::add_anti_diagonal_moves(*this, this->color_.get_board());
+}
+
+void Queen::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	linear_moves::remove_illegal_rank_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_file_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_diagonal_moves(*this, this->color_.get_board(), enemy_color);
+	linear_moves::remove_illegal_anti_diagonal_moves(*this, this->color_.get_board(), enemy_color);
 }
 
 bool Queen::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && 
+	return this->color_.get_ranks().first == this->square_->get_rank() && 
 		this->square_->get_file() == 3 ;
 }
 
-void King::compute_pseudo_legal_moves() noexcept
+template <typename Fn>
+void King::legal_squares(const Fn& legal_squares_fn) noexcept
 {
 	BoardIterator iterators[8] = {
 		++RankIterator(this->color_.get_board()).begin(*this->square_), --RankIterator(this->color_.get_board()).begin(*this->square_),
@@ -113,60 +144,79 @@ void King::compute_pseudo_legal_moves() noexcept
 	{
 		if ( square_it && !square_it->has_friend_piece_of(*this) )
 		{
-			this->legal_moves_[square_it->get_value()] = std::make_unique<SimpleMove>();
+			legal_squares_fn(square_it);
 		}
 	}
 }
 
 void King::compute_legal_moves() noexcept
 {
-	Piece::compute_legal_moves();
-	this->remove_attacked_squares();
+	this->legal_squares([this](const BoardIterator& it)
+	{
+		this->legal_moves_[it->get_value()] = std::make_unique<SimpleMove>();
+	});
 	this->add_long_castle_if_possible();
 	this->add_short_castle_if_possible();
 }
 
-bool King::is_on_start() const noexcept
+void King::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && 
-		this->square_->get_file() == 4 ;
+	const auto& king = enemy_color.get_king();
+	this->legal_squares([&king](const BoardIterator& square_it)
+	{
+		if (king)
+		{
+			king->clear_move(*square_it);
+		}
+	});
 }
 
-/**
- * Remove from legal moves list the squares that are attacked by enemy pieces
- */
-void King::remove_attacked_squares() noexcept
+bool King::is_on_start() const noexcept
 {
-	for (const auto& color: this->color_.get_board().get_colors())
+	return this->square_->get_value() == this->get_start_position();
+}
+
+void King::clear_move(const Square& square) noexcept
+{
+	if (!square.has_friend_piece_of(*this) ) // to not remove castle moves
 	{
-		if (*color == this->get_color()) continue;
-		for (const auto& piece: color->get_pieces())
+		this->legal_moves_[square.get_value()] = nullptr;
+	}
+	if ( const auto start_position = this->get_start_position();
+		this->can_castle() && square.get_value() >= start_position && square.get_value() <= start_position + 2 ||
+		square.get_value() <= start_position && square.get_value() >= start_position - 2
+		)
+	{
+		for (auto& move: this->legal_moves_)
 		{
-			for (int8_t i = 0 ;i < piece->get_legal_moves().size(); ++i)
+			if (dynamic_cast<CastleMove*>(&*move))
 			{
-				if (!piece->get_legal_move(i)) continue;
-				this->legal_moves_[i] = nullptr;
+				move = nullptr;
 			}
 		}
 	}
 }
 
+int8_t King::get_start_position() const noexcept
+{
+	return this->color_.get_ranks().first * NB_COLUMNS + 4;
+}
+
 void King::add_castling_move(const increment_fn_type increment_fn) noexcept
 {
-	if (this->has_moved_ || !this->is_on_start()) return;
+	if (!this->can_castle()) return;
 	int8_t i = 0;
 	Square* rock_square{ nullptr };
 	Square* king_square{ nullptr };
 	for ( auto& it = RankIterator(this->color_.get_board()).begin(*this->square_)
 		;it; increment_fn(it))
 	{
-		if (i <= 2 && this->color_.is_square_attacked(*it)) return;
 		if (i == 1) rock_square = &*it;
 		if (i == 2) king_square = &*it;
 		if (Piece* const piece = it->get_piece(); piece && piece != this)
 		{
-			if (dynamic_cast<Rock*>(piece) && piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start()
-				&& king_square && rock_square)
+			if (piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start() &&
+				dynamic_cast<Rock*>(piece) &&  king_square && rock_square)
 			{
 				this->legal_moves_[it->get_value()] = std::make_unique<CastleMove>(*piece, *king_square, *rock_square);
 			}
@@ -177,9 +227,8 @@ void King::add_castling_move(const increment_fn_type increment_fn) noexcept
 }
 
 
-
-template<typename It1, typename It2>
-void Knight::add_legal_moves() noexcept
+template<typename It1, typename It2, typename Fn>
+void Knight::legal_squares(const Fn& legal_square_fn) noexcept
 {
 	BoardIterator first_it[2] = {
 		It1(this->color_.get_board()).begin(*this->get_square())+=2,
@@ -195,40 +244,55 @@ void Knight::add_legal_moves() noexcept
 		for (const auto& it_2: second_it)
 		{
 			if (!it_2 || it_2->has_friend_piece_of(*this)) continue;
-			this->legal_moves_[it_2->get_value()] = std::make_unique<SimpleMove>();
+			legal_square_fn(it_2);
 		}
 	}
 }
 
 
-void Knight::compute_pseudo_legal_moves() noexcept
+void Knight::compute_legal_moves() noexcept
 {
-	this->add_legal_moves<FileIterator, RankIterator>();
-	this->add_legal_moves<RankIterator, FileIterator>();
+	const auto& add_move = [this](const BoardIterator& square_it)
+	{
+		this->legal_moves_[square_it->get_value()] = std::make_unique<SimpleMove>();
+	};
+	this->legal_squares<FileIterator, RankIterator>(add_move);
+	this->legal_squares<RankIterator, FileIterator>(add_move);
+}
+
+void Knight::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	const auto& remove_illegal_king_moves = [this, &enemy_color](const BoardIterator& square_it)
+	{
+		const auto& king = enemy_color.get_king();
+		if (!king) return;
+		if (square_it->get_piece() == king)
+		{
+			enemy_color.clear_legal_moves_except({this->square_->get_value()});
+		}
+		king->clear_move(*square_it);
+	};
+	this->legal_squares<FileIterator, RankIterator>(remove_illegal_king_moves);
+	this->legal_squares<RankIterator, FileIterator>(remove_illegal_king_moves);
 }
 
 bool Knight::is_on_start() const noexcept
 {
-	return this->color_.get_rank().first == this->square_->get_rank() && (
+	return this->color_.get_ranks().first == this->square_->get_rank() && (
 		this->square_->get_file() == 1 || this->square_->get_file() == NB_COLUMNS - 2
 		);
 }
 
-void Pawn::compute_pseudo_legal_moves() noexcept
-{
-	this->get_color().accept(PawnPseudoLegalSquares(*this));
-}
 
 void Pawn::compute_legal_moves() noexcept 
 {
-	Piece::compute_legal_moves();
-	this->get_color().accept(PawnLegalSquares(*this));
+	this->get_color().accept(PawnLegalMoves(*this));
 }
 
 
 bool Pawn::is_on_start() const noexcept
 {
-	return this->square_->get_rank() == this->color_.get_rank().second;
+	return this->square_->get_rank() == this->color_.get_ranks().second;
 }
 
 void Pawn::add_move(const Square& square) noexcept
@@ -246,11 +310,16 @@ void Pawn::add_move(const Square& square) noexcept
 	this->legal_moves_[square.get_value()] = std::make_unique<SimpleMove>();
 }
 
-void Pawn::clear_legal_moves_states() noexcept
+void Pawn::clear_legal_moves() noexcept
 {
-	Piece::clear_legal_moves_states();
+	Piece::clear_legal_moves();
 	if (this->color_.is_turn())
 	{
 		this->has_double_moved_ = false;
 	}
+}
+
+void Pawn::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
+{
+	this->get_color().accept(RemoveIllegalMoves(*this, enemy_color));
 }

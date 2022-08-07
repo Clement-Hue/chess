@@ -131,8 +131,7 @@ TEST(PieceTest, not_allowed_to_move_to_not_legal_square)
 	auto& rock = board.get_color(0).add_piece<Rock>(board[40]);
 	rock.move(board[48]);
 	EXPECT_EQ(rock.get_square(), &board[40]);
-	rock.compute_pseudo_legal_moves();
-	rock.compute_legal_moves();
+	board.init_game();
 	rock.move(board[48]);
 	EXPECT_EQ(rock.get_square(), &board[48]);
 }
@@ -155,4 +154,13 @@ TEST(PieceTest, should_have_moved)
 	rock.move(board[42]);
 	EXPECT_EQ(rock.get_square(), &board[42]);
 	EXPECT_TRUE(rock.has_moved());
+}
+
+TEST(PieceTest, edge_case_piece_not_in_board)
+{
+	BoardGame board;
+	board.get_color(0).add_piece<Rock>(board[40]);
+	auto& rock_b = board.get_color(1).add_piece<Rock>(board[40]);
+	rock_b.remove_square();
+	board.init_game();
 }

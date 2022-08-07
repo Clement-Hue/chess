@@ -187,10 +187,10 @@
     <ClCompile Include="src\game\Move.cpp" />
     <ClCompile Include="src\window\Renderer.cpp" />
     <ClCompile Include="src\window\AssetFactory.cpp" />
-    <ClCompile Include="src\game\PawnLegalSquares.cpp" />
+    <ClCompile Include="src\game\PawnMoves.cpp" />
     <ClCompile Include="src\game\PieceColor.cpp" />
     <ClCompile Include="src\game\BoardIterator.cpp" />
-    <ClCompile Include="src\game\LinearLegalSquares.cpp" />
+    <ClCompile Include="src\game\LinearMoves.cpp" />
     <ClCompile Include="src\window\EventHandler.cpp" />
     <ClCompile Include="src\game\BoardGame.cpp" />
     <ClCompile Include="src\game\Piece.cpp" />
@@ -202,10 +202,10 @@
     <ClInclude Include="src\game\Move.h" />
     <ClInclude Include="src\window\Renderer.h" />
     <ClInclude Include="src\window\AssetFactory.h" />
-    <ClInclude Include="src\game\PawnLegalSquares.h" />
+    <ClInclude Include="src\game\PawnMoves.h" />
     <ClInclude Include="src\game\PieceColor.h" />
     <ClInclude Include="src\game\BoardIterator.h" />
-    <ClInclude Include="src\game\LinearLegalSquares.h" />
+    <ClInclude Include="src\game\LinearMoves.h" />
     <ClInclude Include="src\Chess.h" />
     <ClInclude Include="src\window\EventHandler.h" />
     <ClInclude Include="src\game\BoardGame.h" />
