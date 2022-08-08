@@ -149,6 +149,16 @@ void King::legal_squares(const Fn& legal_squares_fn) noexcept
 	}
 }
 
+King::King(Square* square, PieceColor& color): Piece(square, color),
+	short_castle_({ *(RankIterator(color.get_board()).begin(this->get_start_position()) += 2),
+*(RankIterator(color.get_board()).begin(this->get_start_position()) += 1),
+	}),
+	long_castle_({ *(RankIterator(color.get_board()).begin(this->get_start_position()) -= 2),
+*(RankIterator(color.get_board()).begin(this->get_start_position()) -= 1),
+	})
+{
+}
+
 void King::compute_legal_moves() noexcept
 {
 	this->legal_squares([this](const BoardIterator& it)
@@ -173,7 +183,8 @@ void King::remove_illegal_moves_of_enemy(PieceColor& enemy_color) noexcept
 
 bool King::is_on_start() const noexcept
 {
-	return this->square_->get_value() == this->get_start_position();
+	if (!this->square_) return false;
+	return *this->square_ == this->get_start_position();
 }
 
 void King::clear_move(const Square& square) noexcept
@@ -182,47 +193,38 @@ void King::clear_move(const Square& square) noexcept
 	{
 		this->legal_moves_[square.get_value()] = nullptr;
 	}
-	if ( const auto start_position = this->get_start_position();
-		this->can_castle() && square.get_value() >= start_position && square.get_value() <= start_position + 2 ||
-		square.get_value() <= start_position && square.get_value() >= start_position - 2
-		)
+	if (this->short_castle_.move && square >= this->get_start_position() && square <= this->short_castle_.king_square )
 	{
-		for (auto& move: this->legal_moves_)
-		{
-			if (dynamic_cast<CastleMove*>(&*move))
-			{
-				move = nullptr;
-			}
-		}
+		*this->short_castle_.move = nullptr;
+	}
+	if (this->long_castle_.move && square <= this->get_start_position() && square >= this->long_castle_.king_square)
+	{
+		*this->long_castle_.move = nullptr;
 	}
 }
 
-int8_t King::get_start_position() const noexcept
+Square& King::get_start_position() const noexcept
 {
-	return this->color_.get_ranks().first * NB_COLUMNS + 4;
+	return this->color_.get_board()[this->color_.get_ranks().first * NB_COLUMNS + 4];
 }
 
-void King::add_castling_move(const increment_fn_type increment_fn) noexcept
+void King::add_castling_move(const increment_fn_type increment_fn, Castling& castling) noexcept
 {
 	if (!this->can_castle()) return;
-	int8_t i = 0;
-	Square* rock_square{ nullptr };
-	Square* king_square{ nullptr };
 	for ( auto& it = RankIterator(this->color_.get_board()).begin(*this->square_)
 		;it; increment_fn(it))
 	{
-		if (i == 1) rock_square = &*it;
-		if (i == 2) king_square = &*it;
 		if (Piece* const piece = it->get_piece(); piece && piece != this)
 		{
 			if (piece->is_friend_of(*this) && !piece->has_moved() && piece->is_on_start() &&
-				dynamic_cast<Rock*>(piece) &&  king_square && rock_square)
+				dynamic_cast<Rock*>(piece))
 			{
-				this->legal_moves_[it->get_value()] = std::make_unique<CastleMove>(*piece, *king_square, *rock_square);
+				this->legal_moves_[it->get_value()] = std::make_unique<CastleMove>(*piece, 
+					castling.king_square, castling.rock_square);
+				castling.move = &this->legal_moves_[it->get_value()];
 			}
 			return;
 		}
-		++i;
 	}
 }
 

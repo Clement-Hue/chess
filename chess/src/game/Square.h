@@ -29,6 +29,8 @@ public:
 	bool operator!=(const Square& other) const noexcept { return !(other == *this); }
 	bool operator<(const Square& other) const noexcept { return this->value_ < other.value_; }
 	bool operator>(const Square& other) const noexcept { return this->value_ > other.value_; }
+	bool operator<=(const Square& other) const noexcept { return this->value_ <= other.value_; }
+	bool operator>=(const Square& other) const noexcept { return this->value_ >= other.value_; }
 private:
 	int8_t value_;
 	Piece* piece_;
