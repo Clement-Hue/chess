@@ -115,6 +115,20 @@ TEST(CastlingTest, no_short_castle_if_king_pass_through_attacked_squares)
 	EXPECT_FALSE(king_legal_moves[63]);
 }
 
+
+TEST(CastlingTest, no_long_castle_but_short_castle_possible)
+{
+	BoardGame board;
+	const auto& king = board.get_color(0).add_piece<King>(board[60]);
+	board.get_color(0).add_piece<Rock>(board[63]);
+	board.get_color(0).add_piece<Rock>(board[56]);
+	board.get_color(1).add_piece<Knight>(board[41]);
+	board.init_game();
+	const auto& king_legal_moves = king.get_legal_moves();
+	EXPECT_TRUE(king_legal_moves[63]);
+	EXPECT_FALSE(king_legal_moves[56]);
+}
+
 TEST(CastlingTest, castle_if_king_dont_pass_through_attacked_squares)
 {
 	BoardGame board;

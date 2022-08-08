@@ -75,20 +75,28 @@ public:
 class CHESS_API King final: public Piece
 {
 public:
-	King(Square* square, PieceColor& color): Piece(square, color) {}
+	King(Square* square, PieceColor& color);
 	void compute_legal_moves() noexcept override;
 	void remove_illegal_moves_of_enemy(PieceColor&) noexcept override;
 	bool is_on_start() const noexcept override;
 	void clear_move(const Square& square) noexcept;
-	int8_t get_start_position() const noexcept;
+	Square& get_start_position() const noexcept;
 private:
+	struct Castling
+	{
+		Square& king_square;
+		Square& rock_square;
+		std::unique_ptr<Move>* move{ nullptr };
+	};
+	Castling short_castle_;
+	Castling long_castle_;
 	using increment_fn_type = void (*)(BoardIterator&);
 	template <typename Fn>
 	void legal_squares(const Fn&) noexcept;
 	bool can_castle() const noexcept { return !this->has_moved_ && this->is_on_start(); }
-	void add_castling_move(increment_fn_type) noexcept;
-	void add_long_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }); }
-	void add_short_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }); }
+	void add_castling_move(increment_fn_type, Castling&) noexcept;
+	void add_long_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {--it; }, this->long_castle_); }
+	void add_short_castle_if_possible() noexcept { this->add_castling_move([](BoardIterator& it) {++it; }, this->short_castle_); }
 };
 
 
